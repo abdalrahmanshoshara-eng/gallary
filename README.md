@@ -167,3 +167,5 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 The full deployment guide (TLS issuance, backups with WAL/PITR, monitoring) is written in Phase 9. Choosing the hosting provider is an open decision (PRD Q2), and the provider must support WebSockets.
+#   g a l l a r y  
+ 
