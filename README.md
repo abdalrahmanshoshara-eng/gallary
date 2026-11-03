@@ -1,3 +1,5 @@
+# gallary
+
 # منصة الفن الدمشقية — Damascene Art Platform
 
 A managed art marketplace with a digital archive and live auctions. The interface is in Arabic and right-to-left (RTL), and prices are in USD.
@@ -185,6 +187,3 @@ docker compose -f docker-compose.prod.yml up -d --build
 ```
 
 The full deployment guide (TLS issuance, backups with WAL/PITR, monitoring) is written in Phase 9. Choosing the hosting provider is an open decision (PRD Q2), and the provider must support WebSockets.
-#   g a l l a r y  
- #   g a l l a r y  
- 
