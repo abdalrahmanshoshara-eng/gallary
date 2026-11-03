@@ -1,0 +1,146 @@
+# Local development stack. Open http://localhost:8080 — nginx routes / to Next.js,
+# /api/ to Django (WSGI), /ws/ to Django Channels (ASGI). Same topology as production.
+name: damascene-art
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: infra/docker/backend.Dockerfile
+    target: dev
+  image: damascene-art/backend:dev
+  env_file: .env
+  environment: &backend-env
+    DJANGO_SETTINGS_MODULE: config.settings.dev
+    # Application traffic goes through PgBouncer (transaction pooling, ADR-15).
+    DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgbouncer:6432/${POSTGRES_DB}
+  volumes:
+    - ./backend:/app
+  depends_on:
+    migrate:
+      condition: service_completed_successfully
+    pgbouncer:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  pgbouncer:
+    build:
+      context: infra/pgbouncer
+    image: damascene-art/pgbouncer:local
+    environment:
+      DB_HOST: postgres
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 20
+    restart: unless-stopped
+
+  # Migrations connect to PostgreSQL directly (not through PgBouncer) and run once.
+  migrate:
+    <<: *backend
+    command: ["python", "manage.py", "migrate", "--noinput"]
+    environment:
+      <<: *backend-env
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    <<: *backend
+    command: ["python", "manage.py", "runserver", "0.0.0.0:8000"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/api/v1/health/live"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  realtime:
+    <<: *backend
+    command: ["uvicorn", "config.asgi:application", "--host", "0.0.0.0", "--port", "8001", "--reload", "--reload-dir", "/app"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8001/api/v1/health/live"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+  worker:
+    <<: *backend
+    command: ["celery", "-A", "config", "worker", "-Q", "critical,default,media,notifications", "-c", "2", "-l", "INFO"]
+
+  # Exactly one beat process (ARCHITECTURE §7.5).
+  beat:
+    <<: *backend
+    command: ["celery", "-A", "config", "beat", "-l", "INFO"]
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/frontend.Dockerfile
+      target: dev
+    image: damascene-art/frontend:dev
+    environment:
+      INTERNAL_API_URL: http://api:8000
+      NEXT_PUBLIC_CSRF_COOKIE_NAME: csrftoken
+      WATCHPACK_POLLING: "true"
+    volumes:
+      - ./frontend:/app
+      - frontend-node-modules:/app/node_modules
+      - frontend-next:/app/.next
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+
+  nginx:
+    image: nginx:1.28-alpine
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./infra/nginx/conf.d/00-common.conf:/etc/nginx/conf.d/00-common.conf:ro
+      - ./infra/nginx/dev/default.conf:/etc/nginx/conf.d/default.conf:ro
+      - ./infra/nginx/snippets:/etc/nginx/snippets:ro
+    depends_on:
+      - web
+      - api
+      - realtime
+    restart: unless-stopped
+
+volumes:
+  postgres-data:
+  redis-data:
+  frontend-node-modules:
+  frontend-next:

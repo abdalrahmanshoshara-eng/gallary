@@ -1,0 +1,109 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: damascene
+          POSTGRES_USER: damascene
+          POSTGRES_PASSWORD: ci-only-password
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd "pg_isready -U damascene" --health-interval 5s --health-timeout 3s --health-retries 20
+      redis:
+        image: redis:7-alpine
+        ports: ["6379:6379"]
+        options: >-
+          --health-cmd "redis-cli ping" --health-interval 5s --health-timeout 3s --health-retries 20
+    env:
+      DJANGO_SECRET_KEY: ci-only-not-secret-0123456789abcdefghijklmnopqrstuvwxyz-0123456789
+      DATABASE_URL: postgres://damascene:ci-only-password@localhost:5432/damascene
+      REDIS_CACHE_URL: redis://localhost:6379/0
+      CELERY_BROKER_URL: redis://localhost:6379/1
+      CHANNEL_LAYER_URL: redis://localhost:6379/2
+      DJANGO_ALLOWED_HOSTS: localhost,testserver
+      REDIS_INTEGRATION: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: backend/requirements/*.txt
+      - run: pip install -r requirements/dev.txt
+      - name: Lint
+        run: |
+          ruff check .
+          ruff format --check .
+          lint-imports
+      - name: Migrations are up to date
+        run: python manage.py makemigrations --check --dry-run
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.test
+      - name: OpenAPI schema is up to date
+        run: |
+          python manage.py spectacular --file /tmp/schema.yml --validate --fail-on-warn
+          diff -u openapi/schema.yml /tmp/schema.yml
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.test
+      - name: Production settings pass deploy checks
+        run: python manage.py check --deploy --fail-level WARNING
+        env:
+          DJANGO_SETTINGS_MODULE: config.settings.prod
+          DJANGO_SECRET_KEY: ci-only-deploy-check-0123456789abcdefghijklmnopqrstuvwxyz-0123456789
+          CSRF_TRUSTED_ORIGINS: https://art.example
+      - name: Tests
+        run: pytest
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    env:
+      NEXT_TELEMETRY_DISABLED: "1"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - name: API types match the OpenAPI schema
+        run: npm run check:api
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
+
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compose files are valid
+        run: |
+          cp .env.example .env
+          docker compose config -q
+          REDIS_PASSWORD=x SERVER_NAME=art.example MEDIA_ORIGIN=https://media.art.example TLS_CERT_DIR=/tmp \
+            docker compose -f docker-compose.prod.yml config -q
+      - name: Build production images
+        run: |
+          docker build -f infra/docker/backend.Dockerfile --target prod -t backend:ci .
+          docker build -f infra/docker/frontend.Dockerfile --target prod -t frontend:ci .
+          docker build -t pgbouncer:ci infra/pgbouncer

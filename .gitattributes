@@ -1,0 +1,10 @@
+# Normalise line endings: shell scripts and configs must keep LF inside Linux containers,
+# even when the repository is checked out on Windows.
+* text=auto eol=lf
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary

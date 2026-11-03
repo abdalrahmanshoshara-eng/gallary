@@ -1,0 +1,25 @@
+[importlinter]
+root_packages =
+    apps
+    config
+include_external_packages = True
+
+[importlinter:contract:domain-independent-of-transport]
+name = Domain and core apps must not depend on the realtime transport (ADR-05v2)
+type = forbidden
+source_modules =
+    apps.core
+    apps.accounts
+forbidden_modules =
+    apps.realtime
+    channels
+    channels_redis
+
+[importlinter:contract:realtime-is-a-leaf]
+name = Only the ASGI entry point and settings may wire the realtime app
+type = forbidden
+source_modules =
+    apps.core
+    apps.accounts
+forbidden_modules =
+    config.asgi

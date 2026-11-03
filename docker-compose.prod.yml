@@ -1,0 +1,169 @@
+# Production stack on a single host (Docker Compose, no Kubernetes — ADR, PROJECT_MASTER_PROMPT §4.5).
+# Every service is stateless except postgres/redis; api, realtime, worker and web can be
+# scaled with `docker compose up --scale api=3` or moved to more hosts without code changes.
+# Secrets come from the server's .env (never committed). Object storage is external (S3/R2).
+name: damascene-art
+
+x-logging: &logging
+  driver: json-file
+  options:
+    max-size: "20m"
+    max-file: "5"
+
+x-backend: &backend
+  build:
+    context: .
+    dockerfile: infra/docker/backend.Dockerfile
+    target: prod
+  image: ${REGISTRY:-damascene-art}/backend:${IMAGE_TAG:-latest}
+  env_file: .env
+  environment: &backend-env
+    DJANGO_SETTINGS_MODULE: config.settings.prod
+    DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgbouncer:6432/${POSTGRES_DB}
+    LOG_FORMAT: json
+  depends_on:
+    migrate:
+      condition: service_completed_successfully
+    pgbouncer:
+      condition: service_healthy
+    redis:
+      condition: service_healthy
+  restart: unless-stopped
+  logging: *logging
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_INITDB_ARGS: --auth-host=scram-sha-256
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    shm_size: 256mb
+    restart: unless-stopped
+    logging: *logging
+
+  pgbouncer:
+    build:
+      context: infra/pgbouncer
+    image: ${REGISTRY:-damascene-art}/pgbouncer:${IMAGE_TAG:-latest}
+    environment:
+      DB_HOST: postgres
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD: ${POSTGRES_PASSWORD}
+      PGB_DEFAULT_POOL_SIZE: ${PGB_DEFAULT_POOL_SIZE:-20}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+  redis:
+    image: redis:7-alpine
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "${REDIS_PASSWORD:?REDIS_PASSWORD is required}"]
+    volumes:
+      - redis-data:/data
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$REDIS_PASSWORD\" --no-auth-warning ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    restart: unless-stopped
+    logging: *logging
+
+  migrate:
+    <<: *backend
+    command: ["python", "manage.py", "migrate", "--noinput"]
+    environment:
+      <<: *backend-env
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: "no"
+
+  api:
+    <<: *backend
+    command: ["gunicorn", "-c", "config/gunicorn/api.py", "config.wsgi:application"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8000/api/v1/health/live"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  realtime:
+    <<: *backend
+    command: ["gunicorn", "-c", "config/gunicorn/realtime.py", "config.asgi:application"]
+    stop_grace_period: 30s
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://127.0.0.1:8001/api/v1/health/live"]
+      interval: 15s
+      timeout: 3s
+      retries: 5
+
+  worker:
+    <<: *backend
+    command: ["celery", "-A", "config", "worker", "-Q", "critical,default,media,notifications", "-c", "${CELERY_CONCURRENCY:-4}", "-l", "INFO"]
+    stop_grace_period: 60s
+
+  beat:
+    <<: *backend
+    command: ["celery", "-A", "config", "beat", "-l", "INFO"]
+    deploy:
+      replicas: 1  # must never be scaled (ARCHITECTURE §7.5)
+
+  web:
+    build:
+      context: .
+      dockerfile: infra/docker/frontend.Dockerfile
+      target: prod
+      args:
+        NEXT_PUBLIC_CSRF_COOKIE_NAME: __Host-csrf
+    image: ${REGISTRY:-damascene-art}/frontend:${IMAGE_TAG:-latest}
+    environment:
+      INTERNAL_API_URL: http://api:8000
+    depends_on:
+      api:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+  nginx:
+    image: nginx:1.28-alpine
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      SERVER_NAME: ${SERVER_NAME:?SERVER_NAME is required}
+      MEDIA_ORIGIN: ${MEDIA_ORIGIN:?MEDIA_ORIGIN is required}
+      NGINX_ENVSUBST_FILTER: "^(SERVER_NAME|MEDIA_ORIGIN)$"
+    volumes:
+      - ./infra/nginx/conf.d/00-common.conf:/etc/nginx/conf.d/00-common.conf:ro
+      - ./infra/nginx/prod/default.conf.template:/etc/nginx/templates/default.conf.template:ro
+      - ./infra/nginx/snippets:/etc/nginx/snippets:ro
+      - ${TLS_CERT_DIR:?TLS_CERT_DIR is required}:/etc/nginx/certs:ro
+      - acme-webroot:/var/www/acme
+    depends_on:
+      web:
+        condition: service_healthy
+      api:
+        condition: service_healthy
+      realtime:
+        condition: service_healthy
+    restart: unless-stopped
+    logging: *logging
+
+volumes:
+  postgres-data:
+  redis-data:
+  acme-webroot:

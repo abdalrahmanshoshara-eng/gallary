@@ -1,0 +1,35 @@
+/*
+ * Design tokens — the single source of brand values (PROJECT_MASTER_PROMPT §3.2).
+ * Components never use raw hex values; they use the Tailwind theme mapped in globals.css.
+ */
+:root {
+  --color-primary: #69392a; /* بني حجري داكن */
+  --color-secondary: #a8754f; /* نحاسي معتّق */
+  --color-background: #f5f0e7; /* عاجي / ورق طبيعي */
+  --color-surface: #e7ded1; /* بيج حجري */
+  --color-text: #292522; /* فحمي دافئ */
+  --color-olive: #68705a; /* زيتوني هادئ */
+  --color-white: #fffdf9; /* أبيض دافئ */
+  --color-muted: #77716a; /* رمادي دافئ */
+
+  --color-on-primary: var(--color-white);
+  --color-border: color-mix(in oklab, var(--color-surface) 70%, var(--color-text) 30%);
+  --color-focus: var(--color-secondary);
+
+  --font-body: "IBM Plex Sans Arabic", system-ui, sans-serif;
+  --font-heading: "IBM Plex Sans Arabic", system-ui, sans-serif;
+
+  --radius-card: 0.25rem;
+  --radius-control: 0.125rem;
+  --container-max: 80rem;
+  --gutter: 1rem;
+
+  --ease-calm: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --duration-calm: 320ms;
+}
+
+@media (min-width: 768px) {
+  :root {
+    --gutter: 2rem;
+  }
+}

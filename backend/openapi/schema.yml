@@ -1,0 +1,106 @@
+openapi: 3.0.3
+info:
+  title: Damascene Art Platform API
+  version: 1.0.0
+  description: REST API لمنصة الفن الدمشقية
+paths:
+  /api/v1/health/live:
+    get:
+      operationId: health_live
+      description: The process is up and can serve requests. No dependency checks.
+      tags:
+      - health
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Liveness'
+          description: ''
+  /api/v1/health/ready:
+    get:
+      operationId: health_ready
+      description: All critical dependencies are reachable. Returns 503 otherwise.
+      tags:
+      - health
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+          description: ''
+        '503':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Readiness'
+          description: ''
+components:
+  schemas:
+    HealthCheck:
+      type: object
+      properties:
+        name:
+          type: string
+        status:
+          $ref: '#/components/schemas/HealthCheckStatusEnum'
+        latency_ms:
+          type: number
+          format: double
+        detail:
+          type: string
+      required:
+      - detail
+      - latency_ms
+      - name
+      - status
+    HealthCheckStatusEnum:
+      enum:
+      - ok
+      - degraded
+      - error
+      type: string
+      description: |-
+        * `ok` - ok
+        * `degraded` - degraded
+        * `error` - error
+    Liveness:
+      type: object
+      properties:
+        status:
+          type: string
+        server_time:
+          type: string
+          format: date-time
+      required:
+      - server_time
+      - status
+    Readiness:
+      type: object
+      properties:
+        status:
+          $ref: '#/components/schemas/ReadinessStatusEnum'
+        server_time:
+          type: string
+          format: date-time
+        checks:
+          type: array
+          items:
+            $ref: '#/components/schemas/HealthCheck'
+      required:
+      - checks
+      - server_time
+      - status
+    ReadinessStatusEnum:
+      enum:
+      - ready
+      - not_ready
+      type: string
+      description: |-
+        * `ready` - ready
+        * `not_ready` - not_ready
