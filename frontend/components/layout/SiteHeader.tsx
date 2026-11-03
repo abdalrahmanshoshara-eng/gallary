@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 
 import { Container } from "@/components/ui/Container";
+import { UserMenu } from "@/components/layout/UserMenu";
 import { Link } from "@/i18n/navigation";
 
 export async function SiteHeader() {
@@ -17,8 +18,10 @@ export async function SiteHeader() {
         <Link href="/" className="font-heading text-xl font-semibold text-primary">
           {t("brand.name")}
         </Link>
-        {/* Navigation links are added with their pages (Phase 3+); no dead links. */}
-        <nav aria-label={t("nav.label")} />
+        {/* Catalogue links are added with their pages (Phase 3+); no dead links. */}
+        <nav aria-label={t("nav.label")}>
+          <UserMenu />
+        </nav>
       </Container>
     </header>
   );

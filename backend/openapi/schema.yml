@@ -4,6 +4,356 @@ info:
   version: 1.0.0
   description: REST API لمنصة الفن الدمشقية
 paths:
+  /api/v1/admin/roles:
+    get:
+      operationId: admin_roles_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Role'
+          description: ''
+  /api/v1/admin/staff:
+    get:
+      operationId: admin_staff_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminUser'
+          description: ''
+    post:
+      operationId: admin_staff_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffCreateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+          description: ''
+  /api/v1/admin/staff/{public_id}:
+    patch:
+      operationId: admin_staff_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedStaffUpdateRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+          description: ''
+    delete:
+      operationId: admin_staff_revoke_access
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/users:
+    get:
+      operationId: admin_users_list
+      parameters:
+      - in: query
+        name: is_active
+        schema:
+          type: boolean
+      - in: query
+        name: kind
+        schema:
+          type: string
+          enum:
+          - customer
+          - staff
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+        description: الاسم أو البريد أو جزء من الرقم
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminUserList'
+          description: ''
+  /api/v1/admin/users/{public_id}/activate:
+    post:
+      operationId: admin_users_activate
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivationRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+          description: ''
+  /api/v1/admin/users/{public_id}/deactivate:
+    post:
+      operationId: admin_users_deactivate
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ActivationRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminUser'
+          description: ''
+  /api/v1/admin/users/{public_id}/revoke-sessions:
+    post:
+      operationId: admin_users_revoke_sessions
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokedCount'
+          description: ''
+  /api/v1/auth/csrf:
+    get:
+      operationId: auth_csrf
+      description: Sets the CSRF cookie. The frontend calls it before the first unsafe
+        request.
+      tags:
+      - auth
+      security:
+      - {}
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/logout:
+    post:
+      operationId: auth_logout
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/me:
+    get:
+      operationId: auth_me
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+    patch:
+      operationId: auth_me_update
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedProfileUpdateRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
+  /api/v1/auth/otp/request:
+    post:
+      operationId: auth_otp_request
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PhoneInputRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '202':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OtpRequested'
+          description: ''
+  /api/v1/auth/otp/verify:
+    post:
+      operationId: auth_otp_verify
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VerifyInputRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/LoginResult'
+          description: ''
+  /api/v1/auth/sessions:
+    get:
+      operationId: auth_sessions_list
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Session'
+          description: ''
+  /api/v1/auth/sessions/{public_id}:
+    delete:
+      operationId: auth_sessions_revoke
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/auth/sessions/revoke-others:
+    post:
+      operationId: auth_sessions_revoke_others
+      tags:
+      - auth
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevokedCount'
+          description: ''
   /api/v1/health/live:
     get:
       operationId: health_live
@@ -42,6 +392,68 @@ paths:
           description: ''
 components:
   schemas:
+    ActivationRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          default: ''
+          maxLength: 500
+    AdminUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        phone:
+          type: string
+          readOnly: true
+          title: رقم الهاتف
+        display_name:
+          type: string
+          readOnly: true
+          title: الاسم
+        email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+          title: البريد الإلكتروني
+        is_active:
+          type: boolean
+          readOnly: true
+          title: نشط
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: موظف
+        roles:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: تاريخ الانضمام
+        last_login:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+          title: آخر دخول
+      required:
+      - date_joined
+      - display_name
+      - email
+      - id
+      - is_active
+      - is_staff
+      - last_login
+      - phone
+      - roles
     HealthCheck:
       type: object
       properties:
@@ -80,6 +492,135 @@ components:
       required:
       - server_time
       - status
+    LoginResult:
+      type: object
+      properties:
+        user:
+          $ref: '#/components/schemas/Me'
+        created:
+          type: boolean
+      required:
+      - created
+      - user
+    Me:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        phone:
+          type: string
+          readOnly: true
+          title: رقم الهاتف
+        display_name:
+          type: string
+          readOnly: true
+          title: الاسم
+        email:
+          type: string
+          format: email
+          readOnly: true
+          nullable: true
+          title: البريد الإلكتروني
+        is_staff:
+          type: boolean
+          readOnly: true
+          title: موظف
+        roles:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        is_super_admin:
+          type: boolean
+          readOnly: true
+        date_joined:
+          type: string
+          format: date-time
+          readOnly: true
+          title: تاريخ الانضمام
+      required:
+      - date_joined
+      - display_name
+      - email
+      - id
+      - is_staff
+      - is_super_admin
+      - phone
+      - roles
+    OtpRequested:
+      type: object
+      properties:
+        phone:
+          type: string
+          description: E.164 form of the submitted number
+        expires_in_seconds:
+          type: integer
+        resend_after_seconds:
+          type: integer
+        channel:
+          type: string
+      required:
+      - channel
+      - expires_in_seconds
+      - phone
+      - resend_after_seconds
+    PaginatedAdminUserList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminUser'
+    PatchedProfileUpdateRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+          maxLength: 120
+        email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+    PatchedStaffUpdateRequest:
+      type: object
+      properties:
+        display_name:
+          type: string
+          minLength: 1
+          maxLength: 120
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RolesEnum'
+    PhoneInputRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 32
+      required:
+      - phone
     Readiness:
       type: object
       properties:
@@ -104,3 +645,106 @@ components:
       description: |-
         * `ready` - ready
         * `not_ready` - not_ready
+    RevokedCount:
+      type: object
+      properties:
+        revoked:
+          type: integer
+      required:
+      - revoked
+    Role:
+      type: object
+      properties:
+        value:
+          type: string
+        label:
+          type: string
+      required:
+      - label
+      - value
+    RolesEnum:
+      enum:
+      - content_staff
+      - operations_staff
+      - auction_manager
+      - super_admin
+      type: string
+      description: |-
+        * `content_staff` - موظف المحتوى
+        * `operations_staff` - موظف العمليات
+        * `auction_manager` - مدير المزادات
+        * `super_admin` - المدير العام
+    Session:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        user_agent_summary:
+          type: string
+          readOnly: true
+        ip:
+          type: string
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        last_seen_at:
+          type: string
+          format: date-time
+          readOnly: true
+        expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+        current:
+          type: boolean
+          readOnly: true
+      required:
+      - created_at
+      - current
+      - expires_at
+      - id
+      - ip
+      - last_seen_at
+      - user_agent_summary
+    StaffCreateRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 32
+        display_name:
+          type: string
+          default: ''
+          maxLength: 120
+        roles:
+          type: array
+          items:
+            $ref: '#/components/schemas/RolesEnum'
+      required:
+      - phone
+      - roles
+    VerifyInputRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 32
+        code:
+          type: string
+          minLength: 1
+          maxLength: 12
+      required:
+      - code
+      - phone
+  securitySchemes:
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sid

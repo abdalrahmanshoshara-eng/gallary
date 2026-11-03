@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     # Project
     "apps.core",
     "apps.accounts",
+    "apps.audit",
     "apps.realtime",
 ]
 
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     "django.middleware.common.CommonMiddleware",
     "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "apps.accounts.middleware.SessionPolicyMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
@@ -159,6 +161,33 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 # ---------------------------------------------------------------------------
+# Authentication — phone + OTP (BR-901…910). No MFA in the MVP (BR-907).
+# ---------------------------------------------------------------------------
+AUTHENTICATION_BACKENDS = ["django.contrib.auth.backends.ModelBackend"]
+
+# "console" (development only), "disabled" (default until the WhatsApp service is
+# subscribed — BR-901c). A WhatsApp sender is added as a new class + setting value.
+OTP_SENDER = env.str("OTP_SENDER", default="disabled")
+OTP_SENDERS = {
+    "disabled": "apps.accounts.otp.senders.DisabledSender",
+    "console": "apps.accounts.otp.senders.ConsoleSender",
+}
+OTP_LENGTH = 6
+OTP_TTL_SECONDS = env.int("OTP_TTL_SECONDS", default=300)
+OTP_MAX_ATTEMPTS = 5
+OTP_RESEND_COOLDOWN_SECONDS = env.int("OTP_RESEND_COOLDOWN_SECONDS", default=60)
+OTP_MAX_PER_PHONE_PER_HOUR = env.int("OTP_MAX_PER_PHONE_PER_HOUR", default=5)
+OTP_MAX_PER_IP_PER_HOUR = env.int("OTP_MAX_PER_IP_PER_HOUR", default=20)
+PHONE_DEFAULT_REGION = env.str("PHONE_DEFAULT_REGION", default="SY")
+
+# Session policy (BR-908). Customer sessions slide; staff sessions are short.
+CUSTOMER_SESSION_SECONDS = 60 * 60 * 24 * 30
+STAFF_SESSION_ABSOLUTE_SECONDS = 60 * 60 * 12
+STAFF_SESSION_IDLE_SECONDS = 60 * 30
+# How often last-seen is written to the database and revocation re-checked there.
+SESSION_TOUCH_INTERVAL_SECONDS = 300
+
+# ---------------------------------------------------------------------------
 # Internationalisation — stored in UTC, displayed in Damascus time by the frontend
 # ---------------------------------------------------------------------------
 LANGUAGE_CODE = "ar"
@@ -214,7 +243,15 @@ REST_FRAMEWORK = {
     "DEFAULT_THROTTLE_RATES": {
         "anon": env.str("THROTTLE_ANON", default="120/min"),
         "user": env.str("THROTTLE_USER", default="600/min"),
+        # Burst protection; the durable OTP limits (BR-904) are enforced in the database.
+        "otp_request": env.str("THROTTLE_OTP_REQUEST", default="10/min"),
+        "otp_verify": env.str("THROTTLE_OTP_VERIFY", default="30/min"),
     },
+    # Number of trusted reverse proxies in front of Django (nginx = 1). Used to read the
+    # client IP from X-Forwarded-For for throttling and OTP limits.
+    "NUM_PROXIES": env.int("NUM_PROXIES", default=1),
+    "DEFAULT_PAGINATION_CLASS": "apps.core.pagination.StandardPagination",
+    "PAGE_SIZE": 25,
     "UNAUTHENTICATED_USER": "django.contrib.auth.models.AnonymousUser",
     "TEST_REQUEST_DEFAULT_FORMAT": "json",
 }
@@ -248,6 +285,9 @@ CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP = True
 CELERY_BROKER_TRANSPORT_OPTIONS = {"visibility_timeout": 3600}
 # Keep Django LOGGING (JSON, request_id, redaction) for worker and beat output.
 CELERY_WORKER_HIJACK_ROOT_LOGGER = False
+# Do not turn print() output into log records: the dev OTP console sender writes to raw
+# stdout on purpose so codes never enter log pipelines.
+CELERY_WORKER_REDIRECT_STDOUTS = False
 CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
     "scheduler-heartbeat": {

@@ -93,7 +93,7 @@ erDiagram
 
 Index: `(phone, created_at DESC)`.
 
-**StaffMfaDevice** — عبر `django-otp` (TOTP) إن اعتُمد BR-907.
+~~StaffMfaDevice~~ — أُلغي: لا MFA في MVP (BR-907).
 
 **UserSession** (BR-909)
 | حقل | نوع | ملاحظات |

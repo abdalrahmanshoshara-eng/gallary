@@ -23,6 +23,21 @@ export type ApiRequestOptions = Omit<RequestInit, "body"> & {
   idempotencyKey?: string;
 };
 
+let csrfBootstrap: Promise<void> | null = null;
+
+/** Make sure the CSRF cookie exists (first unsafe request of a visit). */
+async function ensureCsrfCookie(): Promise<string | null> {
+  const existing = readCookie(CSRF_COOKIE);
+  if (existing) return existing;
+  csrfBootstrap ??= fetch(`${API_BASE}/auth/csrf`, { credentials: "same-origin" })
+    .then(() => undefined)
+    .finally(() => {
+      csrfBootstrap = null;
+    });
+  await csrfBootstrap;
+  return readCookie(CSRF_COOKIE);
+}
+
 export async function apiFetch<T>(path: string, options: ApiRequestOptions = {}): Promise<T> {
   const { body, idempotencyKey, headers: extraHeaders, ...init } = options;
   const method = (init.method ?? "GET").toUpperCase();
@@ -30,7 +45,12 @@ export async function apiFetch<T>(path: string, options: ApiRequestOptions = {})
   headers.set("Accept", "application/json");
   if (body !== undefined) headers.set("Content-Type", "application/json");
   if (!SAFE_METHODS.has(method)) {
-    const csrf = readCookie(CSRF_COOKIE);
+    let csrf: string | null = null;
+    try {
+      csrf = await ensureCsrfCookie();
+    } catch {
+      throw new ApiError(0, "NETWORK_ERROR", NETWORK_ERROR_MESSAGE);
+    }
     if (csrf) headers.set("X-CSRFToken", csrf);
   }
   if (idempotencyKey) headers.set("Idempotency-Key", idempotencyKey);

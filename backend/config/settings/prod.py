@@ -16,6 +16,9 @@ if len(SECRET_KEY) < 50 or SECRET_KEY.startswith("django-insecure"):
 if not (SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE):
     raise ImproperlyConfigured("Session and CSRF cookies must be Secure in production.")
 
+if OTP_SENDER == "console":
+    raise ImproperlyConfigured("OTP_SENDER=console is for development only (BR-901c).")
+
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
 # Health probes from the internal network arrive over plain HTTP.
 SECURE_REDIRECT_EXEMPT = [r"^api/v1/health/"]

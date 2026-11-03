@@ -1,7 +1,16 @@
 import pytest
+from asgiref.sync import sync_to_async
 from channels.testing import WebsocketCommunicator
+from django.db import connections
 
 from config.asgi import application
+
+
+@pytest.fixture(autouse=True)
+async def _close_thread_connections():
+    """Database work in consumers runs in asgiref's worker thread; close its connection."""
+    yield
+    await sync_to_async(connections.close_all)()
 
 
 def communicator(origin: bytes = b"http://localhost") -> WebsocketCommunicator:

@@ -78,7 +78,7 @@
 | `SECURE_SSL_REDIRECT`, HSTS | مفعّل، HSTS سنتان + preload |
 | `SECURE_PROXY_SSL_HEADER` | يُوثق بها من Nginx فقط |
 | انتهاء جلسة العميل | 30 يوماً كحد أقصى مع تجديد منزلق عند تجاوز نصف المدة |
-| انتهاء جلسة الموظف | 12 ساعة مطلقة + 30 دقيقة خمول، وMFA عند كل دخول |
+| انتهاء جلسة الموظف | 12 ساعة مطلقة + 30 دقيقة خمول (لا MFA — حسابات الموظفين ينشئها Super Admin فقط، قرار 2026-11-03) |
 
 ### 4.3 إدارة الجلسات
 - جدول `UserSession`: hash مفتاح الجلسة، الجهاز (User-Agent مختصر)، IP، `created_at`, `last_seen_at` (يُحدَّث كل 5 دقائق كحد أقصى)، `revoked_at`.
@@ -222,14 +222,14 @@ on_commit → event_bus.publish(BidPlaced(seq=version, …), UserOutbid(…), Au
 Python 3.12 · Django 5.2 LTS · DRF 3.15+ · Channels 4 + channels_redis · Uvicorn · PostgreSQL 16 · PgBouncer · Redis 7 · Celery 5 + django-celery-beat · drf-spectacular · django-storages · Pillow · django-otp · pytest + pytest-django + pytest-asyncio + factory_boy · import-linter.
 
 > **الإصدارات المثبّتة فعلياً (Phase 1):** Django 5.2.18 LTS · DRF 3.18.3 · Channels 4.3.2 · channels-redis 4.3.0 · Celery 5.6.3 · django-celery-beat 2.9.0 · drf-spectacular 0.30.0 · psycopg 3.3.7 · Gunicorn 26.2 · Uvicorn 0.54 · PgBouncer (Alpine 3.22). القائمة الكاملة في `backend/requirements/`.
-> Pillow وdjango-otp تُضاف في المراحل التي تستخدمها (3 و2).
+> Pillow يُضاف في Phase 3. django-otp **أُلغي** (لا MFA في MVP — BR-907).
 
 ### 7.2 التطبيقات
 
 | App | المسؤولية |
 |---|---|
 | `core` | الإعدادات المشتركة، EventBus، أخطاء API موحدة، Pagination، Money/Time utils، تطبيع العربية، Idempotency، Health، SiteSetting |
-| `accounts` | User، OTP، UserSession، الأدوار، MFA |
+| `accounts` | User، OTP، UserSession، الأدوار |
 | `catalog` | Category، Material، Technique، Tag |
 | `artists` | Artist، ArtistAgreement |
 | `artworks` | Artwork، ArtworkImage، الصور، البحث |
@@ -289,7 +289,7 @@ app/
 ### 8.1 الإصدارات
 Next.js 15 (App Router) · React 19 · TypeScript strict · Tailwind CSS 4 · TanStack Query 5 · React Hook Form + Zod · Radix UI · next-intl · openapi-typescript.
 
-> **تحديث Phase 1 (يحتاج موافقتك — انظر `IMPLEMENTATION_LOG.md`):** اعتُمد **Next.js 16.4** بدل 15 لأنه الإصدار المستقر الحالي، ونسخة 15 أقرب إلى نهاية الدعم. الأثر الوحيد هو تسمية `middleware.ts` إلى `proxy.ts`، دون أي تغيير معماري.
+> **تحديث Phase 1 (معتمد 2026-11-03):** اعتُمد **Next.js 16.4** بدل 15 لأنه الإصدار المستقر الحالي، ونسخة 15 أقرب إلى نهاية الدعم. الأثر الوحيد هو تسمية `middleware.ts` إلى `proxy.ts`، دون أي تغيير معماري.
 > الإصدارات المثبّتة: Next 16.4.4 · React 19.3.1 · TypeScript 5.9.3 (لأن openapi-typescript لا يدعم 6.x بعد) · Tailwind 4.3.4 · next-intl 4.14.9 · TanStack Query 5.105 · Zod 4.6 · Vitest 5.1 · ESLint 9.39 (لأن إضافات eslint-config-next لا تدعم ESLint 10 بعد).
 > React Hook Form وRadix UI تُضاف مع أول نموذج أو مكوّن تفاعلي (Phase 2).
 
@@ -316,7 +316,7 @@ frontend/
 - **RTL**: خصائص منطقية فقط (`ms-*`, `ps-*`, `start-*`)، وقاعدة ESLint تمنع `ml-/mr-/left-/right-`.
 - **Design Tokens** في `tokens.css` فقط.
 - المزاد الحي: `useAuctionLive(id)` يجمع اللقطة (TanStack Query) والـ WebSocket في Store واحد مرتب بالـ `seq`.
-- الأرقام: لاتينية للأسعار (ADR-04، يحتاج تأكيد).
+- الأرقام: لاتينية للأسعار (ADR-04، معتمد).
 
 ---
 
@@ -345,7 +345,7 @@ same-origin + `__Host-` cookies + CSRF · HSTS/CSP/X-Frame-Options/Referrer-Poli
 | 01 | أصل واحد عبر Nginx (`/`, `/api`, `/ws`) | نطاقات فرعية / نطاقات مختلفة | Cookies أصل واحد، بلا CORS، WebSocket بنفس الجلسة |
 | 02 | آلة حالات صريحة في Services | django-fsm | وضوح، بلا اعتماد إضافي |
 | 03 | Types مولّدة من OpenAPI | Types يدوية | منع الانحراف بين العقد والواجهة |
-| 04 | أرقام لاتينية للأسعار | هندية | وضوح — **يحتاج تأكيد** |
+| 04 | أرقام لاتينية للأسعار | هندية | وضوح — معتمد 2026-11-03 |
 | 05v2 | Channels + WebSockets + Redis من البداية | Polling | قرارك؛ لحظية دون إعادة هندسة |
 | 06 | Django Sessions (`cached_db`) + UserSession | JWT | إبطال فوري، لا تخزين في المتصفح |
 | 07 | لوحة إدارة في Next.js + Django Admin داخلياً | Django Admin فقط | متطلب §9 |
@@ -357,7 +357,8 @@ same-origin + `__Host-` cookies + CSRF · HSTS/CSP/X-Frame-Options/Referrer-Poli
 | 13 | معرّفات عامة (slug/order_number/UUID) | IDs تسلسلية | منع التعداد وسهولة الترحيل |
 | 14 | next-intl منذ البداية | نصوص مضمّنة | الإنجليزية لاحقاً دون إعادة كتابة |
 | 15 | PgBouncer + WAL/PITR منذ البداية | pg_dump فقط | جاهزية إنتاج وتوسع الاتصالات |
-| 16 | OTP عبر WhatsApp خلف واجهة `OtpSender` | ربط مباشر بمزود SMS | قرارك؛ تبديل القناة أو المزود بالإعداد فقط |
+| 16 | OTP عبر WhatsApp خلف واجهة `OtpSender` | ربط مباشر بمزود SMS | قرارك؛ تبديل القناة أو المزود بالإعداد فقط. حتى الاشتراك بالخدمة: `OTP_SENDER=disabled` في الإنتاج |
+| 17 | تخزين متوافق مع S3 عبر django-storages؛ التطوير: **SeaweedFS**؛ الإنتاج: خدمة S3 مُدارة إن توفرت، وإلا SeaweedFS ذاتي الاستضافة | MinIO | MinIO Community أصبح مؤرشفاً ومصدرياً فقط (2025–2026)؛ SeaweedFS برخصة Apache-2.0 وناضج؛ الكود لا يرتبط بأي مزود |
 
 ---
 

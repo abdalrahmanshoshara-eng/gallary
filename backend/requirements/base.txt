@@ -12,3 +12,5 @@ django-environ==0.14.0
 django-storages[s3]==1.14.6
 python-json-logger==4.2.0
 whitenoise==6.12.0
+phonenumberslite==9.0.42
+cryptography==50.0.2

@@ -12,7 +12,7 @@ A managed art marketplace with a digital archive and live auctions. The interfac
 | [`FEATURE_CHECKLIST.md`](FEATURE_CHECKLIST.md) | Feature status |
 | [`IMPLEMENTATION_LOG.md`](IMPLEMENTATION_LOG.md) | What was built, tested and decided, phase by phase |
 
-**Current status:** Phase 1 (Foundation) is complete. No business features yet — see `FEATURE_CHECKLIST.md`.
+**Current status:** Phase 2 (Authentication) is complete: phone + OTP login, tracked sessions, staff roles managed by the Super Admin, session-bound WebSockets. Catalogue features start in Phase 3 — see `FEATURE_CHECKLIST.md`.
 
 ---
 
@@ -70,6 +70,22 @@ docker compose down                                 # stop (data volumes are kep
 ```
 
 The scheduler check reports `degraded` until Celery beat completes its first one-minute heartbeat. That is expected right after startup.
+
+### First login (Super Admin)
+
+```bash
+docker compose run --rm --no-deps api python manage.py bootstrap_super_admin --phone 09XXXXXXXX --name "الاسم"
+```
+
+Open http://localhost:8080/login and enter that phone number. In development the 6-digit code is printed in the worker output:
+
+```bash
+docker compose logs worker | grep "DEV OTP"
+```
+
+After signing in, the Super Admin creates every other staff account from **لوحة الإدارة ← الموظفون**. Staff sign in with their own phone number. There is no MFA (BR-907).
+
+In production, `OTP_SENDER` stays `disabled` until the WhatsApp service is subscribed. Until then, login requests return `503 OTP_UNAVAILABLE` with a clear message. To add the provider, implement an `OtpSender` subclass in `backend/apps/accounts/otp/senders.py`, register it in `OTP_SENDERS`, and select it with `OTP_SENDER`.
 
 `make help` lists shortcuts for the same commands (`make up`, `make test`, `make lint`, …). The Makefile is optional; on Windows without `make`, use the `docker compose` commands directly.
 
@@ -154,7 +170,9 @@ All configuration comes from environment variables (`backend/config/settings/bas
 | `SESSION_COOKIE_NAME` / `CSRF_COOKIE_NAME` | `__Host-sid` / `__Host-csrf` in production. Dev uses `sid` / `csrftoken`, because `__Host-` cookies require HTTPS. |
 | `DJANGO_ADMIN_PATH` | Path of the internal Django admin (default `internal-admin/`). |
 | `LOG_LEVEL`, `LOG_FORMAT` | Log format is `json` in production and `console` in dev. |
-| `S3_*` | S3-compatible object storage. Used from Phase 3. |
+| `OTP_SENDER` | `console` (dev) or `disabled` (prod default until WhatsApp is set up). |
+| `NUM_PROXIES` | Trusted reverse proxies in front of Django (default 1 = nginx); used for client IPs in rate limits. |
+| `S3_*` | S3-compatible object storage. Used from Phase 3 (SeaweedFS in dev, ADR-17). |
 
 ## Production (Docker Compose on one host)
 

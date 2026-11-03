@@ -26,3 +26,6 @@ STORAGES["staticfiles"] = {"BACKEND": "django.contrib.staticfiles.storage.Static
 # Serve static files from app directories without collectstatic (no STATIC_ROOT scan).
 WHITENOISE_AUTOREFRESH = True
 WHITENOISE_USE_FINDERS = True
+
+# Development prints OTP codes to this process's stdout (never in production — BR-901c).
+OTP_SENDER = env.str("OTP_SENDER", default="console")

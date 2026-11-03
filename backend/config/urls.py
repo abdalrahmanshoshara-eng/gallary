@@ -10,10 +10,14 @@ from django.contrib import admin
 from django.urls import include, path, re_path
 from drf_spectacular.views import SpectacularAPIView
 
+from apps.accounts.urls import admin_urls as accounts_admin_urls
+from apps.accounts.urls import auth_urls
 from apps.core.exceptions import api_not_found
 
 api_v1 = [
     path("", include("apps.core.urls")),
+    path("auth/", include((auth_urls, "auth"))),
+    path("admin/", include((accounts_admin_urls, "admin"))),
     path("schema/", SpectacularAPIView.as_view(api_version="v1"), name="schema"),
 ]
 

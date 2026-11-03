@@ -1,6 +1,6 @@
 # FEATURE_CHECKLIST.md — قائمة تتبع الميزات
 
-> آخر تحديث: 2026-11-03 — **Phase 1 (Foundation) مستقرة**. المرحلة التالية: Phase 2 (Authentication).
+> آخر تحديث: 2026-11-03 — **Phase 2 (Authentication) مستقرة**. المرحلة التالية: Phase 3 (Catalog).
 >
 > **الحالات:** `NOT_STARTED` · `IN_PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `TESTED` · `COMPLETE` — و`N/A` عندما لا ينطبق البُعد على الميزة.
 > **COMPLETE** فقط عندما تكون كل الأبعاد المنطبقة `TESTED` والتوثيق مكتملاً.
@@ -35,18 +35,18 @@
 | F-UX-06 | i18n | next-intl، روابط عربية بلا بادئة، `messages/ar.json` | N/A | TESTED | N/A | N/A | TESTED | TESTED | TESTED | |
 | F-AUTH-00 | نموذج المستخدم المخصص | User برقم هاتف E.164، بريد فريد غير حساس لحالة الأحرف، بلا كلمة مرور للعملاء | TESTED | N/A | TESTED | N/A | TESTED | TESTED | TESTED | أُنشئ مبكراً: لا يمكن تبديل AUTH_USER_MODEL بعد أول migration |
 
-## Phase 2 — Authentication (F-AUTH)
+## Phase 2 — Authentication (F-AUTH) — ✅ مستقرة (2026-11-03)
 
 | ID | الميزة | الوصف | BE | FE | DB | Perm | Tests | Docs | Overall | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| F-AUTH-01 | طلب OTP | رقم E.164، رسالة موحدة، Throttle، إرسال عبر WhatsApp خلف `OtpSender` | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-901a؛ الإنتاج يحتاج بيانات خدمة WhatsApp |
-| F-AUTH-02 | التحقق من OTP | 5 دقائق، 5 محاولات، hash، إنشاء الحساب | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-901..905 |
-| F-AUTH-03 | الجلسة والخروج و`me` | Session cookie + CSRF | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-906 |
-| F-AUTH-04 | الملف الشخصي | تعديل الاسم والبريد | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-AUTH-05 | الأدوار وإدارة المستخدمين | Groups + صلاحيات مخصصة + واجهة Super Admin | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-AUTH-06 | MFA للموظفين | TOTP عبر django-otp | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BLOCKED | Q10 |
-| F-AUTH-07 | إدارة الجلسات | UserSession، الأجهزة النشطة، الخروج من الأجهزة الأخرى، إبطال إداري، انتهاء العميل/الموظف | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-908..910 |
-| F-AUTH-08 | مصادقة WebSocket | جلسة Cookie + Origin validation + إغلاق عند الإبطال | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
+| F-AUTH-01 | طلب OTP | E.164 (يقبل الأرقام العربية)، رسالة موحدة، مهلة 60 ثانية، 5/ساعة لكل رقم، 20/ساعة لكل IP، throttle + nginx | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | الإرسال الحقيقي ينتظر اشتراك WhatsApp؛ الإنتاج `disabled` ← 503 واضح (BR-901c) |
+| F-AUTH-02 | التحقق من OTP | 5 دقائق، 5 محاولات محفوظة، HMAC مربوط بالرقم، الرمز الأحدث فقط، إنشاء الحساب عند أول دخول، رفض الحساب المعطّل | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
+| F-AUTH-03 | الجلسة والخروج و`me` | Session (`cached_db`) + تدوير المفتاح + CSRF على الدخول أيضاً | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
+| F-AUTH-04 | الملف الشخصي | الاسم والبريد (فريد دون حساسية للأحرف) | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
+| F-AUTH-05 | الأدوار وإدارة المستخدمين | 4 أدوار (Groups)، Super Admin ينشئ الموظفين ويعدّل أدوارهم ويلغيها، تعطيل/تفعيل، إنهاء الجلسات، حماية من تعديل الذات ومن حذف آخر مدير عام، `bootstrap_super_admin` | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | صلاحيات كل دور على البيانات تُضاف مع ميزاتها في المراحل القادمة |
+| F-AUTH-07 | إدارة الجلسات | UserSession، الأجهزة المتصلة، الخروج من الأجهزة الأخرى، العميل 30 يوماً منزلقة، الموظف 12 ساعة/30 دقيقة خمول، الإبطال فوري (cache) ومضمون (فحص DB كل 5 دقائق) | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
+| F-AUTH-08 | مصادقة WebSocket | الجلسة + Origin؛ `/ws/me/` للمسجلين فقط؛ إغلاق 4409 فوراً عند الإبطال؛ لا إعادة اتصال بجلسة ملغاة | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | مختبر في المتصفح عبر nginx |
+| F-ADM-03 | AuditLog | append-only، كل عمليات إدارة الموظفين والمستخدمين | TESTED | N/A | TESTED | TESTED | TESTED | TESTED | IMPLEMENTED | واجهة عرض السجل في Phase 7 |
 
 ## Phase 3 — Catalog (F-CAT)
 
@@ -113,7 +113,7 @@
 |---|---|---|---|---|---|---|---|---|---|---|
 | F-ADM-01 | هيكل لوحة الإدارة | تنقل حسب الصلاحية | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | يُبنى تدريجياً من Phase 2 |
 | F-ADM-02 | Dashboard | مؤشرات §9.1 | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-ADM-03 | AuditLog | تسجيل + عرض للـ Super Admin | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | الخدمة تُستخدم من Phase 2 |
+| F-ADM-03b | عرض AuditLog | واجهة للـ Super Admin | N/A | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | الخدمة جاهزة منذ Phase 2 |
 | F-SET-01 | اتفاقيات الفنانين | نسبة العمولة، اتفاقية نشطة واحدة | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
 | F-SET-02 | حساب العمولة | ترتيب الحسم + Snapshot | NOT_STARTED | N/A | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-701..703؛ المنطق يُبنى في Phase 5 |
 | F-SET-03 | التسويات | إنشاء عند CONFIRMED + تسجيل الدفع؛ المستفيد فنان أو مالك | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-704..706 |

@@ -40,3 +40,6 @@ for _logger in LOGGING["loggers"].values():
 # Serve static files from app directories without collectstatic (no STATIC_ROOT scan).
 WHITENOISE_AUTOREFRESH = True
 WHITENOISE_USE_FINDERS = True
+
+OTP_SENDER = "console"
+REST_FRAMEWORK["NUM_PROXIES"] = 0
