@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
   poweredByHeader: false,
   reactStrictMode: true,
   typedRoutes: true,
+  // Do not auto-generate AGENTS.md in the repository when the dev server starts.
+  agentRules: false,
 };
 
 export default withNextIntl(nextConfig);
