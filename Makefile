@@ -1,6 +1,8 @@
 # Developer shortcuts. Every target wraps a plain command documented in README.md.
 COMPOSE ?= docker compose
 BACKEND = $(COMPOSE) run --rm --no-deps api
+# Commands that need the database run inside the running api container.
+BACKEND_LIVE = $(COMPOSE) exec api
 
 .PHONY: help env up down logs ps migrate makemigrations superuser shell test test-backend test-frontend lint lint-backend lint-frontend schema check
 
@@ -26,13 +28,13 @@ migrate: ## Apply database migrations
 	$(COMPOSE) run --rm migrate
 
 makemigrations: ## Create migrations after model changes
-	$(BACKEND) python manage.py makemigrations
+	$(BACKEND_LIVE) python manage.py makemigrations
 
 superuser: ## Create an internal-admin superuser
-	$(BACKEND) python manage.py createsuperuser
+	$(BACKEND_LIVE) python manage.py createsuperuser
 
 shell: ## Django shell
-	$(BACKEND) python manage.py shell
+	$(BACKEND_LIVE) python manage.py shell
 
 test: test-backend test-frontend ## Run all tests
 

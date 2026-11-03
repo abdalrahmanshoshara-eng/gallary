@@ -67,7 +67,7 @@ Open **http://localhost:8080**. Useful checks:
 ```bash
 curl http://localhost:8080/api/v1/health/ready      # database, cache, broker, scheduler, channel layer
 docker compose logs -f api realtime worker beat     # follow logs
-docker compose run --rm --no-deps api python manage.py createsuperuser   # internal admin at /internal-admin/
+docker compose exec api python manage.py createsuperuser   # internal admin at /internal-admin/
 docker compose down                                 # stop (data volumes are kept)
 ```
 
@@ -76,7 +76,7 @@ The scheduler check reports `degraded` until Celery beat completes its first one
 ### First login (Super Admin)
 
 ```bash
-docker compose run --rm --no-deps api python manage.py bootstrap_super_admin --phone 09XXXXXXXX --name "الاسم"
+docker compose exec api python manage.py bootstrap_super_admin --phone 09XXXXXXXX --name "الاسم"
 ```
 
 Open http://localhost:8080/login and enter that phone number. In development the 6-digit code is printed in the worker output:
