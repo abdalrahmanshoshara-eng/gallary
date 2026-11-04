@@ -16,7 +16,8 @@
     "artworks": "الأعمال",
     "artists": "الفنانون",
     "archive": "الأرشيف",
-    "register": "إنشاء حساب"
+    "register": "إنشاء حساب",
+    "favorites": "المفضلة"
   },
   "home": {
     "eyebrow": "معرض فني رقمي",
@@ -338,7 +339,74 @@
       "editArtwork": "تعديل العمل",
       "noImage": "بلا صورة",
       "homeIntro": "إنشاء الأعمال وصورها ونشرها وأرشفتها."
-    }
+    },
+    "settings": {
+      "title": "إعدادات المنصة",
+      "intro": "القيم الافتراضية للعمولة والعربون. يمكن تخصيصها لكل عرض. التعديل للمدير العام فقط.",
+      "commission": "نسبة العمولة الافتراضية (%)",
+      "depositType": "نوع العربون الافتراضي",
+      "depositValue": "قيمة العربون الافتراضية",
+      "depositFixed": "مبلغ ثابت (USD)",
+      "depositPercentage": "نسبة من قيمة الطلب (%)",
+      "whatsapp": "رقم WhatsApp لاستقبال الطلبات",
+      "maxPending": "الحد الأقصى للحجوزات المعلقة لكل عميل",
+      "saved": "تم حفظ الإعدادات.",
+      "readOnly": "يمكنك الاطلاع فقط؛ التعديل للمدير العام."
+    },
+    "listings": {
+      "title": "العرض التجاري",
+      "intro": "العرض يحمل السعر والمخزون. يعتمد المدير العام السعر والعمولة والعربون قبل التفعيل.",
+      "none": "لا يوجد عرض لهذا العمل بعد.",
+      "create": "إنشاء عرض بسعر ثابت",
+      "quantityMode": "نوع الكمية",
+      "modes": {
+        "unique": "قطعة فريدة",
+        "limited": "كمية محدودة",
+        "unlimited": "غير محدودة"
+      },
+      "quantityTotal": "الكمية الكلية",
+      "maxPerOrder": "الحد الأقصى للطلب الواحد",
+      "startsAt": "بداية العرض (اختياري)",
+      "endsAt": "نهاية العرض (اختياري)",
+      "notes": "ملاحظات داخلية",
+      "status": {
+        "draft": "مسودة",
+        "active": "نشط",
+        "sold_out": "نفدت الكمية",
+        "ended": "انتهى",
+        "withdrawn": "مسحوب"
+      },
+      "stock": "المخزون: متاح {available} · محجوز {reserved} · مباع {sold}",
+      "stockUnlimited": "غير محدودة · محجوز {reserved} · مباع {sold}",
+      "pricing": "التسعير",
+      "price": "السعر (USD)",
+      "commission": "نسبة العمولة (%)",
+      "commissionHint": "اتركها فارغة لاستخدام النسبة الافتراضية ({rate}%).",
+      "depositType": "العربون",
+      "depositDefault": "الافتراضي ({value})",
+      "depositFixed": "مبلغ ثابت",
+      "depositPercentage": "نسبة",
+      "depositValue": "قيمة العربون",
+      "approvePricing": "اعتماد التسعير",
+      "pricingApproved": "اعتمد التسعير {name} في {date}",
+      "pricingPending": "بانتظار اعتماد المدير العام للتسعير.",
+      "effective": "العمولة المطبّقة {rate}% · العربون {deposit}",
+      "activate": "تفعيل العرض",
+      "withdraw": "سحب العرض",
+      "withdrawReason": "سبب السحب",
+      "deleteDraft": "حذف المسودة",
+      "save": "حفظ المخزون والمواعيد",
+      "history": "العروض السابقة",
+      "problems": {
+        "pricing_not_approved": "لم يُعتمد التسعير بعد.",
+        "artwork_not_public": "العمل غير منشور أو مؤرشف أو فنانه مخفي.",
+        "no_stock": "لا توجد كمية متاحة.",
+        "window_ended": "تاريخ نهاية العرض مضى."
+      },
+      "purchasable": "متاح للشراء الآن",
+      "notPurchasable": "غير متاح للشراء حالياً"
+    },
+    "catalogSettings": "إعدادات المنصة"
   },
   "catalog": {
     "artworksTitle": "الأعمال الفنية",
@@ -349,7 +417,9 @@
       "newest": "الأحدث",
       "oldest": "الأقدم",
       "title": "حسب العنوان",
-      "year": "حسب سنة الإنشاء"
+      "year": "حسب سنة الإنشاء",
+      "price_asc": "السعر: من الأقل",
+      "price_desc": "السعر: من الأعلى"
     },
     "apply": "تطبيق",
     "emptyArtworks": "لا توجد أعمال معروضة في هذا القسم بعد.",
@@ -394,6 +464,49 @@
       "previous": "الصورة السابقة",
       "next": "الصورة التالية",
       "close": "إغلاق العرض"
+    },
+    "searchLabel": "بحث في الأعمال",
+    "searchPlaceholder": "العنوان، الفنان، المادة، التقنية…",
+    "search": "بحث",
+    "filters": "تصفية النتائج",
+    "artistFilter": "الفنان",
+    "anyArtist": "كل الفنانين",
+    "priceMin": "السعر من ($)",
+    "priceMax": "إلى ($)",
+    "availability": "التوفر",
+    "anyAvailability": "الكل",
+    "availableOnly": "متاح للشراء",
+    "unavailableOnly": "غير متاح",
+    "saleMode": "نوع البيع",
+    "anySaleMode": "الكل",
+    "fixedPrice": "سعر ثابت",
+    "auction": "مزاد",
+    "materials": "المواد",
+    "techniques": "التقنيات",
+    "clearFilters": "مسح التصفية",
+    "resultsCount": "{count, plural, =0 {لا نتائج} one {نتيجة واحدة} two {نتيجتان} few {# نتائج} many {# نتيجة} other {# نتيجة}}",
+    "noResults": "لا توجد أعمال تطابق بحثك. جرّب كلمات أخرى أو خفّف التصفية.",
+    "offer": {
+      "price": "السعر",
+      "available": "{count, plural, one {متبقٍّ قطعة واحدة} two {متبقٍّ قطعتان} few {متبقٍّ # قطع} many {متبقٍّ # قطعة} other {متبقٍّ # قطعة}}",
+      "unique": "قطعة فريدة",
+      "unlimited": "متوفر",
+      "maxPerOrder": "الحد الأقصى للطلب الواحد: {count}",
+      "status": {
+        "sold_out": "مباع",
+        "reserved": "محجوز حالياً",
+        "not_started": "يُطرح قريباً",
+        "ended": "انتهى العرض",
+        "artwork_unavailable": "غير متاح",
+        "not_active": "غير متاح",
+        "quantity_limit": "غير متاح",
+        "insufficient_stock": "الكمية غير كافية",
+        "auction_only": "يُباع بالمزاد"
+      },
+      "startsAt": "يبدأ العرض في {date}",
+      "endsAt": "ينتهي العرض في {date}",
+      "buySoon": "الشراء عبر العربة متاح قريباً.",
+      "depositNote": "يُثبَّت الطلب بعربون، وتُعرض شروطه قبل التأكيد."
     }
   },
   "register": {
@@ -441,5 +554,14 @@
     "raqqa": "الرقة",
     "hasakah": "الحسكة",
     "outside_syria": "خارج سوريا"
+  },
+  "favorites": {
+    "title": "المفضلة",
+    "intro": "الأعمال التي حفظتها لتعود إليها لاحقاً.",
+    "empty": "لم تضف أي عمل إلى المفضلة بعد.",
+    "browse": "تصفّح الأعمال",
+    "add": "أضف إلى المفضلة",
+    "remove": "إزالة من المفضلة",
+    "loginToSave": "سجّل الدخول لحفظ الأعمال في المفضلة"
   }
 }

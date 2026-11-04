@@ -24,28 +24,7 @@ from .serializers import (
     ImageOrderSerializer,
     ImageUpdateSerializer,
     PublicArtworkCardSerializer,
-    PublicArtworkDetailSerializer,
 )
-
-ORDERING_PARAM = OpenApiParameter("ordering", str, enum=list(selectors.ORDERINGS))
-
-
-class PublicArtworkListView(ListAPIView):
-    permission_classes = [AllowAny]
-    serializer_class = PublicArtworkCardSerializer
-
-    def get_queryset(self):
-        p = self.request.query_params
-        return selectors.catalog_artworks(
-            category=p.get("category", ""), artist=p.get("artist", ""), ordering=p.get("ordering", "newest")
-        )
-
-    @extend_schema(
-        operation_id="artworks_list",
-        parameters=[OpenApiParameter("category", str), OpenApiParameter("artist", str), ORDERING_PARAM],
-    )
-    def get(self, request: Request, *args, **kwargs) -> Response:
-        return super().get(request, *args, **kwargs)
 
 
 class PublicArchiveListView(ListAPIView):
@@ -58,15 +37,6 @@ class PublicArchiveListView(ListAPIView):
     @extend_schema(operation_id="archive_list", parameters=[OpenApiParameter("artist", str)])
     def get(self, request: Request, *args, **kwargs) -> Response:
         return super().get(request, *args, **kwargs)
-
-
-class PublicArtworkDetailView(APIView):
-    permission_classes = [AllowAny]
-
-    @extend_schema(operation_id="artworks_detail", responses=PublicArtworkDetailSerializer)
-    def get(self, request: Request, slug: str) -> Response:
-        artwork = get_object_or_404(selectors.public_artwork_detail(), slug=slug)
-        return Response(PublicArtworkDetailSerializer(artwork).data)
 
 
 # --- staff ------------------------------------------------------------------------------------

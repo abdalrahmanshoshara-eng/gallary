@@ -203,6 +203,8 @@ CHECK constraints:
 - `status <> 'ACTIVE' OR pricing_approved_at IS NOT NULL`
 
 Partial unique: `UNIQUE (artwork_id) WHERE status = 'ACTIVE'` (BR-202).
+
+> **مُنفَّذ في Phase 4** مع إضافات: `public_id`، `activated_at`، `closed_at`، `internal_notes`، `created_by`، وقيود إضافية (LIMITED > 1، UNLIMITED بلا total، نطاق العمولة والعربون، `max_per_order ≥ 1`، ترتيب نافذة العرض). `Artwork.search_text` (نص مطبّع غير معروض) مع فهرس GIN trigram. `SiteSetting` مُنفَّذ في `apps.core` بالحقول: `default_commission_rate`، `default_deposit_type/value`، `whatsapp_number`، `max_pending_orders_per_user`.
 Indexes: `(status, sale_mode)`, `price_usd`.
 
 ### favorites

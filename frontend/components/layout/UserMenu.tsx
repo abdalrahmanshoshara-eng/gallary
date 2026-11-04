@@ -32,6 +32,9 @@ export function UserMenu() {
           {t("admin")}
         </Link>
       ) : null}
+      <Link href="/favorites" className="text-primary hover:text-secondary">
+        {t("favorites")}
+      </Link>
       <Link href="/account" className="text-primary hover:text-secondary">
         {t("account")}
       </Link>

@@ -14,6 +14,7 @@ from apps.media import services as media
 from apps.media.models import ImagePurpose, ImageStatus
 
 from .models import ArchiveVisibility, Artwork, ArtworkImage, PublicationStatus
+from .search import build_search_text
 
 M2M_FIELDS = ("materials", "techniques", "tags")
 AUDITED = ("title", "slug", "category", "artist", "creator_name_override", "executor", "owner_name")
@@ -49,6 +50,25 @@ def _lock(artwork: Artwork) -> Artwork:
     return Artwork.objects.select_for_update().get(pk=artwork.pk)
 
 
+# --- search key ---------------------------------------------------------------------------------
+def refresh_search_text(artwork: Artwork) -> None:
+    key = build_search_text(artwork)
+    if key != artwork.search_text:
+        artwork.search_text = key
+        Artwork.objects.filter(pk=artwork.pk).update(search_text=key)
+
+
+def refresh_search_text_for(queryset) -> int:
+    """Rebuild keys for many artworks (after an artist or a term is renamed)."""
+    count = 0
+    for artwork in queryset.select_related("artist", "category", "category__parent").prefetch_related(
+        "materials", "techniques", "tags"
+    ):
+        refresh_search_text(artwork)
+        count += 1
+    return count
+
+
 # --- create / update ------------------------------------------------------------------------
 @transaction.atomic
 def create_artwork(*, actor, data: dict) -> Artwork:
@@ -58,6 +78,7 @@ def create_artwork(*, actor, data: dict) -> Artwork:
     for field, values in m2m.items():
         if values:
             getattr(artwork, field).set(values)
+    refresh_search_text(artwork)
     audit.record(actor=actor, action="artwork.created", entity=artwork, changes={"title": artwork.title})
     return artwork
 
@@ -81,6 +102,7 @@ def update_artwork(artwork: Artwork, *, actor, data: dict) -> Artwork:
     artwork.save()
     for field, values in m2m.items():
         getattr(artwork, field).set(values)
+    refresh_search_text(artwork)
     if changes:
         audit.record(actor=actor, action="artwork.updated", entity=artwork, changes=changes)
     return artwork

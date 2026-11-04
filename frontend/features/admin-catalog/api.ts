@@ -79,3 +79,22 @@ export const updateImage = (id: string, imageId: string, body: { alt_text?: stri
   apiFetch<AdminArtwork>(`/admin/artworks/${id}/images/${imageId}`, { method: "PATCH", body });
 export const deleteImage = (id: string, imageId: string) =>
   apiFetch<AdminArtwork>(`/admin/artworks/${id}/images/${imageId}`, { method: "DELETE" });
+
+// --- listings & settings ---------------------------------------------------------------------
+export type AdminListing = Schema<"AdminListing">;
+export type SiteSettings = Schema<"SiteSetting">;
+export const listingsKey = (artworkId: string) => ["admin", "artwork", artworkId, "listings"] as const;
+export const listListings = (artworkId: string) => apiFetch<AdminListing[]>(`/admin/artworks/${artworkId}/listings`);
+export const createListing = (artworkId: string, body: Record<string, unknown>) =>
+  apiFetch<AdminListing>(`/admin/artworks/${artworkId}/listings`, { method: "POST", body });
+export const updateListing = (id: string, body: Record<string, unknown>) =>
+  apiFetch<AdminListing>(`/admin/listings/${id}`, { method: "PATCH", body });
+export const deleteListing = (id: string) => apiFetch<void>(`/admin/listings/${id}`, { method: "DELETE" });
+export const priceListing = (id: string, body: Record<string, unknown>) =>
+  apiFetch<AdminListing>(`/admin/listings/${id}/pricing`, { method: "POST", body });
+export const listingAction = (id: string, action: "activate" | "withdraw", body?: Record<string, unknown>) =>
+  apiFetch<AdminListing>(`/admin/listings/${id}/${action}`, { method: "POST", body: body ?? {} });
+export const settingsKey = ["admin", "settings"] as const;
+export const getSettings = () => apiFetch<SiteSettings>("/admin/settings");
+export const updateSettings = (body: Record<string, unknown>) =>
+  apiFetch<SiteSettings>("/admin/settings", { method: "PATCH", body });

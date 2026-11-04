@@ -3,12 +3,20 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import type { ArtworkCardData } from "@/lib/catalog/types";
 
+import { FavoriteButton } from "@/features/favorites/FavoriteButton";
+
+import { OfferBadge } from "./OfferBadge";
 import { ResponsiveImage } from "./ResponsiveImage";
 
 export async function ArtworkCard({ artwork, priority = false }: { artwork: ArtworkCardData; priority?: boolean }) {
   const t = await getTranslations("catalog");
   return (
-    <article className="group">
+    <article className="group relative">
+      {!artwork.is_archived ? (
+        <div className="absolute end-3 top-3 z-10">
+          <FavoriteButton artworkId={artwork.id} title={artwork.title} size="sm" />
+        </div>
+      ) : null}
       <Link href={`/artworks/${artwork.slug}`} className="block">
         <div className="flex aspect-[4/5] items-center justify-center overflow-hidden rounded-[var(--radius-card)] bg-surface/60 p-4 transition-colors duration-500 ease-calm group-hover:bg-surface">
           {artwork.primary_image ? (
@@ -35,6 +43,7 @@ export async function ArtworkCard({ artwork, priority = false }: { artwork: Artw
         {artwork.year_created ? <span> · {artwork.year_created}</span> : null}
       </p>
       {artwork.is_archived ? <p className="mt-1 text-xs text-olive">{t("archivedBadge")}</p> : null}
+      <OfferBadge offer={artwork.offer} />
     </article>
   );
 }

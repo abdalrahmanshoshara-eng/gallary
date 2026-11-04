@@ -1,6 +1,6 @@
 # FEATURE_CHECKLIST.md — قائمة تتبع الميزات
 
-> آخر تحديث: 2026-11-04 — **Phase 3 (Catalog) مستقرة** + الدخول بكلمة المرور (Phase 3b). المرحلة التالية: Phase 4 (Listings, Search, Favorites) — بعد موافقتك.
+> آخر تحديث: 2026-11-04 — **Phase 4 (Listings, Search, Favorites) مستقرة**. المرحلة التالية: Phase 5 (العربة والطلبات) — بعد موافقتك.
 >
 > **الحالات:** `NOT_STARTED` · `IN_PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `TESTED` · `COMPLETE` — و`N/A` عندما لا ينطبق البُعد على الميزة.
 > **COMPLETE** فقط عندما تكون كل الأبعاد المنطبقة `TESTED` والتوثيق مكتملاً.
@@ -64,16 +64,16 @@
 | F-CAT-07 | صفحة الفنان | نبذة، أعمال متاحة ومؤرشفة | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | |
 | F-CAT-08 | الأرشيف العام | مباع/منتهٍ/مؤرشف، غير قابل للشراء | TESTED | TESTED | N/A | N/A | TESTED | TESTED | IMPLEMENTED | الأرشفة اليدوية جاهزة؛ الأرشفة التلقائية عند البيع/انتهاء المزاد تأتي مع Phase 5/6 |
 
-## Phase 4 — Listings, Search, Favorites
+## Phase 4 — Listings, Search, Favorites — ✅ مستقرة (2026-11-04)
 
 | ID | الميزة | الوصف | BE | FE | DB | Perm | Tests | Docs | Overall | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| F-LST-01 | Listing بسعر ثابت | إنشاء/تعديل، عرض نشط واحد لكل عمل، اعتماد التسعير من Super Admin | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-201/202/212 |
-| F-LST-02 | أنواع الكمية والمخزون | UNIQUE/LIMITED/UNLIMITED + قيود CHECK + أقفال | NOT_STARTED | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-203..207 |
-| F-LST-03 | جدولة العرض وحالاته | starts_at/ends_at، SOLD_OUT مشتق | NOT_STARTED | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-208/209 |
-| F-LST-04 | عمولة وعربون العرض | override + الافتراضي العام | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-402/701, Q12 |
-| F-CAT-09 | البحث والفلاتر | تطبيع عربي + pg_trgm + فلاتر §21 | NOT_STARTED | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-FAV-01 | المفضلة | إضافة/حذف/عرض، فريدة، منع IDOR | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
+| F-LST-01 | Listing بسعر ثابت | إنشاء/تعديل، عرض نشط واحد لكل عمل، اعتماد التسعير من Super Admin | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-201/202/212؛ قيد DB يمنع التفعيل بلا اعتماد |
+| F-LST-02 | أنواع الكمية والمخزون | UNIQUE/LIMITED/UNLIMITED + قيود CHECK + أقفال | TESTED | N/A | TESTED | N/A | TESTED | TESTED | COMPLETE | BR-203..207؛ اختبار تزامن 10 مشترين على 3 قطع |
+| F-LST-03 | جدولة العرض وحالاته | starts_at/ends_at، SOLD_OUT مشتق | TESTED | TESTED | TESTED | N/A | TESTED | TESTED | COMPLETE | BR-208/209؛ مهمة Beat كل دقيقة تُنهي المنتهية |
+| F-LST-04 | عمولة وعربون العرض | override + الافتراضي العام | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-402/701؛ SiteSetting للمدير العام. ArtistAgreement (BR-701) مع التسويات |
+| F-CAT-09 | البحث والفلاتر | تطبيع عربي + pg_trgm + فلاتر §21 | TESTED | TESTED | TESTED | N/A | TESTED | TESTED | IMPLEMENTED | كل الفلاتر عدا "حالة المزاد" (تُضاف مع المزادات Phase 6) |
+| F-FAV-01 | المفضلة | إضافة/حذف/عرض، فريدة، منع IDOR | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | الأعمال المخفية تختفي من القائمة وتعود عند إظهارها |
 
 ## Phase 5 — Cart & Orders (F-CART / F-ORD)
 

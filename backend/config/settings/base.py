@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "django.contrib.postgres",
     # Third party
     "channels",
     "rest_framework",
@@ -48,6 +49,8 @@ INSTALLED_APPS = [
     "apps.catalog",
     "apps.artists",
     "apps.artworks",
+    "apps.listings",
+    "apps.favorites",
     "apps.realtime",
 ]
 
@@ -328,6 +331,10 @@ SPECTACULAR_SETTINGS = {
         "PublicationStatusEnum": "apps.artworks.models.PublicationStatus",
         "ArtistStatusEnum": "apps.artists.models.ArtistStatus",
         "ImageStatusEnum": "apps.media.models.ImageStatus",
+        "DepositTypeEnum": "apps.core.models.DepositType",
+        "ListingStatusEnum": "apps.listings.models.ListingStatus",
+        "QuantityModeEnum": "apps.listings.models.QuantityMode",
+        "SaleModeEnum": "apps.listings.models.SaleMode",
     },
 }
 
@@ -359,6 +366,11 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.core.tasks.scheduler_heartbeat",
         "schedule": 60.0,
         "options": {"queue": "critical", "expires": 55},
+    },
+    "end-expired-listings": {
+        "task": "apps.listings.tasks.end_expired_listings",
+        "schedule": 60.0,
+        "options": {"queue": "default", "expires": 55},
     },
 }
 # Seconds after which a missing scheduler heartbeat is reported as degraded.

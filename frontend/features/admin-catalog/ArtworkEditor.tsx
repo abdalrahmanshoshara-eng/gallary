@@ -9,6 +9,7 @@ import { artworkKey, getArtwork, type AdminArtwork } from "./api";
 import { ArtworkForm } from "./ArtworkForm";
 import { ArtworkStatusPanel } from "./ArtworkStatusPanel";
 import { ImagesManager } from "./ImagesManager";
+import { ListingsPanel } from "./ListingsPanel";
 
 /** One cached artwork shared by every panel; polls while any image is still being processed. */
 export function ArtworkEditor({ initial, justCreated }: { initial: AdminArtwork; justCreated: boolean }) {
@@ -27,6 +28,7 @@ export function ArtworkEditor({ initial, justCreated }: { initial: AdminArtwork;
         <ImagesManager artwork={data} />
         <ArtworkStatusPanel artwork={data} />
       </div>
+      <ListingsPanel artworkId={initial.id} />
       <ArtworkForm artwork={initial} />
     </div>
   );

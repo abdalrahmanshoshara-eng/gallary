@@ -2,8 +2,10 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { OfferPanel } from "@/components/art/OfferPanel";
 import { Container } from "@/components/ui/Container";
 import { Gallery } from "@/features/catalog/Gallery";
+import { FavoriteButton } from "@/features/favorites/FavoriteButton";
 import { Link } from "@/i18n/navigation";
 import { publicApiGetOrNull } from "@/lib/api/public";
 import type { ArtworkDetail } from "@/lib/catalog/types";
@@ -60,7 +62,10 @@ export default async function ArtworkPage({ params }: Props) {
               {artwork.category.name}
             </Link>
           </p>
-          <h1 className="mt-3 text-3xl font-semibold text-primary md:text-4xl">{artwork.title}</h1>
+          <div className="mt-3 flex items-start justify-between gap-4">
+            <h1 className="text-3xl font-semibold text-primary md:text-4xl">{artwork.title}</h1>
+            {!artwork.is_archived ? <FavoriteButton artworkId={artwork.id} title={artwork.title} /> : null}
+          </div>
           <p className="mt-3 text-lg">
             {artwork.artist ? (
               <Link href={`/artists/${artwork.artist.slug}`} className="text-text hover:text-secondary">
@@ -73,11 +78,7 @@ export default async function ArtworkPage({ params }: Props) {
           </p>
 
           <div className="mt-8 rounded-[var(--radius-card)] border border-border/60 bg-white/50 p-5 text-sm">
-            {artwork.is_archived ? (
-              <p className="text-olive">{t("archivedNotice")}</p>
-            ) : (
-              <p className="text-muted">{t("notForSale")}</p>
-            )}
+            <OfferPanel offer={artwork.offer} archived={artwork.is_archived} />
           </div>
 
           {artwork.description ? (

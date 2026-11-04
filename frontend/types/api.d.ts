@@ -164,6 +164,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/artworks/{public_id}/listings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_artwork_listings"];
+        put?: never;
+        post: operations["admin_artwork_listing_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/artworks/{public_id}/publish": {
         parameters: {
             query?: never;
@@ -324,6 +340,71 @@ export interface paths {
         patch: operations["admin_techniques_update"];
         trace?: never;
     };
+    "/api/v1/admin/listings/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_listing_detail"];
+        put?: never;
+        post?: never;
+        delete: operations["admin_listing_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_listing_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/listings/{public_id}/activate": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_listing_activate"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/listings/{public_id}/pricing": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /** @description BR-212: price, commission and deposit are the Super Admin's decision. */
+        post: operations["admin_listing_pricing"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/listings/{public_id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_listing_withdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/roles": {
         parameters: {
             query?: never;
@@ -338,6 +419,24 @@ export interface paths {
         options?: never;
         head?: never;
         patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settings": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Staff can read the platform defaults; only the Super Admin changes them (BR-212). */
+        get: operations["admin_settings"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        /** @description Staff can read the platform defaults; only the Super Admin changes them (BR-212). */
+        patch: operations["admin_settings_update"];
         trace?: never;
     };
     "/api/v1/admin/staff": {
@@ -507,6 +606,7 @@ export interface paths {
             path?: never;
             cookie?: never;
         };
+        /** @description Catalogue with Arabic-normalised search and filters (§21). */
         get: operations["artworks_list"];
         put?: never;
         post?: never;
@@ -718,6 +818,55 @@ export interface paths {
             cookie?: never;
         };
         get: operations["catalog_techniques"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/favorites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["favorites_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/favorites/{artwork_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["favorites_add"];
+        post?: never;
+        delete: operations["favorites_remove"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/favorites/ids": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Lets cached public pages mark hearts client-side without personalising the page. */
+        get: operations["favorites_ids"];
         put?: never;
         post?: never;
         delete?: never;
@@ -979,6 +1128,48 @@ export interface components {
             status: string;
             error: string;
         };
+        AdminListing: {
+            /** Format: uuid */
+            readonly id: string;
+            /** Format: uuid */
+            readonly artwork: string;
+            readonly sale_mode: components["schemas"]["SaleModeEnum"];
+            readonly status: components["schemas"]["ListingStatusEnum"];
+            /** Format: decimal */
+            readonly price_usd: string | null;
+            /** Format: decimal */
+            readonly commission_rate_override: string | null;
+            readonly deposit_type: components["schemas"]["DepositTypeEnum"];
+            /** Format: decimal */
+            readonly deposit_value: string | null;
+            readonly pricing_approved_by: string;
+            /** Format: date-time */
+            readonly pricing_approved_at: string | null;
+            /** Format: decimal */
+            readonly effective_commission_rate: string;
+            readonly effective_deposit: components["schemas"]["DepositTerms"];
+            readonly quantity_mode: components["schemas"]["QuantityModeEnum"];
+            readonly quantity_total: number | null;
+            readonly quantity_available: number;
+            readonly quantity_reserved: number;
+            readonly quantity_sold: number;
+            readonly max_per_order: number;
+            /** Format: date-time */
+            readonly starts_at: string | null;
+            /** Format: date-time */
+            readonly ends_at: string | null;
+            /** Format: date-time */
+            readonly activated_at: string | null;
+            /** Format: date-time */
+            readonly closed_at: string | null;
+            readonly internal_notes: string;
+            readonly activation_problems: string[];
+            readonly purchasable: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
         AdminMaterial: {
             readonly id: number;
             /** الاسم */
@@ -1106,6 +1297,18 @@ export interface components {
             slug: string;
             parent: components["schemas"]["TermRef"] | null;
         };
+        DepositTerms: {
+            type: string;
+            /** Format: decimal */
+            value: string;
+            inherited: boolean;
+        };
+        /**
+         * @description * `fixed` - مبلغ ثابت (USD)
+         *     * `percentage` - نسبة من قيمة الطلب
+         * @enum {string}
+         */
+        DepositTypeEnum: "fixed" | "percentage";
         Dimensions: {
             /** Format: decimal */
             height_cm: string | null;
@@ -1115,6 +1318,9 @@ export interface components {
             depth_cm: string | null;
             /** Format: decimal */
             weight_kg: string | null;
+        };
+        FavoriteIds: {
+            ids: string[];
         };
         /**
          * @description * `damascus` - دمشق
@@ -1167,6 +1373,25 @@ export interface components {
             height: number;
             /** Format: uri */
             url: string;
+        };
+        /**
+         * @description * `draft` - مسودة
+         *     * `active` - نشط
+         *     * `sold_out` - نفدت الكمية
+         *     * `ended` - انتهى
+         *     * `withdrawn` - سُحب
+         * @enum {string}
+         */
+        ListingStatusEnum: "draft" | "active" | "sold_out" | "ended" | "withdrawn";
+        ListingWriteRequest: {
+            quantity_mode?: components["schemas"]["QuantityModeEnum"];
+            quantity_total?: number | null;
+            max_per_order?: number;
+            /** Format: date-time */
+            starts_at?: string | null;
+            /** Format: date-time */
+            ends_at?: string | null;
+            internal_notes?: string;
         };
         Liveness: {
             status: string;
@@ -1285,6 +1510,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["PublicArtworkCard"][];
         };
+        PaginatedStorefrontCardList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["StorefrontCard"][];
+        };
         PasswordChangeRequest: {
             current_password: string;
             new_password: string;
@@ -1385,6 +1625,16 @@ export interface components {
             alt_text?: string;
             is_primary?: boolean;
         };
+        PatchedListingWriteRequest: {
+            quantity_mode?: components["schemas"]["QuantityModeEnum"];
+            quantity_total?: number | null;
+            max_per_order?: number;
+            /** Format: date-time */
+            starts_at?: string | null;
+            /** Format: date-time */
+            ends_at?: string | null;
+            internal_notes?: string;
+        };
         PatchedProfileUpdateRequest: {
             display_name?: string;
             first_name?: string;
@@ -1394,9 +1644,37 @@ export interface components {
             city?: string;
             address_line?: string;
         };
+        PatchedSiteSettingRequest: {
+            /**
+             * نسبة العمولة الافتراضية %
+             * Format: decimal
+             */
+            default_commission_rate?: string;
+            /** نوع العربون الافتراضي */
+            default_deposit_type?: components["schemas"]["DepositTypeEnum"];
+            /**
+             * قيمة العربون الافتراضية
+             * Format: decimal
+             */
+            default_deposit_value?: string;
+            /** رقم WhatsApp للطلبات */
+            whatsapp_number?: string;
+            /** الحد الأقصى للحجوزات المعلقة */
+            max_pending_orders_per_user?: number;
+        };
         PatchedStaffUpdateRequest: {
             display_name?: string;
             roles?: components["schemas"]["RolesEnum"][];
+        };
+        PricingRequest: {
+            /** Format: decimal */
+            price_usd: string;
+            /** Format: decimal */
+            commission_rate_override?: string | null;
+            /** @default  */
+            deposit_type: components["schemas"]["DepositTypeEnum"] | components["schemas"]["BlankEnum"];
+            /** Format: decimal */
+            deposit_value?: string | null;
         };
         PublicArtist: {
             /** Format: uuid */
@@ -1432,33 +1710,6 @@ export interface components {
             readonly primary_image: components["schemas"]["PublicArtworkImage"] | null;
             is_archived: boolean;
         };
-        PublicArtworkDetail: {
-            /** Format: uuid */
-            readonly id: string;
-            /** المعرّف */
-            readonly slug: string;
-            /** العنوان */
-            readonly title: string;
-            artist: components["schemas"]["ArtistRef"] | null;
-            creator_name: string;
-            category: components["schemas"]["CategoryWithParent"];
-            /** سنة الإنشاء */
-            readonly year_created: number | null;
-            readonly primary_image: components["schemas"]["PublicArtworkImage"] | null;
-            is_archived: boolean;
-            /** الوصف */
-            readonly description: string;
-            executor: components["schemas"]["ArtistRef"] | null;
-            owner_name: string;
-            rights_holder: string;
-            materials: components["schemas"]["TermRef"][];
-            techniques: components["schemas"]["TermRef"][];
-            tags: components["schemas"]["TermRef"][];
-            readonly dimensions: components["schemas"]["Dimensions"];
-            readonly images: components["schemas"]["PublicArtworkImage"][];
-            /** Format: date-time */
-            published_at: string;
-        };
         PublicArtworkImage: {
             /** Format: uuid */
             id: string;
@@ -1482,6 +1733,25 @@ export interface components {
             height: number;
             readonly variants: components["schemas"]["ImageVariant"][];
         };
+        /** @description What a visitor needs to decide: price, availability and why it can't be bought. */
+        PublicOffer: {
+            /** Format: uuid */
+            id: string;
+            sale_mode: string;
+            status: string;
+            /** Format: decimal */
+            price_usd: string | null;
+            quantity_mode: string;
+            /** @description Units left; null when stock is not tracked. */
+            readonly available: number | null;
+            max_per_order: number;
+            /** Format: date-time */
+            starts_at: string | null;
+            /** Format: date-time */
+            ends_at: string | null;
+            readonly purchasable: boolean;
+            readonly unavailable_reason: string | null;
+        };
         PublicTerm: {
             name: string;
             slug: string;
@@ -1493,6 +1763,13 @@ export interface components {
          * @enum {string}
          */
         PublicationStatusEnum: "draft" | "published" | "hidden";
+        /**
+         * @description * `unique` - قطعة فريدة
+         *     * `limited` - كمية محدودة
+         *     * `unlimited` - غير محدودة
+         * @enum {string}
+         */
+        QuantityModeEnum: "unique" | "limited" | "unlimited";
         Readiness: {
             status: components["schemas"]["ReadinessStatusEnum"];
             /** Format: date-time */
@@ -1505,6 +1782,10 @@ export interface components {
          * @enum {string}
          */
         ReadinessStatusEnum: "ready" | "not_ready";
+        ReasonRequest: {
+            /** @default  */
+            reason: string;
+        };
         RegisterInputRequest: {
             phone: string;
             first_name: string;
@@ -1532,6 +1813,12 @@ export interface components {
          * @enum {string}
          */
         RolesEnum: "content_staff" | "operations_staff" | "auction_manager" | "super_admin";
+        /**
+         * @description * `fixed_price` - سعر ثابت
+         *     * `auction` - مزاد
+         * @enum {string}
+         */
+        SaleModeEnum: "fixed_price" | "auction";
         Session: {
             /** Format: uuid */
             readonly id: string;
@@ -1545,6 +1832,26 @@ export interface components {
             readonly expires_at: string;
             readonly current: boolean;
         };
+        SiteSetting: {
+            /**
+             * نسبة العمولة الافتراضية %
+             * Format: decimal
+             */
+            default_commission_rate?: string;
+            /** نوع العربون الافتراضي */
+            default_deposit_type?: components["schemas"]["DepositTypeEnum"];
+            /**
+             * قيمة العربون الافتراضية
+             * Format: decimal
+             */
+            default_deposit_value?: string;
+            /** رقم WhatsApp للطلبات */
+            whatsapp_number?: string;
+            /** الحد الأقصى للحجوزات المعلقة */
+            max_pending_orders_per_user?: number;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
         StaffCreateRequest: {
             phone: string;
             /** @default  */
@@ -1552,6 +1859,50 @@ export interface components {
             roles: components["schemas"]["RolesEnum"][];
             /** @default  */
             password: string;
+        };
+        StorefrontCard: {
+            /** Format: uuid */
+            readonly id: string;
+            /** المعرّف */
+            readonly slug: string;
+            /** العنوان */
+            readonly title: string;
+            artist: components["schemas"]["ArtistRef"] | null;
+            creator_name: string;
+            category: components["schemas"]["TermRef"];
+            /** سنة الإنشاء */
+            readonly year_created: number | null;
+            readonly primary_image: components["schemas"]["PublicArtworkImage"] | null;
+            is_archived: boolean;
+            readonly offer: components["schemas"]["PublicOffer"] | null;
+        };
+        StorefrontDetail: {
+            /** Format: uuid */
+            readonly id: string;
+            /** المعرّف */
+            readonly slug: string;
+            /** العنوان */
+            readonly title: string;
+            artist: components["schemas"]["ArtistRef"] | null;
+            creator_name: string;
+            category: components["schemas"]["CategoryWithParent"];
+            /** سنة الإنشاء */
+            readonly year_created: number | null;
+            readonly primary_image: components["schemas"]["PublicArtworkImage"] | null;
+            is_archived: boolean;
+            /** الوصف */
+            readonly description: string;
+            executor: components["schemas"]["ArtistRef"] | null;
+            owner_name: string;
+            rights_holder: string;
+            materials: components["schemas"]["TermRef"][];
+            techniques: components["schemas"]["TermRef"][];
+            tags: components["schemas"]["TermRef"][];
+            readonly dimensions: components["schemas"]["Dimensions"];
+            readonly images: components["schemas"]["PublicArtworkImage"][];
+            /** Format: date-time */
+            published_at: string;
+            readonly offer: components["schemas"]["PublicOffer"] | null;
         };
         TermRef: {
             name: string;
@@ -1992,6 +2343,52 @@ export interface operations {
             };
         };
     };
+    admin_artwork_listings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListing"][];
+                };
+            };
+        };
+    };
+    admin_artwork_listing_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ListingWriteRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListing"];
+                };
+            };
+        };
+    };
     admin_artworks_publish: {
         parameters: {
             query?: never;
@@ -2382,6 +2779,143 @@ export interface operations {
             };
         };
     };
+    admin_listing_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListing"];
+                };
+            };
+        };
+    };
+    admin_listing_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_listing_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedListingWriteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListing"];
+                };
+            };
+        };
+    };
+    admin_listing_activate: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListing"];
+                };
+            };
+        };
+    };
+    admin_listing_pricing: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PricingRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListing"];
+                };
+            };
+        };
+    };
+    admin_listing_withdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ReasonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminListing"];
+                };
+            };
+        };
+    };
     admin_roles_list: {
         parameters: {
             query?: never;
@@ -2397,6 +2931,48 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Role"][];
+                };
+            };
+        };
+    };
+    admin_settings: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteSetting"];
+                };
+            };
+        };
+    };
+    admin_settings_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedSiteSettingRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SiteSetting"];
                 };
             };
         };
@@ -2687,12 +3263,20 @@ export interface operations {
         parameters: {
             query?: {
                 artist?: string;
+                availability?: "available" | "unavailable";
                 category?: string;
-                ordering?: "newest" | "oldest" | "title" | "year";
+                material?: string[];
+                ordering?: "newest" | "oldest" | "price_asc" | "price_desc" | "title" | "year";
                 /** @description رقم الصفحة ضمن النتائج المقسمة. */
                 page?: number;
                 /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
                 page_size?: number;
+                price_max?: string;
+                price_min?: string;
+                /** @description Search title, creator, description, category, materials, techniques */
+                q?: string;
+                sale_mode?: "auction" | "fixed_price";
+                technique?: string[];
             };
             header?: never;
             path?: never;
@@ -2705,7 +3289,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PaginatedPublicArtworkCardList"];
+                    "application/json": components["schemas"]["PaginatedStorefrontCardList"];
                 };
             };
         };
@@ -2726,7 +3310,7 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["PublicArtworkDetail"];
+                    "application/json": components["schemas"]["StorefrontDetail"];
                 };
             };
         };
@@ -2989,6 +3573,96 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["PublicTerm"][];
+                };
+            };
+        };
+    };
+    favorites_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedStorefrontCardList"];
+                };
+            };
+        };
+    };
+    favorites_add: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                artwork_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    favorites_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                artwork_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    favorites_ids: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FavoriteIds"];
                 };
             };
         };

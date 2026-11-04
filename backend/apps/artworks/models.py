@@ -9,6 +9,7 @@ from __future__ import annotations
 import uuid
 
 from django.conf import settings
+from django.contrib.postgres.indexes import GinIndex
 from django.db import models
 from django.utils import timezone
 
@@ -85,6 +86,10 @@ class Artwork(models.Model):
     created_at = models.DateTimeField(default=timezone.now)
     updated_at = models.DateTimeField(auto_now=True)
 
+    # Normalised search key (title, creator, description, category, materials, techniques,
+    # tags) maintained by services.refresh_search_text — never displayed (§21).
+    search_text = models.TextField(blank=True, default="", editable=False)
+
     class Meta:
         verbose_name = "عمل فني"
         verbose_name_plural = "الأعمال الفنية"
@@ -92,6 +97,8 @@ class Artwork(models.Model):
         indexes = [
             models.Index(fields=["publication_status", "-published_at"], name="artwork_public_listing_idx"),
             models.Index(fields=["archived_at"], name="artwork_archived_idx"),
+            # Trigram GIN index: serves `search_text LIKE '%term%'` for every query word.
+            GinIndex(fields=["search_text"], opclasses=["gin_trgm_ops"], name="artwork_search_trgm"),
         ]
         constraints = [
             models.CheckConstraint(

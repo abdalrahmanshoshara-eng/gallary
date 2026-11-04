@@ -9,12 +9,14 @@ import { ApiError, NETWORK_ERROR_MESSAGE, toApiError } from "./errors";
 
 const INTERNAL_API_URL = process.env.INTERNAL_API_URL ?? "http://localhost:8000";
 
-export type QueryParams = Record<string, string | number | undefined | null>;
+export type QueryParams = Record<string, string | number | string[] | undefined | null>;
 
 export function toQuery(params: QueryParams = {}): string {
   const query = new URLSearchParams();
   for (const [key, value] of Object.entries(params)) {
-    if (value !== undefined && value !== null && value !== "") query.set(key, String(value));
+    for (const item of Array.isArray(value) ? value : [value]) {
+      if (item !== undefined && item !== null && item !== "") query.append(key, String(item));
+    }
   }
   const text = query.toString();
   return text ? `?${text}` : "";

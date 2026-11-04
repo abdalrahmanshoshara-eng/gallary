@@ -110,3 +110,12 @@ describe("ArtworkForm", () => {
     expect(body).toMatchObject({ title: "ياسمين", category: 1, artist: null, height_cm: null, year_created: null });
   });
 });
+
+describe("ArtworkForm (edit)", () => {
+  it("keeps the saved category selected once the options load", async () => {
+    renderUi(<ArtworkForm artwork={ARTWORK} />);
+    const select = screen.getByLabelText("التصنيف");
+    await screen.findByRole("option", { name: "لوحات" });
+    expect(select).toHaveValue("1");
+  });
+});

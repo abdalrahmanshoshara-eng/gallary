@@ -102,6 +102,14 @@ In development the `storage` service (SeaweedFS) runs inside Compose. `migrate` 
 
 In production, set `S3_ENDPOINT_URL`, the keys and `MEDIA_PUBLIC_BASE_URL` for your provider. To self-host SeaweedFS instead, copy `infra/seaweedfs/s3.dev.json` to `infra/seaweedfs/s3.json` (gitignored), set strong keys, and start Compose with `--profile self-hosted-storage`. See `infra/seaweedfs/README.md`.
 
+## Offers, search and favorites (Phase 4)
+
+- **Offers (listings)**: from the artwork editor (**العرض التجاري**), staff create a fixed-price offer: a unique piece, a limited quantity, or unlimited. Only the Super Admin sets the price, the commission and the deposit (BR-212). An offer cannot be activated before that, and the database refuses it too. An artwork has at most one active offer. Withdrawn or ended offers stay as history.
+- **Platform defaults** (**لوحة الإدارة ← إعدادات المنصة**): the default commission and deposit, the WhatsApp number and the pending-order limit. Staff can read them; only the Super Admin can change them.
+- **Search**: `/artworks?q=…` matches the title, creator, description, category, materials, techniques and tags. Arabic spelling variants match (أ/إ/آ/ا, ى/ي, ة/ه, tashkeel). Filters: category, artist, price range, availability, sale mode, materials and techniques. The search uses PostgreSQL `pg_trgm`, which the migration enables (`CREATE EXTENSION`). On a managed database, make sure the migration user may create extensions, or enable `pg_trgm` once by hand.
+- **Favorites**: the heart button on cards and artwork pages, plus `/favorites`.
+- Public catalogue pages are cached for 60 seconds, so a new price shows up within a minute. Checkout (Phase 5) always re-checks price and stock on the server.
+
 ## Run without Docker
 
 You need Python 3.12+, Node 22.12+, PostgreSQL 16 and Redis 7 running locally.

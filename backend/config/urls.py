@@ -16,14 +16,23 @@ from apps.artists import urls as artists_urls
 from apps.artworks import urls as artworks_urls
 from apps.catalog import urls as catalog_urls
 from apps.core.exceptions import api_not_found
+from apps.favorites import urls as favorites_urls
+from apps.listings import urls as listings_urls
 
 admin_v1 = [
     *accounts_admin_urls,
     *catalog_urls.admin_urls,
     *artists_urls.admin_urls,
     *artworks_urls.admin_urls,
+    *listings_urls.admin_urls,
 ]
-public_v1 = [*catalog_urls.public_urls, *artists_urls.public_urls, *artworks_urls.public_urls]
+public_v1 = [
+    *catalog_urls.public_urls,
+    *artists_urls.public_urls,
+    *listings_urls.public_urls,  # storefront: artworks list/detail with offers and search
+    *artworks_urls.public_urls,
+    *favorites_urls.urls,
+]
 
 api_v1 = [
     path("", include("apps.core.urls")),

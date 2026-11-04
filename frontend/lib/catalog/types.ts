@@ -1,8 +1,10 @@
 import type { Schema } from "@/lib/api/types";
 
 export type PublicImage = Schema<"PublicImage">;
-export type ArtworkCardData = Schema<"PublicArtworkCard">;
-export type ArtworkDetail = Schema<"PublicArtworkDetail">;
+export type Offer = Schema<"PublicOffer">;
+/** Archive cards have no offer; catalogue (storefront) cards do. */
+export type ArtworkCardData = Schema<"PublicArtworkCard"> & { offer?: Offer | null };
+export type ArtworkDetail = Schema<"StorefrontDetail">;
 export type ArtistPublic = Schema<"PublicArtist">;
 export type CategoryNode = Schema<"PublicCategory">;
 

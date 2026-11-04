@@ -213,20 +213,33 @@ export function ArtworkForm({ artwork }: { artwork?: AdminArtwork }) {
           <label htmlFor={`${uid}-category`} className="font-medium">
             {t("category")}
           </label>
-          <select
-            id={`${uid}-category`}
-            className={selectClass}
-            aria-invalid={e.category ? true : undefined}
-            aria-describedby={e.category ? `${uid}-category-error` : undefined}
-            {...form.register("category")}
-          >
-            <option value="">{t("chooseCategory")}</option>
-            {orderCategories(categories.data ?? [], selectedCategory).map(({ category, depth }) => (
-              <option key={category.id} value={String(category.id)}>
-                {depth ? `— ${category.name}` : category.name}
-              </option>
-            ))}
-          </select>
+          {/* Controlled: the options load after mount, and an uncontrolled select would
+              silently fall back to the empty option and lose the saved category. */}
+          <Controller
+            control={form.control}
+            name="category"
+            render={({ field }) => (
+              <select
+                id={`${uid}-category`}
+                className={selectClass}
+                aria-invalid={e.category ? true : undefined}
+                aria-describedby={e.category ? `${uid}-category-error` : undefined}
+                aria-busy={categories.isPending || undefined}
+                name={field.name}
+                ref={field.ref}
+                value={field.value}
+                onBlur={field.onBlur}
+                onChange={field.onChange}
+              >
+                <option value="">{t("chooseCategory")}</option>
+                {orderCategories(categories.data ?? [], selectedCategory).map(({ category, depth }) => (
+                  <option key={category.id} value={String(category.id)}>
+                    {depth ? `— ${category.name}` : category.name}
+                  </option>
+                ))}
+              </select>
+            )}
+          />
           {e.category ? (
             <span id={`${uid}-category-error`} role="alert" className="text-sm text-primary">
               {msg(e.category.message)}

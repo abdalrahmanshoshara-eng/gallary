@@ -8,7 +8,7 @@ import uuid
 from django.db import models
 from django.utils.text import slugify
 
-_ARABIC_MARKS = re.compile(r"[ؐ-ًؚ-ٰٟۖ-ۭـ]")  # tashkeel + tatweel
+_ARABIC_MARKS = re.compile(r"[\u0610-\u061a\u064b-\u065f\u0670\u06d6-\u06ed\u0640]")  # tashkeel + tatweel
 
 
 def make_slug(text: str, max_length: int = 200) -> str:

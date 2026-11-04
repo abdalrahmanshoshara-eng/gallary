@@ -7,7 +7,7 @@ type Props = {
   page: number;
   totalPages: number;
   /** Other query parameters to keep when changing page. */
-  query?: Record<string, string | undefined>;
+  query?: Record<string, string | string[] | undefined>;
 };
 
 /** Link-based pagination: crawlable, works without JavaScript, keeps filters. */
@@ -15,11 +15,10 @@ export async function Pagination({ pathname, page, totalPages, query = {} }: Pro
   if (totalPages <= 1) return null;
   const t = await getTranslations("common");
   const href = (p: number) => {
-    const params = new URLSearchParams(
-      Object.entries({ ...query, page: p > 1 ? String(p) : undefined }).filter(
-        (entry): entry is [string, string] => Boolean(entry[1]),
-      ),
-    );
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries({ ...query, page: p > 1 ? String(p) : undefined })) {
+      for (const item of Array.isArray(value) ? value : [value]) if (item) params.append(key, item);
+    }
     const qs = params.toString();
     return qs ? `${pathname}?${qs}` : pathname;
   };

@@ -122,7 +122,9 @@ def content_staff(make_user):
 def category(db):
     from apps.catalog.models import Category
 
-    return Category.objects.get(slug="paintings")
+    # get_or_create: transactional tests flush the seeded rows between tests.
+    category, _ = Category.objects.get_or_create(slug="paintings", defaults={"name": "لوحات"})
+    return category
 
 
 @pytest.fixture
@@ -161,11 +163,40 @@ def artwork_factory(db, category, artist_factory, django_capture_on_commit_callb
             artist=artist,
             **extra,
         )
+        services.refresh_search_text(artwork)
         if published:
             with django_capture_on_commit_callbacks(execute=True):
                 services.add_image(artwork, SimpleUploadedFile("a.jpg", make_image_bytes()), actor=None)
             services.publish(artwork, actor=None)
             artwork.refresh_from_db()
         return artwork
+
+    return _make
+
+
+@pytest.fixture
+def listing_factory(db):
+    """An offer for an artwork; `price` approves pricing and `active=True` activates it."""
+    from decimal import Decimal
+
+    from apps.listings import services
+
+    def _make(artwork, *, price="500.00", active=True, quantity_mode="unique", quantity_total=None, **extra):
+        listing = services.create_listing(
+            actor=None, artwork=artwork, quantity_mode=quantity_mode, quantity_total=quantity_total, **extra
+        )
+        if price is not None:
+            services.set_pricing(
+                listing,
+                actor=None,
+                price_usd=Decimal(price),
+                commission_rate_override=None,
+                deposit_type="",
+                deposit_value=None,
+            )
+        if active:
+            services.activate(listing, actor=None)
+        listing.refresh_from_db()
+        return listing
 
     return _make

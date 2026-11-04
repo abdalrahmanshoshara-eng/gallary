@@ -3,8 +3,6 @@ from django.urls import path
 from .api import views
 
 public_urls = [
-    path("artworks", views.PublicArtworkListView.as_view(), name="artworks"),
-    path("artworks/<str:slug>", views.PublicArtworkDetailView.as_view(), name="artwork-detail"),
     path("archive", views.PublicArchiveListView.as_view(), name="archive"),
 ]
 
