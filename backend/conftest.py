@@ -77,3 +77,95 @@ def login_client():
         return client
 
     return _login
+
+
+# --- catalog / media fixtures ----------------------------------------------------------
+def make_image_bytes(fmt="JPEG", size=(1200, 800), *, orientation=None, gps=False, mode="RGB", color=(150, 90, 60)):
+    """Real encoded image bytes, optionally with EXIF orientation and GPS metadata."""
+    import io
+
+    from PIL import Image
+
+    image = Image.new(mode, size, color if mode == "RGB" else (*color, 128))
+    buffer = io.BytesIO()
+    kwargs = {}
+    if fmt == "JPEG" and (orientation or gps):
+        exif = Image.Exif()
+        if orientation:
+            exif[0x0112] = orientation
+        if gps:
+            exif[0x8825] = {1: "N", 2: (33.0, 30.0, 0.0), 3: "E", 4: (36.0, 18.0, 0.0)}
+        kwargs["exif"] = exif.tobytes()
+    image.save(buffer, format=fmt, **kwargs)
+    return buffer.getvalue()
+
+
+@pytest.fixture
+def image_file():
+    from django.core.files.uploadedfile import SimpleUploadedFile
+
+    def _make(name="art.jpg", fmt="JPEG", **kwargs):
+        content_types = {"JPEG": "image/jpeg", "PNG": "image/png", "WEBP": "image/webp"}
+        return SimpleUploadedFile(
+            name, make_image_bytes(fmt, **kwargs), content_type=content_types.get(fmt, "image/jpeg")
+        )
+
+    return _make
+
+
+@pytest.fixture
+def content_staff(make_user):
+    return make_user(roles=["content_staff"], display_name="محررة")
+
+
+@pytest.fixture
+def category(db):
+    from apps.catalog.models import Category
+
+    return Category.objects.get(slug="paintings")
+
+
+@pytest.fixture
+def artist_factory(db):
+    from apps.artists.models import Artist
+
+    counter = iter(range(1, 10_000))
+
+    def _make(**extra):
+        n = next(counter)
+        return Artist.objects.create(
+            name=extra.pop("name", f"فنان {n}"), slug=extra.pop("slug", f"artist-{n}"), **extra
+        )
+
+    return _make
+
+
+@pytest.fixture
+def artwork_factory(db, category, artist_factory, django_capture_on_commit_callbacks):
+    """Creates artworks; `published=True` attaches a processed image and publishes."""
+    from django.core.files.uploadedfile import SimpleUploadedFile
+
+    from apps.artworks import services
+    from apps.artworks.models import Artwork
+
+    counter = iter(range(1, 10_000))
+
+    def _make(*, published=False, artist=..., **extra):
+        n = next(counter)
+        if artist is ...:
+            artist = artist_factory()
+        artwork = Artwork.objects.create(
+            title=extra.pop("title", f"عمل {n}"),
+            slug=extra.pop("slug", f"artwork-{n}"),
+            category=extra.pop("category", category),
+            artist=artist,
+            **extra,
+        )
+        if published:
+            with django_capture_on_commit_callbacks(execute=True):
+                services.add_image(artwork, SimpleUploadedFile("a.jpg", make_image_bytes()), actor=None)
+            services.publish(artwork, actor=None)
+            artwork.refresh_from_db()
+        return artwork
+
+    return _make

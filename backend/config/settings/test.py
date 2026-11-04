@@ -23,7 +23,8 @@ CELERY_TASK_EAGER_PROPAGATES = True
 EVENT_BUS_BACKEND = "apps.core.events.InMemoryEventBus"
 
 STORAGES = {
-    "default": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
+    "default": {"BACKEND": "django.core.files.storage.InMemoryStorage", "OPTIONS": {"base_url": "http://media.test/"}},
+    "private": {"BACKEND": "django.core.files.storage.InMemoryStorage"},
     "staticfiles": {"BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage"},
 }
 
@@ -43,3 +44,5 @@ WHITENOISE_USE_FINDERS = True
 
 OTP_SENDER = "console"
 REST_FRAMEWORK["NUM_PROXIES"] = 0
+
+HEALTH_CHECKS = [c for c in HEALTH_CHECKS if not c.endswith("check_storage")]

@@ -26,3 +26,10 @@ export async function requireSuperAdmin(locale: string, path: string): Promise<C
   if (!user.is_super_admin) notFound();
   return user;
 }
+
+/** Catalogue management: content staff and Super Admin (PRD §8). */
+export async function requireCatalogEditor(locale: string, path: string): Promise<CurrentUser> {
+  const user = await requireStaff(locale, path);
+  if (!user.roles.some((r) => r === "content_staff" || r === "super_admin")) notFound();
+  return user;
+}

@@ -18,8 +18,24 @@ export async function SiteHeader() {
         <Link href="/" className="font-heading text-xl font-semibold text-primary">
           {t("brand.name")}
         </Link>
-        {/* Catalogue links are added with their pages (Phase 3+); no dead links. */}
-        <nav aria-label={t("nav.label")}>
+        <nav aria-label={t("nav.label")} className="flex items-center gap-6 text-sm md:gap-8">
+          <ul className="hidden items-center gap-6 sm:flex">
+            <li>
+              <Link href="/artworks" className="text-text hover:text-secondary">
+                {t("nav.artworks")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/artists" className="text-text hover:text-secondary">
+                {t("nav.artists")}
+              </Link>
+            </li>
+            <li>
+              <Link href="/archive" className="text-text hover:text-secondary">
+                {t("nav.archive")}
+              </Link>
+            </li>
+          </ul>
           <UserMenu />
         </nav>
       </Container>

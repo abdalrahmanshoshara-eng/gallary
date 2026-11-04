@@ -44,6 +44,10 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.accounts",
     "apps.audit",
+    "apps.media",
+    "apps.catalog",
+    "apps.artists",
+    "apps.artworks",
     "apps.realtime",
 ]
 
@@ -203,23 +207,64 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# Object storage (S3-compatible). Only keys are stored in the database (ARCHITECTURE §9).
-AWS_S3_ENDPOINT_URL = env.str("S3_ENDPOINT_URL", default=None)
-AWS_S3_REGION_NAME = env.str("S3_REGION", default="us-east-1")
-AWS_ACCESS_KEY_ID = env.str("S3_ACCESS_KEY_ID", default=None)
-AWS_SECRET_ACCESS_KEY = env.str("S3_SECRET_ACCESS_KEY", default=None)
-AWS_STORAGE_BUCKET_NAME = env.str("S3_PUBLIC_BUCKET", default="damascene-public")
-AWS_S3_CUSTOM_DOMAIN = env.str("S3_PUBLIC_CUSTOM_DOMAIN", default=None)
-AWS_S3_ADDRESSING_STYLE = env.str("S3_ADDRESSING_STYLE", default="path")
-AWS_DEFAULT_ACL = None
-AWS_QUERYSTRING_AUTH = False
-AWS_S3_FILE_OVERWRITE = False
+# Object storage (S3-compatible, ADR-17). Only object keys are stored in the database, so
+# the provider or the CDN can change without data migration (ARCHITECTURE §9).
+#   public  bucket: processed image variants, served anonymously through the media URL/CDN
+#   private bucket: original uploads (may contain EXIF/GPS) and private documents
+S3_ENDPOINT_URL = env.str("S3_ENDPOINT_URL", default=None)
+S3_REGION = env.str("S3_REGION", default="us-east-1")
+S3_ACCESS_KEY_ID = env.str("S3_ACCESS_KEY_ID", default=None)
+S3_SECRET_ACCESS_KEY = env.str("S3_SECRET_ACCESS_KEY", default=None)
+S3_PUBLIC_BUCKET = env.str("S3_PUBLIC_BUCKET", default="damascene-public")
 S3_PRIVATE_BUCKET = env.str("S3_PRIVATE_BUCKET", default="damascene-private")
+# Browser-facing base URL of the public bucket, e.g. http://localhost:8080/media (dev,
+# proxied by nginx) or https://media.example.com (CDN in production).
+MEDIA_PUBLIC_BASE_URL = env.str("MEDIA_PUBLIC_BASE_URL", default="http://localhost:8080/media").rstrip("/")
+
+_media_scheme, _, _media_host = MEDIA_PUBLIC_BASE_URL.partition("://")
+_S3_COMMON = {
+    "endpoint_url": S3_ENDPOINT_URL,
+    "region_name": S3_REGION,
+    "access_key": S3_ACCESS_KEY_ID,
+    "secret_key": S3_SECRET_ACCESS_KEY,
+    "addressing_style": "path",
+    "signature_version": "s3v4",
+    "default_acl": None,
+    "file_overwrite": False,
+}
 
 STORAGES = {
-    "default": {"BACKEND": "storages.backends.s3.S3Storage"},
+    "default": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            **_S3_COMMON,
+            "bucket_name": S3_PUBLIC_BUCKET,
+            "custom_domain": _media_host,
+            "url_protocol": f"{_media_scheme}:",
+            "querystring_auth": False,
+            # Variant keys are content-addressed (new upload = new key), so they never change.
+            "object_parameters": {"CacheControl": "public, max-age=31536000, immutable"},
+        },
+    },
+    "private": {
+        "BACKEND": "storages.backends.s3.S3Storage",
+        "OPTIONS": {
+            **_S3_COMMON,
+            "bucket_name": S3_PRIVATE_BUCKET,
+            "querystring_auth": True,
+            "querystring_expire": 300,
+        },
+    },
     "staticfiles": {"BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage"},
 }
+
+# Image uploads (BR-108).
+IMAGE_UPLOAD_MAX_BYTES = env.int("IMAGE_UPLOAD_MAX_BYTES", default=15 * 1024 * 1024)
+IMAGE_MIN_SIDE_PX = 300
+IMAGE_MAX_PIXELS = 60_000_000  # decompression-bomb guard
+IMAGE_VARIANT_WIDTHS = (400, 1000, 2000)
+IMAGE_VARIANT_QUALITY = 82
+FILE_UPLOAD_MAX_MEMORY_SIZE = 2 * 1024 * 1024
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5 * 1024 * 1024
 
@@ -264,6 +309,12 @@ SPECTACULAR_SETTINGS = {
     "SERVE_INCLUDE_SCHEMA": False,
     "COMPONENT_SPLIT_REQUEST": True,
     "SERVE_PERMISSIONS": ["rest_framework.permissions.IsAdminUser"],
+    "ENUM_NAME_OVERRIDES": {
+        "ArchiveVisibilityEnum": "apps.artworks.models.ArchiveVisibility",
+        "PublicationStatusEnum": "apps.artworks.models.PublicationStatus",
+        "ArtistStatusEnum": "apps.artists.models.ArtistStatus",
+        "ImageStatusEnum": "apps.media.models.ImageStatus",
+    },
 }
 
 # ---------------------------------------------------------------------------
@@ -313,9 +364,11 @@ HEALTH_CHECKS = [
     "apps.core.health.check_broker",
     "apps.core.health.check_scheduler",
     "apps.realtime.health.check_channel_layer",
+    "apps.media.health.check_storage",
 ]
-# Checks that report "degraded" without failing readiness.
-HEALTH_NON_CRITICAL = {"scheduler"}
+# Checks that report "degraded" without failing readiness. Storage only affects uploads
+# and new images (pages keep working from the CDN), so it does not take the API down.
+HEALTH_NON_CRITICAL = {"scheduler", "storage"}
 
 # ---------------------------------------------------------------------------
 # Logging — JSON lines with request_id, sensitive fields redacted

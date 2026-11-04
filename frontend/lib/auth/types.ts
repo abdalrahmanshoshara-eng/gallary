@@ -8,3 +8,7 @@ export type RoleName = (typeof ROLES)[number];
 export function hasRole(user: CurrentUser | null, role: RoleName): boolean {
   return Boolean(user?.roles.includes(role));
 }
+
+export function isCatalogEditor(user: CurrentUser | null): boolean {
+  return hasRole(user, "content_staff") || hasRole(user, "super_admin");
+}

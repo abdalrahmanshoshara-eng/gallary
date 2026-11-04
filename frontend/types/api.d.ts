@@ -4,6 +4,326 @@
  */
 
 export interface paths {
+    "/api/v1/admin/artists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_artists_list"];
+        put?: never;
+        post: operations["admin_artists_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artists/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_artists_get"];
+        put?: never;
+        post?: never;
+        delete: operations["admin_artists_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_artists_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/artists/{public_id}/photo": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_artists_photo_upload"];
+        delete: operations["admin_artists_photo_delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artworks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_artworks_list"];
+        put?: never;
+        post: operations["admin_artworks_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_artworks_get"];
+        put?: never;
+        post?: never;
+        delete: operations["admin_artworks_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_artworks_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_artworks_archive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}/hide": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_artworks_hide"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}/images": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_artworks_images_upload"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}/images/{image_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_artworks_images_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_artworks_images_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}/images/order": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["admin_artworks_images_reorder"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_artworks_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artworks/{public_id}/unarchive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_artworks_unarchive"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_categories_list"];
+        put?: never;
+        post: operations["admin_categories_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/categories/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_categories_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_categories_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/materials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_materials_list"];
+        put?: never;
+        post: operations["admin_materials_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/materials/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_materials_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_materials_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/tags": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_tags_list"];
+        put?: never;
+        post: operations["admin_tags_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/tags/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_tags_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_tags_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/techniques": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_techniques_list"];
+        put?: never;
+        post: operations["admin_techniques_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/catalog/techniques/{id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_techniques_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_techniques_update"];
+        trace?: never;
+    };
     "/api/v1/admin/roles": {
         parameters: {
             query?: never;
@@ -110,6 +430,86 @@ export interface paths {
         get?: never;
         put?: never;
         post: operations["admin_users_revoke_sessions"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/archive": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["archive_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/artists": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["artists_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/artists/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["artists_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/artworks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["artworks_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/artworks/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["artworks_detail"];
+        put?: never;
+        post?: never;
         delete?: never;
         options?: never;
         head?: never;
@@ -245,6 +645,54 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/catalog/categories": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["catalog_categories"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/materials": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["catalog_materials"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/catalog/techniques": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["catalog_techniques"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/health/live": {
         parameters: {
             query?: never;
@@ -287,6 +735,280 @@ export interface components {
             /** @default  */
             reason: string;
         };
+        AdminArtist: {
+            /** Format: uuid */
+            readonly id: string;
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** النبذة */
+            biography?: string;
+            /** المدينة */
+            city?: string;
+            /** سنة الميلاد */
+            birth_year?: number | null;
+            status?: components["schemas"]["ArtistStatusEnum"];
+            /** مميّز */
+            is_featured?: boolean;
+            /** هاتف التواصل */
+            contact_phone?: string;
+            contact_email?: string;
+            /** ملاحظات داخلية */
+            internal_notes?: string;
+            readonly photo: components["schemas"]["AdminImage"] | null;
+            /** @default 0 */
+            readonly artwork_count: number;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        AdminArtistRequest: {
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** النبذة */
+            biography?: string;
+            /** المدينة */
+            city?: string;
+            /** سنة الميلاد */
+            birth_year?: number | null;
+            status?: components["schemas"]["ArtistStatusEnum"];
+            /** مميّز */
+            is_featured?: boolean;
+            /** هاتف التواصل */
+            contact_phone?: string;
+            contact_email?: string;
+            /** ملاحظات داخلية */
+            internal_notes?: string;
+        };
+        /** @description Read + write. Relations are written by id (category, terms) or public id (artists). */
+        AdminArtwork: {
+            /** Format: uuid */
+            readonly id: string;
+            /** العنوان */
+            title: string;
+            slug?: string;
+            /** الوصف */
+            description?: string;
+            category: number;
+            /** Format: uuid */
+            artist?: string | null;
+            /** اسم المُبدع (إن لم يكن الفنان مسجلاً) */
+            creator_name_override?: string;
+            /** Format: uuid */
+            executor?: string | null;
+            /** المالك / صاحب حق البيع */
+            owner_name?: string;
+            readonly owner_user_phone: string | null;
+            /** صاحب الحقوق */
+            rights_holder?: string;
+            materials?: number[];
+            techniques?: number[];
+            tags?: number[];
+            /** Format: decimal */
+            height_cm?: string | null;
+            /** Format: decimal */
+            width_cm?: string | null;
+            /** Format: decimal */
+            depth_cm?: string | null;
+            /** Format: decimal */
+            weight_kg?: string | null;
+            /** سنة الإنشاء */
+            year_created?: number | null;
+            /** ملاحظات داخلية */
+            internal_notes?: string;
+            readonly publication_status: components["schemas"]["PublicationStatusEnum"];
+            /** Format: date-time */
+            readonly published_at: string | null;
+            readonly is_archived: boolean;
+            /** Format: date-time */
+            readonly archived_at: string | null;
+            readonly archive_visibility: components["schemas"]["ArchiveVisibilityEnum"];
+            readonly images: components["schemas"]["AdminArtworkImage"][];
+            readonly publish_problems: string[];
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        AdminArtworkImage: {
+            /** Format: uuid */
+            readonly id: string;
+            /** وصف الصورة */
+            alt_text?: string;
+            sort_order?: number;
+            is_primary?: boolean;
+            readonly image: components["schemas"]["AdminImage"];
+        };
+        AdminArtworkImageRequest: {
+            /** وصف الصورة */
+            alt_text?: string;
+            sort_order?: number;
+            is_primary?: boolean;
+        };
+        AdminArtworkList: {
+            /** Format: uuid */
+            readonly id: string;
+            /** المعرّف */
+            slug: string;
+            /** العنوان */
+            title: string;
+            artist: components["schemas"]["ArtistRef"] | null;
+            creator_name: string;
+            category: components["schemas"]["TermRef"];
+            publication_status?: components["schemas"]["PublicationStatusEnum"];
+            is_archived: boolean;
+            archive_visibility?: components["schemas"]["ArchiveVisibilityEnum"];
+            /** Format: date-time */
+            published_at?: string | null;
+            /** Format: date-time */
+            readonly updated_at: string;
+            readonly primary_image: components["schemas"]["PublicArtworkImage"] | null;
+        };
+        /** @description Read + write. Relations are written by id (category, terms) or public id (artists). */
+        AdminArtworkRequest: {
+            /** العنوان */
+            title: string;
+            slug?: string;
+            /** الوصف */
+            description?: string;
+            category: number;
+            /** Format: uuid */
+            artist?: string | null;
+            /** اسم المُبدع (إن لم يكن الفنان مسجلاً) */
+            creator_name_override?: string;
+            /** Format: uuid */
+            executor?: string | null;
+            /** المالك / صاحب حق البيع */
+            owner_name?: string;
+            /** صاحب الحقوق */
+            rights_holder?: string;
+            materials?: number[];
+            techniques?: number[];
+            tags?: number[];
+            /** Format: decimal */
+            height_cm?: string | null;
+            /** Format: decimal */
+            width_cm?: string | null;
+            /** Format: decimal */
+            depth_cm?: string | null;
+            /** Format: decimal */
+            weight_kg?: string | null;
+            /** سنة الإنشاء */
+            year_created?: number | null;
+            /** ملاحظات داخلية */
+            internal_notes?: string;
+        };
+        AdminCategory: {
+            readonly id: number;
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+            /** @default 0 */
+            readonly usage_count: number;
+            parent?: number | null;
+            /** الوصف */
+            description?: string;
+        };
+        AdminCategoryRequest: {
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+            parent?: number | null;
+            /** الوصف */
+            description?: string;
+        };
+        /** @description Responsive image for the frontend: variants are listed by ascending width (srcset). */
+        AdminImage: {
+            /** Format: uuid */
+            id: string;
+            width: number;
+            height: number;
+            readonly variants: components["schemas"]["ImageVariant"][];
+            status: string;
+            error: string;
+        };
+        /** @description Responsive image for the frontend: variants are listed by ascending width (srcset). */
+        AdminImageRequest: {
+            /** Format: uuid */
+            id: string;
+            width: number;
+            height: number;
+            status: string;
+            error: string;
+        };
+        AdminMaterial: {
+            readonly id: number;
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+            /** @default 0 */
+            readonly usage_count: number;
+        };
+        AdminMaterialRequest: {
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+        };
+        AdminTag: {
+            readonly id: number;
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+            /** @default 0 */
+            readonly usage_count: number;
+        };
+        AdminTagRequest: {
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+        };
+        AdminTechnique: {
+            readonly id: number;
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+            /** @default 0 */
+            readonly usage_count: number;
+        };
+        AdminTechniqueRequest: {
+            /** الاسم */
+            name: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+        };
         AdminUser: {
             /** Format: uuid */
             readonly id: string;
@@ -315,6 +1037,43 @@ export interface components {
              */
             readonly last_login: string | null;
         };
+        ArchiveInputRequest: {
+            /** @default visible */
+            visibility: components["schemas"]["ArchiveVisibilityEnum"];
+            /** @default  */
+            reason: string;
+        };
+        /**
+         * @description * `visible` - ظاهر في الأرشيف
+         *     * `hidden` - مخفي من الأرشيف
+         * @enum {string}
+         */
+        ArchiveVisibilityEnum: "visible" | "hidden";
+        ArtistRef: {
+            name: string;
+            slug: string;
+        };
+        /**
+         * @description * `active` - ظاهر
+         *     * `hidden` - مخفي
+         * @enum {string}
+         */
+        ArtistStatusEnum: "active" | "hidden";
+        CategoryWithParent: {
+            name: string;
+            slug: string;
+            parent: components["schemas"]["TermRef"] | null;
+        };
+        Dimensions: {
+            /** Format: decimal */
+            height_cm: string | null;
+            /** Format: decimal */
+            width_cm: string | null;
+            /** Format: decimal */
+            depth_cm: string | null;
+            /** Format: decimal */
+            weight_kg: string | null;
+        };
         HealthCheck: {
             name: string;
             status: components["schemas"]["HealthCheckStatusEnum"];
@@ -329,6 +1088,25 @@ export interface components {
          * @enum {string}
          */
         HealthCheckStatusEnum: "ok" | "degraded" | "error";
+        HideInputRequest: {
+            /** @default  */
+            reason: string;
+        };
+        ImageOrderRequest: {
+            ids: string[];
+        };
+        ImageUploadRequest: {
+            /** Format: binary */
+            file: string;
+            /** @default  */
+            alt_text: string;
+        };
+        ImageVariant: {
+            width: number;
+            height: number;
+            /** Format: uri */
+            url: string;
+        };
         Liveness: {
             status: string;
             /** Format: date-time */
@@ -367,6 +1145,36 @@ export interface components {
             resend_after_seconds: number;
             channel: string;
         };
+        PaginatedAdminArtistList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AdminArtist"][];
+        };
+        PaginatedAdminArtworkListList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AdminArtworkList"][];
+        };
         PaginatedAdminUserList: {
             /** @example 123 */
             count: number;
@@ -382,6 +1190,132 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["AdminUser"][];
         };
+        PaginatedPublicArtistList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["PublicArtist"][];
+        };
+        PaginatedPublicArtworkCardList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["PublicArtworkCard"][];
+        };
+        PatchedAdminArtistRequest: {
+            /** الاسم */
+            name?: string;
+            slug?: string;
+            /** النبذة */
+            biography?: string;
+            /** المدينة */
+            city?: string;
+            /** سنة الميلاد */
+            birth_year?: number | null;
+            status?: components["schemas"]["ArtistStatusEnum"];
+            /** مميّز */
+            is_featured?: boolean;
+            /** هاتف التواصل */
+            contact_phone?: string;
+            contact_email?: string;
+            /** ملاحظات داخلية */
+            internal_notes?: string;
+        };
+        /** @description Read + write. Relations are written by id (category, terms) or public id (artists). */
+        PatchedAdminArtworkRequest: {
+            /** العنوان */
+            title?: string;
+            slug?: string;
+            /** الوصف */
+            description?: string;
+            category?: number;
+            /** Format: uuid */
+            artist?: string | null;
+            /** اسم المُبدع (إن لم يكن الفنان مسجلاً) */
+            creator_name_override?: string;
+            /** Format: uuid */
+            executor?: string | null;
+            /** المالك / صاحب حق البيع */
+            owner_name?: string;
+            /** صاحب الحقوق */
+            rights_holder?: string;
+            materials?: number[];
+            techniques?: number[];
+            tags?: number[];
+            /** Format: decimal */
+            height_cm?: string | null;
+            /** Format: decimal */
+            width_cm?: string | null;
+            /** Format: decimal */
+            depth_cm?: string | null;
+            /** Format: decimal */
+            weight_kg?: string | null;
+            /** سنة الإنشاء */
+            year_created?: number | null;
+            /** ملاحظات داخلية */
+            internal_notes?: string;
+        };
+        PatchedAdminCategoryRequest: {
+            /** الاسم */
+            name?: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+            parent?: number | null;
+            /** الوصف */
+            description?: string;
+        };
+        PatchedAdminMaterialRequest: {
+            /** الاسم */
+            name?: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+        };
+        PatchedAdminTagRequest: {
+            /** الاسم */
+            name?: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+        };
+        PatchedAdminTechniqueRequest: {
+            /** الاسم */
+            name?: string;
+            slug?: string;
+            /** فعّال */
+            is_active?: boolean;
+            /** الترتيب */
+            sort_order?: number;
+        };
+        PatchedImageUpdateRequest: {
+            alt_text?: string;
+            is_primary?: boolean;
+        };
         PatchedProfileUpdateRequest: {
             display_name?: string;
             email?: string;
@@ -393,6 +1327,101 @@ export interface components {
         PhoneInputRequest: {
             phone: string;
         };
+        PublicArtist: {
+            /** Format: uuid */
+            readonly id: string;
+            /** الاسم */
+            readonly name: string;
+            /** المعرّف */
+            readonly slug: string;
+            /** النبذة */
+            readonly biography: string;
+            /** المدينة */
+            readonly city: string;
+            /** سنة الميلاد */
+            readonly birth_year: number | null;
+            /** مميّز */
+            readonly is_featured: boolean;
+            readonly photo: components["schemas"]["PublicImage"] | null;
+            /** @default 0 */
+            readonly artwork_count: number;
+        };
+        PublicArtworkCard: {
+            /** Format: uuid */
+            readonly id: string;
+            /** المعرّف */
+            readonly slug: string;
+            /** العنوان */
+            readonly title: string;
+            artist: components["schemas"]["ArtistRef"] | null;
+            creator_name: string;
+            category: components["schemas"]["TermRef"];
+            /** سنة الإنشاء */
+            readonly year_created: number | null;
+            readonly primary_image: components["schemas"]["PublicArtworkImage"] | null;
+            is_archived: boolean;
+        };
+        PublicArtworkDetail: {
+            /** Format: uuid */
+            readonly id: string;
+            /** المعرّف */
+            readonly slug: string;
+            /** العنوان */
+            readonly title: string;
+            artist: components["schemas"]["ArtistRef"] | null;
+            creator_name: string;
+            category: components["schemas"]["CategoryWithParent"];
+            /** سنة الإنشاء */
+            readonly year_created: number | null;
+            readonly primary_image: components["schemas"]["PublicArtworkImage"] | null;
+            is_archived: boolean;
+            /** الوصف */
+            readonly description: string;
+            executor: components["schemas"]["ArtistRef"] | null;
+            owner_name: string;
+            rights_holder: string;
+            materials: components["schemas"]["TermRef"][];
+            techniques: components["schemas"]["TermRef"][];
+            tags: components["schemas"]["TermRef"][];
+            readonly dimensions: components["schemas"]["Dimensions"];
+            readonly images: components["schemas"]["PublicArtworkImage"][];
+            /** Format: date-time */
+            published_at: string;
+        };
+        PublicArtworkImage: {
+            /** Format: uuid */
+            id: string;
+            alt_text: string;
+            image: components["schemas"]["PublicImage"];
+        };
+        PublicCategory: {
+            /** الاسم */
+            readonly name: string;
+            /** المعرّف */
+            readonly slug: string;
+            /** الوصف */
+            readonly description: string;
+            readonly children: components["schemas"]["TermRef"][];
+        };
+        /** @description Responsive image for the frontend: variants are listed by ascending width (srcset). */
+        PublicImage: {
+            /** Format: uuid */
+            id: string;
+            width: number;
+            height: number;
+            readonly variants: components["schemas"]["ImageVariant"][];
+        };
+        PublicTerm: {
+            name: string;
+            slug: string;
+        };
+        /**
+         * @description * `draft` - مسودة
+         *     * `published` - منشور
+         *     * `hidden` - مخفي
+         * @enum {string}
+         */
+        PublicationStatusEnum: "draft" | "published" | "hidden";
         Readiness: {
             status: components["schemas"]["ReadinessStatusEnum"];
             /** Format: date-time */
@@ -439,6 +1468,10 @@ export interface components {
             display_name: string;
             roles: components["schemas"]["RolesEnum"][];
         };
+        TermRef: {
+            name: string;
+            slug: string;
+        };
         VerifyInputRequest: {
             phone: string;
             code: string;
@@ -452,6 +1485,822 @@ export interface components {
 }
 export type $defs = Record<string, never>;
 export interface operations {
+    admin_artists_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                search?: string;
+                status?: "active" | "hidden";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAdminArtistList"];
+                };
+            };
+        };
+    };
+    admin_artists_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminArtistRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtist"];
+                };
+            };
+        };
+    };
+    admin_artists_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtist"];
+                };
+            };
+        };
+    };
+    admin_artists_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_artists_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAdminArtistRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtist"];
+                };
+            };
+        };
+    };
+    admin_artists_photo_upload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["ImageUploadRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtist"];
+                };
+            };
+        };
+    };
+    admin_artists_photo_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_artworks_list: {
+        parameters: {
+            query?: {
+                archived?: "false" | "true";
+                /** @description public id */
+                artist?: string;
+                category?: string;
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                search?: string;
+                status?: "draft" | "hidden" | "published";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAdminArtworkListList"];
+                };
+            };
+        };
+    };
+    admin_artworks_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminArtworkRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_artworks_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAdminArtworkRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_archive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["ArchiveInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_hide: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["HideInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_images_upload: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["ImageUploadRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtworkImage"];
+                };
+            };
+        };
+    };
+    admin_artworks_images_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                image_id: string;
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_artworks_images_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                image_id: string;
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedImageUpdateRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_images_reorder: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["ImageOrderRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_publish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_artworks_unarchive: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminArtwork"];
+                };
+            };
+        };
+    };
+    admin_categories_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategory"][];
+                };
+            };
+        };
+    };
+    admin_categories_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminCategoryRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategory"];
+                };
+            };
+        };
+    };
+    admin_categories_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_categories_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAdminCategoryRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminCategory"];
+                };
+            };
+        };
+    };
+    admin_materials_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminMaterial"][];
+                };
+            };
+        };
+    };
+    admin_materials_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminMaterialRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminMaterial"];
+                };
+            };
+        };
+    };
+    admin_materials_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_materials_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAdminMaterialRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminMaterial"];
+                };
+            };
+        };
+    };
+    admin_tags_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminTag"][];
+                };
+            };
+        };
+    };
+    admin_tags_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminTagRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminTag"];
+                };
+            };
+        };
+    };
+    admin_tags_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_tags_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAdminTagRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminTag"];
+                };
+            };
+        };
+    };
+    admin_techniques_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminTechnique"][];
+                };
+            };
+        };
+    };
+    admin_techniques_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminTechniqueRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminTechnique"];
+                };
+            };
+        };
+    };
+    admin_techniques_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_techniques_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                id: number;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAdminTechniqueRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminTechnique"];
+                };
+            };
+        };
+    };
     admin_roles_list: {
         parameters: {
             query?: never;
@@ -657,6 +2506,126 @@ export interface operations {
             };
         };
     };
+    archive_list: {
+        parameters: {
+            query?: {
+                artist?: string;
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPublicArtworkCardList"];
+                };
+            };
+        };
+    };
+    artists_list: {
+        parameters: {
+            query?: {
+                /** @description المميزون فقط */
+                featured?: boolean;
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPublicArtistList"];
+                };
+            };
+        };
+    };
+    artists_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicArtist"];
+                };
+            };
+        };
+    };
+    artworks_list: {
+        parameters: {
+            query?: {
+                artist?: string;
+                category?: string;
+                ordering?: "newest" | "oldest" | "title" | "year";
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedPublicArtworkCardList"];
+                };
+            };
+        };
+    };
+    artworks_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicArtworkDetail"];
+                };
+            };
+        };
+    };
     auth_csrf: {
         parameters: {
             query?: never;
@@ -835,6 +2804,63 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["RevokedCount"];
+                };
+            };
+        };
+    };
+    catalog_categories: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicCategory"][];
+                };
+            };
+        };
+    };
+    catalog_materials: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicTerm"][];
+                };
+            };
+        };
+    };
+    catalog_techniques: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicTerm"][];
                 };
             };
         };

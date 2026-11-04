@@ -166,7 +166,11 @@ Index: `(user_id) WHERE revoked_at IS NULL`.
 
 Indexes: `(publication_status, published_at DESC)`, `artist_id`, `category_id`, GIN trigram على `search_document`.
 
-**ArtworkImage**: `artwork_id` FK CASCADE, `original_key`, `large_key`, `medium_key`, `thumb_key`, `width`, `height`, `alt_text`, `sort_order`, `is_primary`.
+**ArtworkImage**: `public_id`, `artwork_id` FK CASCADE, `asset_id` OneToOne → ImageAsset (PROTECT), `alt_text`, `sort_order`, `is_primary` (unique جزئي: صورة رئيسية واحدة لكل عمل).
+
+**ImageAsset** (مُنفَّذ في Phase 3، `apps.media`، عام لكل الصور): `public_id`, `purpose` (artwork/artist), `original_key` (في الـ bucket الخاص), `original_content_type`, `original_bytes`, `width`, `height`, `variants` JSON `{"400": {key, width, height}, …}` (في الـ bucket العام، WebP), `status` (pending/ready/failed), `error`, `created_by`, `created_at`, `processed_at`. يحل محل أعمدة `large_key/medium_key/thumb_key` المقترحة سابقاً: عدد المقاسات صار إعداداً لا مخططاً.
+
+> **إضافة في Phase 3:** `Artwork.archived_at` (timestamp nullable) — "مؤرشف" = `archived_at IS NOT NULL`، و`archive_visibility` (`visible`/`hidden`) يحدد ظهوره في صفحة الأرشيف. `Artist.photo` OneToOne → ImageAsset (SET_NULL).
 قيد: `UNIQUE (artwork_id) WHERE is_primary` (BR-104).
 
 ### listings

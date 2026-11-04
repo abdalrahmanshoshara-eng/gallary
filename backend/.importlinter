@@ -10,6 +10,11 @@ type = forbidden
 source_modules =
     apps.core
     apps.accounts
+    apps.audit
+    apps.media
+    apps.catalog
+    apps.artists
+    apps.artworks
 forbidden_modules =
     apps.realtime
     channels
@@ -23,3 +28,13 @@ source_modules =
     apps.accounts
 forbidden_modules =
     config.asgi
+
+[importlinter:contract:media-is-generic]
+name = The media app knows nothing about the features that use it
+type = forbidden
+source_modules =
+    apps.media
+forbidden_modules =
+    apps.catalog
+    apps.artists
+    apps.artworks

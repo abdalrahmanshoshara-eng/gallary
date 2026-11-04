@@ -91,6 +91,20 @@ In production, `OTP_SENDER` stays `disabled` until the WhatsApp service is subsc
 
 `make help` lists shortcuts for the same commands (`make up`, `make test`, `make lint`, …). The Makefile is optional; on Windows without `make`, use the `docker compose` commands directly.
 
+## Catalog, storage and images (Phase 3)
+
+Catalog management is open to **content staff** and the **Super Admin** (لوحة الإدارة ← الأعمال الفنية / الفنانون / التصنيفات). Other roles and customers get 403 from the API and 404 pages.
+
+Images go to S3-compatible object storage through django-storages (ADR-17):
+
+- The uploaded original is validated by its content (JPEG/PNG/WebP, size, pixel count, at least 300 px on the short side) and stored in the **private** bucket, untouched.
+- A Celery task on the `media` queue renders WebP variants (400/1000/2000 px wide, never upscaled or cropped, all metadata including GPS stripped) into the **public** bucket. The admin UI polls until the image is ready.
+- Artworks can only be published once their primary image is ready (BR-103). Problems are explained in the admin panel.
+
+In development the `storage` service (SeaweedFS) runs inside Compose. `migrate` creates both buckets (`ensure_buckets`), and nginx serves public variants read-only at `/media/`. The development credentials live in `infra/seaweedfs/s3.dev.json` and are for local use only.
+
+In production, set `S3_ENDPOINT_URL`, the keys and `MEDIA_PUBLIC_BASE_URL` for your provider. To self-host SeaweedFS instead, copy `infra/seaweedfs/s3.dev.json` to `infra/seaweedfs/s3.json` (gitignored), set strong keys, and start Compose with `--profile self-hosted-storage`. See `infra/seaweedfs/README.md`.
+
 ## Run without Docker
 
 You need Python 3.12+, Node 22.12+, PostgreSQL 16 and Redis 7 running locally.
@@ -174,7 +188,10 @@ All configuration comes from environment variables (`backend/config/settings/bas
 | `LOG_LEVEL`, `LOG_FORMAT` | Log format is `json` in production and `console` in dev. |
 | `OTP_SENDER` | `console` (dev) or `disabled` (prod default until WhatsApp is set up). |
 | `NUM_PROXIES` | Trusted reverse proxies in front of Django (default 1 = nginx); used for client IPs in rate limits. |
-| `S3_*` | S3-compatible object storage. Used from Phase 3 (SeaweedFS in dev, ADR-17). |
+| `S3_ENDPOINT_URL`, `S3_ACCESS_KEY_ID`, `S3_SECRET_ACCESS_KEY` | S3-compatible object storage (SeaweedFS in dev, ADR-17). |
+| `S3_PUBLIC_BUCKET`, `S3_PRIVATE_BUCKET` | Public image variants / private originals (defaults `damascene-public`, `damascene-private`). |
+| `MEDIA_PUBLIC_BASE_URL` | Public URL prefix for image variants (dev `http://localhost:8080/media`; prod your CDN or media domain). |
+| `IMAGE_UPLOAD_MAX_BYTES` | Upload size limit (default 15 MB). |
 
 ## Production (Docker Compose on one host)
 

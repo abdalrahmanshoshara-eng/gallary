@@ -18,6 +18,7 @@ export function readCookie(name: string, cookieString: string = typeof document 
 }
 
 export type ApiRequestOptions = Omit<RequestInit, "body"> & {
+  /** JSON body, or FormData for file uploads (sent as multipart, browser sets the boundary). */
   body?: unknown;
   /** Sent as Idempotency-Key for financial/sensitive POSTs (ARCHITECTURE §7.4). */
   idempotencyKey?: string;
@@ -43,7 +44,8 @@ export async function apiFetch<T>(path: string, options: ApiRequestOptions = {})
   const method = (init.method ?? "GET").toUpperCase();
   const headers = new Headers(extraHeaders);
   headers.set("Accept", "application/json");
-  if (body !== undefined) headers.set("Content-Type", "application/json");
+  const isForm = typeof FormData !== "undefined" && body instanceof FormData;
+  if (body !== undefined && !isForm) headers.set("Content-Type", "application/json");
   if (!SAFE_METHODS.has(method)) {
     let csrf: string | null = null;
     try {
@@ -62,7 +64,7 @@ export async function apiFetch<T>(path: string, options: ApiRequestOptions = {})
       method,
       headers,
       credentials: "same-origin",
-      body: body === undefined ? undefined : JSON.stringify(body),
+      body: body === undefined ? undefined : isForm ? (body as FormData) : JSON.stringify(body),
     });
   } catch {
     throw new ApiError(0, "NETWORK_ERROR", NETWORK_ERROR_MESSAGE);

@@ -4,6 +4,806 @@ info:
   version: 1.0.0
   description: REST API لمنصة الفن الدمشقية
 paths:
+  /api/v1/admin/artists:
+    get:
+      operationId: admin_artists_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - active
+          - hidden
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminArtistList'
+          description: ''
+    post:
+      operationId: admin_artists_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminArtistRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtist'
+          description: ''
+  /api/v1/admin/artists/{public_id}:
+    get:
+      operationId: admin_artists_get
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtist'
+          description: ''
+    patch:
+      operationId: admin_artists_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminArtistRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtist'
+          description: ''
+    delete:
+      operationId: admin_artists_delete
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/artists/{public_id}/photo:
+    post:
+      operationId: admin_artists_photo_upload
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageUploadRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtist'
+          description: ''
+    delete:
+      operationId: admin_artists_photo_delete
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/artworks:
+    get:
+      operationId: admin_artworks_list
+      parameters:
+      - in: query
+        name: archived
+        schema:
+          type: string
+          enum:
+          - 'false'
+          - 'true'
+      - in: query
+        name: artist
+        schema:
+          type: string
+        description: public id
+      - in: query
+        name: category
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - draft
+          - hidden
+          - published
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminArtworkListList'
+          description: ''
+    post:
+      operationId: admin_artworks_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminArtworkRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+  /api/v1/admin/artworks/{public_id}:
+    get:
+      operationId: admin_artworks_get
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+    patch:
+      operationId: admin_artworks_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminArtworkRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+    delete:
+      operationId: admin_artworks_delete
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/artworks/{public_id}/archive:
+    post:
+      operationId: admin_artworks_archive
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ArchiveInputRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+  /api/v1/admin/artworks/{public_id}/hide:
+    post:
+      operationId: admin_artworks_hide
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/HideInputRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+  /api/v1/admin/artworks/{public_id}/images:
+    post:
+      operationId: admin_artworks_images_upload
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ImageUploadRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtworkImage'
+          description: ''
+  /api/v1/admin/artworks/{public_id}/images/{image_id}:
+    patch:
+      operationId: admin_artworks_images_update
+      parameters:
+      - in: path
+        name: image_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedImageUpdateRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+    delete:
+      operationId: admin_artworks_images_delete
+      parameters:
+      - in: path
+        name: image_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/artworks/{public_id}/images/order:
+    put:
+      operationId: admin_artworks_images_reorder
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ImageOrderRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+  /api/v1/admin/artworks/{public_id}/publish:
+    post:
+      operationId: admin_artworks_publish
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+  /api/v1/admin/artworks/{public_id}/unarchive:
+    post:
+      operationId: admin_artworks_unarchive
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminArtwork'
+          description: ''
+  /api/v1/admin/catalog/categories:
+    get:
+      operationId: admin_categories_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminCategory'
+          description: ''
+    post:
+      operationId: admin_categories_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCategoryRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategory'
+          description: ''
+  /api/v1/admin/catalog/categories/{id}:
+    patch:
+      operationId: admin_categories_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminCategoryRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategory'
+          description: ''
+    delete:
+      operationId: admin_categories_delete
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/catalog/materials:
+    get:
+      operationId: admin_materials_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminMaterial'
+          description: ''
+    post:
+      operationId: admin_materials_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminMaterialRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMaterial'
+          description: ''
+  /api/v1/admin/catalog/materials/{id}:
+    patch:
+      operationId: admin_materials_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminMaterialRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminMaterial'
+          description: ''
+    delete:
+      operationId: admin_materials_delete
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/catalog/tags:
+    get:
+      operationId: admin_tags_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminTag'
+          description: ''
+    post:
+      operationId: admin_tags_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminTagRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTag'
+          description: ''
+  /api/v1/admin/catalog/tags/{id}:
+    patch:
+      operationId: admin_tags_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminTagRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTag'
+          description: ''
+    delete:
+      operationId: admin_tags_delete
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/catalog/techniques:
+    get:
+      operationId: admin_techniques_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminTechnique'
+          description: ''
+    post:
+      operationId: admin_techniques_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminTechniqueRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTechnique'
+          description: ''
+  /api/v1/admin/catalog/techniques/{id}:
+    patch:
+      operationId: admin_techniques_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminTechniqueRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminTechnique'
+          description: ''
+    delete:
+      operationId: admin_techniques_delete
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: integer
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/admin/roles:
     get:
       operationId: admin_roles_list
@@ -213,6 +1013,158 @@ paths:
               schema:
                 $ref: '#/components/schemas/RevokedCount'
           description: ''
+  /api/v1/archive:
+    get:
+      operationId: archive_list
+      parameters:
+      - in: query
+        name: artist
+        schema:
+          type: string
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      tags:
+      - archive
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicArtworkCardList'
+          description: ''
+  /api/v1/artists:
+    get:
+      operationId: artists_list
+      parameters:
+      - in: query
+        name: featured
+        schema:
+          type: boolean
+        description: المميزون فقط
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      tags:
+      - artists
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicArtistList'
+          description: ''
+  /api/v1/artists/{slug}:
+    get:
+      operationId: artists_detail
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - artists
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicArtist'
+          description: ''
+  /api/v1/artworks:
+    get:
+      operationId: artworks_list
+      parameters:
+      - in: query
+        name: artist
+        schema:
+          type: string
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: ordering
+        schema:
+          type: string
+          enum:
+          - newest
+          - oldest
+          - title
+          - year
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      tags:
+      - artworks
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedPublicArtworkCardList'
+          description: ''
+  /api/v1/artworks/{slug}:
+    get:
+      operationId: artworks_detail
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - artworks
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicArtworkDetail'
+          description: ''
   /api/v1/auth/csrf:
     get:
       operationId: auth_csrf
@@ -354,6 +1306,57 @@ paths:
               schema:
                 $ref: '#/components/schemas/RevokedCount'
           description: ''
+  /api/v1/catalog/categories:
+    get:
+      operationId: catalog_categories
+      tags:
+      - catalog
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicCategory'
+          description: ''
+  /api/v1/catalog/materials:
+    get:
+      operationId: catalog_materials
+      tags:
+      - catalog
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicTerm'
+          description: ''
+  /api/v1/catalog/techniques:
+    get:
+      operationId: catalog_techniques
+      tags:
+      - catalog
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicTerm'
+          description: ''
   /api/v1/health/live:
     get:
       operationId: health_live
@@ -399,6 +1402,742 @@ components:
           type: string
           default: ''
           maxLength: 500
+    AdminArtist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          title: الاسم
+          maxLength: 200
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 220
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        biography:
+          type: string
+          title: النبذة
+        city:
+          type: string
+          title: المدينة
+          maxLength: 100
+        birth_year:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+          title: سنة الميلاد
+        status:
+          $ref: '#/components/schemas/ArtistStatusEnum'
+        is_featured:
+          type: boolean
+          title: مميّز
+        contact_phone:
+          type: string
+          title: هاتف التواصل
+          maxLength: 32
+        contact_email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        internal_notes:
+          type: string
+          title: ملاحظات داخلية
+        photo:
+          allOf:
+          - $ref: '#/components/schemas/AdminImage'
+          readOnly: true
+          nullable: true
+        artwork_count:
+          type: integer
+          readOnly: true
+          default: 0
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - artwork_count
+      - created_at
+      - id
+      - name
+      - photo
+      - updated_at
+    AdminArtistRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 200
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 220
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        biography:
+          type: string
+          title: النبذة
+        city:
+          type: string
+          title: المدينة
+          maxLength: 100
+        birth_year:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+          title: سنة الميلاد
+        status:
+          $ref: '#/components/schemas/ArtistStatusEnum'
+        is_featured:
+          type: boolean
+          title: مميّز
+        contact_phone:
+          type: string
+          title: هاتف التواصل
+          maxLength: 32
+        contact_email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        internal_notes:
+          type: string
+          title: ملاحظات داخلية
+      required:
+      - name
+    AdminArtwork:
+      type: object
+      description: Read + write. Relations are written by id (category, terms) or
+        public id (artists).
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          title: العنوان
+          maxLength: 250
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 270
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        description:
+          type: string
+          title: الوصف
+        category:
+          type: integer
+        artist:
+          type: string
+          format: uuid
+          nullable: true
+        creator_name_override:
+          type: string
+          title: اسم المُبدع (إن لم يكن الفنان مسجلاً)
+          maxLength: 200
+        executor:
+          type: string
+          format: uuid
+          nullable: true
+        owner_name:
+          type: string
+          title: المالك / صاحب حق البيع
+          maxLength: 200
+        owner_user_phone:
+          type: string
+          readOnly: true
+          nullable: true
+        rights_holder:
+          type: string
+          title: صاحب الحقوق
+          maxLength: 200
+        materials:
+          type: array
+          items:
+            type: integer
+        techniques:
+          type: array
+          items:
+            type: integer
+        tags:
+          type: array
+          items:
+            type: integer
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        width_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        depth_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        year_created:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+          title: سنة الإنشاء
+        internal_notes:
+          type: string
+          title: ملاحظات داخلية
+        publication_status:
+          allOf:
+          - $ref: '#/components/schemas/PublicationStatusEnum'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        is_archived:
+          type: boolean
+          readOnly: true
+        archived_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        archive_visibility:
+          allOf:
+          - $ref: '#/components/schemas/ArchiveVisibilityEnum'
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminArtworkImage'
+          readOnly: true
+        publish_problems:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - archive_visibility
+      - archived_at
+      - category
+      - created_at
+      - id
+      - images
+      - is_archived
+      - owner_user_phone
+      - publication_status
+      - publish_problems
+      - published_at
+      - title
+      - updated_at
+    AdminArtworkImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        alt_text:
+          type: string
+          title: وصف الصورة
+          maxLength: 250
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        is_primary:
+          type: boolean
+        image:
+          allOf:
+          - $ref: '#/components/schemas/AdminImage'
+          readOnly: true
+      required:
+      - id
+      - image
+    AdminArtworkImageRequest:
+      type: object
+      properties:
+        alt_text:
+          type: string
+          title: وصف الصورة
+          maxLength: 250
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+        is_primary:
+          type: boolean
+    AdminArtworkList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+          title: المعرّف
+          pattern: ^[-\w]+$
+          maxLength: 270
+        title:
+          type: string
+          title: العنوان
+          maxLength: 250
+        artist:
+          allOf:
+          - $ref: '#/components/schemas/ArtistRef'
+          nullable: true
+        creator_name:
+          type: string
+        category:
+          $ref: '#/components/schemas/TermRef'
+        publication_status:
+          $ref: '#/components/schemas/PublicationStatusEnum'
+        is_archived:
+          type: boolean
+        archive_visibility:
+          $ref: '#/components/schemas/ArchiveVisibilityEnum'
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        primary_image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+      required:
+      - artist
+      - category
+      - creator_name
+      - id
+      - is_archived
+      - primary_image
+      - slug
+      - title
+      - updated_at
+    AdminArtworkRequest:
+      type: object
+      description: Read + write. Relations are written by id (category, terms) or
+        public id (artists).
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: العنوان
+          maxLength: 250
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 270
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        description:
+          type: string
+          title: الوصف
+        category:
+          type: integer
+        artist:
+          type: string
+          format: uuid
+          nullable: true
+        creator_name_override:
+          type: string
+          title: اسم المُبدع (إن لم يكن الفنان مسجلاً)
+          maxLength: 200
+        executor:
+          type: string
+          format: uuid
+          nullable: true
+        owner_name:
+          type: string
+          title: المالك / صاحب حق البيع
+          maxLength: 200
+        rights_holder:
+          type: string
+          title: صاحب الحقوق
+          maxLength: 200
+        materials:
+          type: array
+          items:
+            type: integer
+        techniques:
+          type: array
+          items:
+            type: integer
+        tags:
+          type: array
+          items:
+            type: integer
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        width_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        depth_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        year_created:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+          title: سنة الإنشاء
+        internal_notes:
+          type: string
+          title: ملاحظات داخلية
+      required:
+      - category
+      - title
+    AdminCategory:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+        usage_count:
+          type: integer
+          readOnly: true
+          default: 0
+        parent:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          title: الوصف
+      required:
+      - id
+      - name
+      - usage_count
+    AdminCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+        parent:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          title: الوصف
+      required:
+      - name
+    AdminImage:
+      type: object
+      description: 'Responsive image for the frontend: variants are listed by ascending
+        width (srcset).'
+      properties:
+        id:
+          type: string
+          format: uuid
+        width:
+          type: integer
+        height:
+          type: integer
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageVariant'
+          readOnly: true
+        status:
+          type: string
+        error:
+          type: string
+      required:
+      - error
+      - height
+      - id
+      - status
+      - variants
+      - width
+    AdminImageRequest:
+      type: object
+      description: 'Responsive image for the frontend: variants are listed by ascending
+        width (srcset).'
+      properties:
+        id:
+          type: string
+          format: uuid
+        width:
+          type: integer
+        height:
+          type: integer
+        status:
+          type: string
+          minLength: 1
+        error:
+          type: string
+          minLength: 1
+      required:
+      - error
+      - height
+      - id
+      - status
+      - width
+    AdminMaterial:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+        usage_count:
+          type: integer
+          readOnly: true
+          default: 0
+      required:
+      - id
+      - name
+      - usage_count
+    AdminMaterialRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+      required:
+      - name
+    AdminTag:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+        usage_count:
+          type: integer
+          readOnly: true
+          default: 0
+      required:
+      - id
+      - name
+      - usage_count
+    AdminTagRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+      required:
+      - name
+    AdminTechnique:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        name:
+          type: string
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+        usage_count:
+          type: integer
+          readOnly: true
+          default: 0
+      required:
+      - id
+      - name
+      - usage_count
+    AdminTechniqueRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+      required:
+      - name
     AdminUser:
       type: object
       properties:
@@ -454,6 +2193,86 @@ components:
       - last_login
       - phone
       - roles
+    ArchiveInputRequest:
+      type: object
+      properties:
+        visibility:
+          allOf:
+          - $ref: '#/components/schemas/ArchiveVisibilityEnum'
+          default: visible
+        reason:
+          type: string
+          default: ''
+          maxLength: 500
+    ArchiveVisibilityEnum:
+      enum:
+      - visible
+      - hidden
+      type: string
+      description: |-
+        * `visible` - ظاهر في الأرشيف
+        * `hidden` - مخفي من الأرشيف
+    ArtistRef:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+      required:
+      - name
+      - slug
+    ArtistStatusEnum:
+      enum:
+      - active
+      - hidden
+      type: string
+      description: |-
+        * `active` - ظاهر
+        * `hidden` - مخفي
+    CategoryWithParent:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+        parent:
+          allOf:
+          - $ref: '#/components/schemas/TermRef'
+          nullable: true
+      required:
+      - name
+      - parent
+      - slug
+    Dimensions:
+      type: object
+      properties:
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        width_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        depth_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+      required:
+      - depth_cm
+      - height_cm
+      - weight_kg
+      - width_cm
     HealthCheck:
       type: object
       properties:
@@ -481,6 +2300,49 @@ components:
         * `ok` - ok
         * `degraded` - degraded
         * `error` - error
+    HideInputRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          default: ''
+          maxLength: 500
+    ImageOrderRequest:
+      type: object
+      properties:
+        ids:
+          type: array
+          items:
+            type: string
+            format: uuid
+      required:
+      - ids
+    ImageUploadRequest:
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+        alt_text:
+          type: string
+          default: ''
+          maxLength: 250
+      required:
+      - file
+    ImageVariant:
+      type: object
+      properties:
+        width:
+          type: integer
+        height:
+          type: integer
+        url:
+          type: string
+          format: uri
+      required:
+      - height
+      - url
+      - width
     Liveness:
       type: object
       properties:
@@ -566,6 +2428,52 @@ components:
       - expires_in_seconds
       - phone
       - resend_after_seconds
+    PaginatedAdminArtistList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminArtist'
+    PaginatedAdminArtworkListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminArtworkList'
     PaginatedAdminUserList:
       type: object
       required:
@@ -589,6 +2497,287 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdminUser'
+    PaginatedPublicArtistList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicArtist'
+    PaginatedPublicArtworkCardList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicArtworkCard'
+    PatchedAdminArtistRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 200
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 220
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        biography:
+          type: string
+          title: النبذة
+        city:
+          type: string
+          title: المدينة
+          maxLength: 100
+        birth_year:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+          title: سنة الميلاد
+        status:
+          $ref: '#/components/schemas/ArtistStatusEnum'
+        is_featured:
+          type: boolean
+          title: مميّز
+        contact_phone:
+          type: string
+          title: هاتف التواصل
+          maxLength: 32
+        contact_email:
+          oneOf:
+          - type: string
+            format: email
+          - type: string
+            maxLength: 0
+        internal_notes:
+          type: string
+          title: ملاحظات داخلية
+    PatchedAdminArtworkRequest:
+      type: object
+      description: Read + write. Relations are written by id (category, terms) or
+        public id (artists).
+      properties:
+        title:
+          type: string
+          minLength: 1
+          title: العنوان
+          maxLength: 250
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 270
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        description:
+          type: string
+          title: الوصف
+        category:
+          type: integer
+        artist:
+          type: string
+          format: uuid
+          nullable: true
+        creator_name_override:
+          type: string
+          title: اسم المُبدع (إن لم يكن الفنان مسجلاً)
+          maxLength: 200
+        executor:
+          type: string
+          format: uuid
+          nullable: true
+        owner_name:
+          type: string
+          title: المالك / صاحب حق البيع
+          maxLength: 200
+        rights_holder:
+          type: string
+          title: صاحب الحقوق
+          maxLength: 200
+        materials:
+          type: array
+          items:
+            type: integer
+        techniques:
+          type: array
+          items:
+            type: integer
+        tags:
+          type: array
+          items:
+            type: integer
+        height_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        width_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        depth_cm:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        weight_kg:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,5}(?:\.\d{0,2})?$
+          nullable: true
+        year_created:
+          type: integer
+          maximum: 32767
+          minimum: 0
+          nullable: true
+          title: سنة الإنشاء
+        internal_notes:
+          type: string
+          title: ملاحظات داخلية
+    PatchedAdminCategoryRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+        parent:
+          type: integer
+          nullable: true
+        description:
+          type: string
+          title: الوصف
+    PatchedAdminMaterialRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+    PatchedAdminTagRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+    PatchedAdminTechniqueRequest:
+      type: object
+      properties:
+        name:
+          type: string
+          minLength: 1
+          title: الاسم
+          maxLength: 100
+        slug:
+          oneOf:
+          - type: string
+            maxLength: 120
+            pattern: ^[-\w]+$
+          - type: string
+            maxLength: 0
+        is_active:
+          type: boolean
+          title: فعّال
+        sort_order:
+          type: integer
+          maximum: 2147483647
+          minimum: 0
+          title: الترتيب
+    PatchedImageUpdateRequest:
+      type: object
+      properties:
+        alt_text:
+          type: string
+          maxLength: 250
+        is_primary:
+          type: boolean
     PatchedProfileUpdateRequest:
       type: object
       properties:
@@ -621,6 +2810,278 @@ components:
           maxLength: 32
       required:
       - phone
+    PublicArtist:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          readOnly: true
+          title: الاسم
+        slug:
+          type: string
+          readOnly: true
+          title: المعرّف
+          pattern: ^[-\w]+$
+        biography:
+          type: string
+          readOnly: true
+          title: النبذة
+        city:
+          type: string
+          readOnly: true
+          title: المدينة
+        birth_year:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: سنة الميلاد
+        is_featured:
+          type: boolean
+          readOnly: true
+          title: مميّز
+        photo:
+          allOf:
+          - $ref: '#/components/schemas/PublicImage'
+          nullable: true
+          readOnly: true
+        artwork_count:
+          type: integer
+          readOnly: true
+          default: 0
+      required:
+      - artwork_count
+      - biography
+      - birth_year
+      - city
+      - id
+      - is_featured
+      - name
+      - photo
+      - slug
+    PublicArtworkCard:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          title: المعرّف
+          pattern: ^[-\w]+$
+        title:
+          type: string
+          readOnly: true
+          title: العنوان
+        artist:
+          allOf:
+          - $ref: '#/components/schemas/ArtistRef'
+          nullable: true
+        creator_name:
+          type: string
+        category:
+          $ref: '#/components/schemas/TermRef'
+        year_created:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: سنة الإنشاء
+        primary_image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        is_archived:
+          type: boolean
+      required:
+      - artist
+      - category
+      - creator_name
+      - id
+      - is_archived
+      - primary_image
+      - slug
+      - title
+      - year_created
+    PublicArtworkDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        slug:
+          type: string
+          readOnly: true
+          title: المعرّف
+          pattern: ^[-\w]+$
+        title:
+          type: string
+          readOnly: true
+          title: العنوان
+        artist:
+          allOf:
+          - $ref: '#/components/schemas/ArtistRef'
+          nullable: true
+        creator_name:
+          type: string
+        category:
+          $ref: '#/components/schemas/CategoryWithParent'
+        year_created:
+          type: integer
+          readOnly: true
+          nullable: true
+          title: سنة الإنشاء
+        primary_image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        is_archived:
+          type: boolean
+        description:
+          type: string
+          readOnly: true
+          title: الوصف
+        executor:
+          allOf:
+          - $ref: '#/components/schemas/ArtistRef'
+          nullable: true
+        owner_name:
+          type: string
+        rights_holder:
+          type: string
+        materials:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
+        techniques:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
+        tags:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
+        dimensions:
+          allOf:
+          - $ref: '#/components/schemas/Dimensions'
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicArtworkImage'
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+      required:
+      - artist
+      - category
+      - creator_name
+      - description
+      - dimensions
+      - executor
+      - id
+      - images
+      - is_archived
+      - materials
+      - owner_name
+      - primary_image
+      - published_at
+      - rights_holder
+      - slug
+      - tags
+      - techniques
+      - title
+      - year_created
+    PublicArtworkImage:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        alt_text:
+          type: string
+        image:
+          $ref: '#/components/schemas/PublicImage'
+      required:
+      - alt_text
+      - id
+      - image
+    PublicCategory:
+      type: object
+      properties:
+        name:
+          type: string
+          readOnly: true
+          title: الاسم
+        slug:
+          type: string
+          readOnly: true
+          title: المعرّف
+          pattern: ^[-\w]+$
+        description:
+          type: string
+          readOnly: true
+          title: الوصف
+        children:
+          type: array
+          items:
+            $ref: '#/components/schemas/TermRef'
+          readOnly: true
+      required:
+      - children
+      - description
+      - name
+      - slug
+    PublicImage:
+      type: object
+      description: 'Responsive image for the frontend: variants are listed by ascending
+        width (srcset).'
+      properties:
+        id:
+          type: string
+          format: uuid
+        width:
+          type: integer
+        height:
+          type: integer
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ImageVariant'
+          readOnly: true
+      required:
+      - height
+      - id
+      - variants
+      - width
+    PublicTerm:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+      required:
+      - name
+      - slug
+    PublicationStatusEnum:
+      enum:
+      - draft
+      - published
+      - hidden
+      type: string
+      description: |-
+        * `draft` - مسودة
+        * `published` - منشور
+        * `hidden` - مخفي
     Readiness:
       type: object
       properties:
@@ -729,6 +3190,16 @@ components:
       required:
       - phone
       - roles
+    TermRef:
+      type: object
+      properties:
+        name:
+          type: string
+        slug:
+          type: string
+      required:
+      - name
+      - slug
     VerifyInputRequest:
       type: object
       properties:

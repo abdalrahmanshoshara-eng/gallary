@@ -12,12 +12,24 @@ from drf_spectacular.views import SpectacularAPIView
 
 from apps.accounts.urls import admin_urls as accounts_admin_urls
 from apps.accounts.urls import auth_urls
+from apps.artists import urls as artists_urls
+from apps.artworks import urls as artworks_urls
+from apps.catalog import urls as catalog_urls
 from apps.core.exceptions import api_not_found
+
+admin_v1 = [
+    *accounts_admin_urls,
+    *catalog_urls.admin_urls,
+    *artists_urls.admin_urls,
+    *artworks_urls.admin_urls,
+]
+public_v1 = [*catalog_urls.public_urls, *artists_urls.public_urls, *artworks_urls.public_urls]
 
 api_v1 = [
     path("", include("apps.core.urls")),
     path("auth/", include((auth_urls, "auth"))),
-    path("admin/", include((accounts_admin_urls, "admin"))),
+    path("admin/", include((admin_v1, "admin"))),
+    path("", include((public_v1, "public"))),
     path("schema/", SpectacularAPIView.as_view(api_version="v1"), name="schema"),
 ]
 

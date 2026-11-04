@@ -1,6 +1,6 @@
 # FEATURE_CHECKLIST.md — قائمة تتبع الميزات
 
-> آخر تحديث: 2026-11-03 — **Phase 2 (Authentication) مستقرة**. المرحلة التالية: Phase 3 (Catalog).
+> آخر تحديث: 2026-11-04 — **Phase 3 (Catalog) مستقرة**. المرحلة التالية: Phase 4 (Listings, Search, Favorites) — بعد موافقتك.
 >
 > **الحالات:** `NOT_STARTED` · `IN_PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `TESTED` · `COMPLETE` — و`N/A` عندما لا ينطبق البُعد على الميزة.
 > **COMPLETE** فقط عندما تكون كل الأبعاد المنطبقة `TESTED` والتوثيق مكتملاً.
@@ -48,18 +48,18 @@
 | F-AUTH-08 | مصادقة WebSocket | الجلسة + Origin؛ `/ws/me/` للمسجلين فقط؛ إغلاق 4409 فوراً عند الإبطال؛ لا إعادة اتصال بجلسة ملغاة | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | مختبر في المتصفح عبر nginx |
 | F-ADM-03 | AuditLog | append-only، كل عمليات إدارة الموظفين والمستخدمين | TESTED | N/A | TESTED | TESTED | TESTED | TESTED | IMPLEMENTED | واجهة عرض السجل في Phase 7 |
 
-## Phase 3 — Catalog (F-CAT)
+## Phase 3 — Catalog (F-CAT) — ✅ مستقرة (2026-11-04)
 
 | ID | الميزة | الوصف | BE | FE | DB | Perm | Tests | Docs | Overall | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| F-CAT-01 | التصنيفات والمواد والتقنيات والوسوم | CRUD إداري + Seed أولي، تعطيل لا حذف | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-106/107 |
-| F-CAT-02 | إدارة الفنانين | عام/داخلي، حالة، صورة، مميز | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-CAT-03 | إدارة الأعمال | كل الحقول، نشر/إخفاء/أرشيف | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-101..105 |
-| F-CAT-04 | صور الأعمال | رفع متعدد، ترتيب، رئيسية، نسخ مصغرة، Object Storage | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-104/108 |
-| F-CAT-05 | استعراض الأعمال | شبكة، ترتيب، Pagination | NOT_STARTED | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-CAT-06 | تفاصيل العمل | Gallery، Lightbox، أزرار حسب الحالة | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-CAT-07 | صفحة الفنان | نبذة، أعمال متاحة ومؤرشفة | NOT_STARTED | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-CAT-08 | الأرشيف العام | مباع/منتهٍ/مؤرشف، غير قابل للشراء | NOT_STARTED | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-802/803 |
+| F-CAT-01 | التصنيفات والمواد والتقنيات والوسوم | CRUD إداري + Seed أولي، تعطيل لا حذف، تصنيفات بمستويين، slug عربي | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | `/admin/catalog`؛ المستخدم في أعمال يُعطَّل فقط (409 TERM_IN_USE) |
+| F-CAT-02 | إدارة الفنانين | عام/داخلي، حالة، صورة، مميز | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | لا يُحذف فنان له أعمال (409)؛ الحقول الداخلية لا تظهر في الـ API العام |
+| F-CAT-03 | إدارة الأعمال | كل الحقول، نشر/إخفاء/أرشيف | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | متطلبات النشر تُشرح برموز مترجمة؛ المنشور مرة لا يُحذف أبداً؛ كل انتقال في AuditLog |
+| F-CAT-04 | صور الأعمال | رفع متعدد، ترتيب، رئيسية، نسخ مصغرة، Object Storage | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | الأصل خاص (bucket خاص)؛ WebP 400/1000/2000 بلا EXIF/GPS، بلا تكبير ولا قص؛ حتى 20 صورة؛ آخر صورة لعمل منشور محمية |
+| F-CAT-05 | استعراض الأعمال | شبكة، ترتيب، Pagination | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | فلتر التصنيف يشمل الفرعية؛ عدد استعلامات ثابت |
+| F-CAT-06 | تفاصيل العمل | Gallery، Lightbox، أزرار حسب الحالة | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | IMPLEMENTED | أزرار الشراء/المزاد تُضاف مع Phase 4/5/6؛ حالياً "غير معروض للبيع" أو "مؤرشف" |
+| F-CAT-07 | صفحة الفنان | نبذة، أعمال متاحة ومؤرشفة | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | |
+| F-CAT-08 | الأرشيف العام | مباع/منتهٍ/مؤرشف، غير قابل للشراء | TESTED | TESTED | N/A | N/A | TESTED | TESTED | IMPLEMENTED | الأرشفة اليدوية جاهزة؛ الأرشفة التلقائية عند البيع/انتهاء المزاد تأتي مع Phase 5/6 |
 
 ## Phase 4 — Listings, Search, Favorites
 

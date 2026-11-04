@@ -13,6 +13,11 @@ x-backend: &backend
     DJANGO_SETTINGS_MODULE: config.settings.dev
     # Application traffic goes through PgBouncer (transaction pooling, ADR-15).
     DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@pgbouncer:6432/${POSTGRES_DB}
+    # Development storage defaults (ADR-17); an older .env without these keeps working.
+    S3_ENDPOINT_URL: ${S3_ENDPOINT_URL:-http://storage:8333}
+    S3_ACCESS_KEY_ID: ${S3_ACCESS_KEY_ID:-dev-access-key}
+    S3_SECRET_ACCESS_KEY: ${S3_SECRET_ACCESS_KEY:-dev-secret-key-change-me}
+    MEDIA_PUBLIC_BASE_URL: ${MEDIA_PUBLIC_BASE_URL:-http://localhost:${HTTP_PORT:-8080}/media}
   volumes:
     - ./backend:/app
   depends_on:
@@ -55,6 +60,30 @@ services:
         condition: service_healthy
     restart: unless-stopped
 
+  # S3-compatible object storage (ADR-17). Public bucket served at /media/ by nginx.
+  storage:
+    image: chrislusf/seaweedfs:4.52
+    command:
+      - server
+      - -dir=/data
+      - -ip=storage
+      - -ip.bind=0.0.0.0
+      - -master.volumeSizeLimitMB=1024
+      - -volume.max=20
+      - -s3
+      - -s3.port=8333
+      - -s3.config=/etc/seaweedfs/s3.json
+    volumes:
+      - storage-data:/data
+      - ./infra/seaweedfs/s3.dev.json:/etc/seaweedfs/s3.json:ro
+    healthcheck:
+      test: ["CMD-SHELL", "wget -q -O /dev/null http://127.0.0.1:9333/cluster/status && nc -z 127.0.0.1 8333"]
+      interval: 5s
+      timeout: 3s
+      retries: 30
+      start_period: 10s
+    restart: unless-stopped
+
   redis:
     image: redis:7-alpine
     command: ["redis-server", "--appendonly", "yes"]
@@ -67,15 +96,18 @@ services:
       retries: 20
     restart: unless-stopped
 
-  # Migrations connect to PostgreSQL directly (not through PgBouncer) and run once.
+  # Migrations connect to PostgreSQL directly (not through PgBouncer) and run once;
+  # then the media buckets are created if missing.
   migrate:
     <<: *backend
-    command: ["python", "manage.py", "migrate", "--noinput"]
+    command: ["sh", "-c", "python manage.py migrate --noinput && python manage.py ensure_buckets"]
     environment:
       <<: *backend-env
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     depends_on:
       postgres:
+        condition: service_healthy
+      storage:
         condition: service_healthy
     restart: "no"
 
@@ -137,10 +169,12 @@ services:
       - web
       - api
       - realtime
+      - storage
     restart: unless-stopped
 
 volumes:
   postgres-data:
   redis-data:
+  storage-data:
   frontend-node-modules:
   frontend-next:

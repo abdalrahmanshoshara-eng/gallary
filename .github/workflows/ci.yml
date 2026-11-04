@@ -101,6 +101,7 @@ jobs:
           cp .env.example .env
           docker compose config -q
           REDIS_PASSWORD=x SERVER_NAME=art.example MEDIA_ORIGIN=https://media.art.example TLS_CERT_DIR=/tmp \
+          S3_ENDPOINT_URL=https://s3.example MEDIA_PUBLIC_BASE_URL=https://media.art.example \
             docker compose -f docker-compose.prod.yml config -q
       - name: Build production images
         run: |
