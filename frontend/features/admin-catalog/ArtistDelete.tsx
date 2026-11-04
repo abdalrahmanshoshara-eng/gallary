@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 import { useRouter } from "@/i18n/navigation";
 
 import { deleteArtist } from "./api";
-import { errorText } from "./form-utils";
+import { errorText } from "@/lib/forms";
 
 /** Deletion is refused by the API (409) while the artist has artworks; the message explains why. */
 export function ArtistDelete({ id, name }: { id: string; name: string }) {

@@ -5,7 +5,7 @@ import { pageCount, parsePage } from "@/lib/catalog/types";
 
 import type { AdminCategory } from "./api";
 import { orderCategories } from "./ArtworkForm";
-import { applyServerErrors, emptyToNull } from "./form-utils";
+import { applyServerErrors, emptyToNull } from "@/lib/forms";
 import { moveId } from "./ImagesManager";
 
 vi.mock("@/i18n/navigation", () => ({ useRouter: () => ({}), Link: () => null }));

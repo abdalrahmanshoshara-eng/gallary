@@ -4,8 +4,9 @@ from .api import admin, auth
 
 auth_urls = [
     path("csrf", auth.CsrfView.as_view(), name="csrf"),
-    path("otp/request", auth.OtpRequestView.as_view(), name="otp-request"),
-    path("otp/verify", auth.OtpVerifyView.as_view(), name="otp-verify"),
+    path("login", auth.LoginView.as_view(), name="login"),
+    path("register", auth.RegisterView.as_view(), name="register"),
+    path("password", auth.PasswordChangeView.as_view(), name="password-change"),
     path("logout", auth.LogoutView.as_view(), name="logout"),
     path("me", auth.MeView.as_view(), name="me"),
     path("sessions", auth.SessionListView.as_view(), name="sessions"),
@@ -20,5 +21,6 @@ admin_urls = [
     path("users", admin.UserListView.as_view(), name="users"),
     path("users/<uuid:public_id>/activate", admin.UserActivateView.as_view(), name="user-activate"),
     path("users/<uuid:public_id>/deactivate", admin.UserDeactivateView.as_view(), name="user-deactivate"),
+    path("users/<uuid:public_id>/set-password", admin.UserSetPasswordView.as_view(), name="user-set-password"),
     path("users/<uuid:public_id>/revoke-sessions", admin.UserRevokeSessionsView.as_view(), name="user-revoke-sessions"),
 ]

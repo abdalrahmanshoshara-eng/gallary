@@ -9,7 +9,7 @@ import { Alert } from "@/components/ui/Alert";
 import { Button } from "@/components/ui/Button";
 
 import { artistKey, getArtist, removeArtistPhoto, uploadArtistPhoto, type AdminArtist } from "./api";
-import { errorText } from "./form-utils";
+import { errorText } from "@/lib/forms";
 
 /** Upload / replace / remove an artist portrait. Polls while the worker renders variants. */
 export function ArtistPhoto({ artist: initial }: { artist: AdminArtist }) {

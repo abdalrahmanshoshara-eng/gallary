@@ -1013,6 +1013,29 @@ paths:
               schema:
                 $ref: '#/components/schemas/RevokedCount'
           description: ''
+  /api/v1/admin/users/{public_id}/set-password:
+    post:
+      operationId: admin_user_set_password
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSetPasswordRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/archive:
     get:
       operationId: archive_list
@@ -1177,6 +1200,26 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/auth/login:
+    post:
+      operationId: auth_login
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginInputRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
+          description: ''
   /api/v1/auth/logout:
     post:
       operationId: auth_logout
@@ -1219,45 +1262,47 @@ paths:
               schema:
                 $ref: '#/components/schemas/Me'
           description: ''
-  /api/v1/auth/otp/request:
+  /api/v1/auth/password:
     post:
-      operationId: auth_otp_request
+      operationId: auth_password_change
       tags:
       - auth
       requestBody:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/PhoneInputRequest'
+              $ref: '#/components/schemas/PasswordChangeRequest'
         required: true
       security:
-      - {}
-      responses:
-        '202':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/OtpRequested'
-          description: ''
-  /api/v1/auth/otp/verify:
-    post:
-      operationId: auth_otp_verify
-      tags:
-      - auth
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/VerifyInputRequest'
-        required: true
-      security:
-      - {}
+      - cookieAuth: []
       responses:
         '200':
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/LoginResult'
+                $ref: '#/components/schemas/RevokedCount'
+          description: ''
+  /api/v1/auth/register:
+    post:
+      operationId: auth_register
+      description: Customer self-registration. Staff accounts are created by the Super
+        Admin only.
+      tags:
+      - auth
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterInputRequest'
+        required: true
+      security:
+      - {}
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Me'
           description: ''
   /api/v1/auth/sessions:
     get:
@@ -2022,6 +2067,15 @@ components:
           title: الترتيب
       required:
       - name
+    AdminSetPasswordRequest:
+      type: object
+      properties:
+        password:
+          type: string
+          minLength: 1
+          maxLength: 128
+      required:
+      - password
     AdminTag:
       type: object
       properties:
@@ -2159,6 +2213,15 @@ components:
           readOnly: true
           nullable: true
           title: البريد الإلكتروني
+        governorate:
+          allOf:
+          - $ref: '#/components/schemas/GovernorateEnum'
+          readOnly: true
+          title: المحافظة
+        city:
+          type: string
+          readOnly: true
+          title: المدينة / المنطقة
         is_active:
           type: boolean
           readOnly: true
@@ -2184,9 +2247,11 @@ components:
           nullable: true
           title: آخر دخول
       required:
+      - city
       - date_joined
       - display_name
       - email
+      - governorate
       - id
       - is_active
       - is_staff
@@ -2230,6 +2295,9 @@ components:
       description: |-
         * `active` - ظاهر
         * `hidden` - مخفي
+    BlankEnum:
+      enum:
+      - ''
     CategoryWithParent:
       type: object
       properties:
@@ -2273,6 +2341,40 @@ components:
       - height_cm
       - weight_kg
       - width_cm
+    GovernorateEnum:
+      enum:
+      - damascus
+      - rif_dimashq
+      - aleppo
+      - homs
+      - hama
+      - latakia
+      - tartus
+      - idlib
+      - daraa
+      - suwayda
+      - quneitra
+      - deir_ez_zor
+      - raqqa
+      - hasakah
+      - outside_syria
+      type: string
+      description: |-
+        * `damascus` - دمشق
+        * `rif_dimashq` - ريف دمشق
+        * `aleppo` - حلب
+        * `homs` - حمص
+        * `hama` - حماة
+        * `latakia` - اللاذقية
+        * `tartus` - طرطوس
+        * `idlib` - إدلب
+        * `daraa` - درعا
+        * `suwayda` - السويداء
+        * `quneitra` - القنيطرة
+        * `deir_ez_zor` - دير الزور
+        * `raqqa` - الرقة
+        * `hasakah` - الحسكة
+        * `outside_syria` - خارج سوريا
     HealthCheck:
       type: object
       properties:
@@ -2354,16 +2456,20 @@ components:
       required:
       - server_time
       - status
-    LoginResult:
+    LoginInputRequest:
       type: object
       properties:
-        user:
-          $ref: '#/components/schemas/Me'
-        created:
-          type: boolean
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 32
+        password:
+          type: string
+          minLength: 1
+          maxLength: 128
       required:
-      - created
-      - user
+      - password
+      - phone
     Me:
       type: object
       properties:
@@ -2379,12 +2485,36 @@ components:
           type: string
           readOnly: true
           title: الاسم
+        first_name:
+          type: string
+          readOnly: true
+          title: الاسم الأول
+        last_name:
+          type: string
+          readOnly: true
+          title: الكنية
         email:
           type: string
           format: email
           readOnly: true
           nullable: true
           title: البريد الإلكتروني
+        governorate:
+          allOf:
+          - $ref: '#/components/schemas/GovernorateEnum'
+          readOnly: true
+          title: المحافظة
+        city:
+          type: string
+          readOnly: true
+          title: المدينة / المنطقة
+        address_line:
+          type: string
+          readOnly: true
+          title: العنوان التفصيلي
+        phone_verified:
+          type: boolean
+          readOnly: true
         is_staff:
           type: boolean
           readOnly: true
@@ -2403,31 +2533,20 @@ components:
           readOnly: true
           title: تاريخ الانضمام
       required:
+      - address_line
+      - city
       - date_joined
       - display_name
       - email
+      - first_name
+      - governorate
       - id
       - is_staff
       - is_super_admin
+      - last_name
       - phone
+      - phone_verified
       - roles
-    OtpRequested:
-      type: object
-      properties:
-        phone:
-          type: string
-          description: E.164 form of the submitted number
-        expires_in_seconds:
-          type: integer
-        resend_after_seconds:
-          type: integer
-        channel:
-          type: string
-      required:
-      - channel
-      - expires_in_seconds
-      - phone
-      - resend_after_seconds
     PaginatedAdminArtistList:
       type: object
       required:
@@ -2543,6 +2662,20 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PublicArtworkCard'
+    PasswordChangeRequest:
+      type: object
+      properties:
+        current_password:
+          type: string
+          minLength: 1
+          maxLength: 128
+        new_password:
+          type: string
+          minLength: 1
+          maxLength: 128
+      required:
+      - current_password
+      - new_password
     PatchedAdminArtistRequest:
       type: object
       properties:
@@ -2784,12 +2917,28 @@ components:
         display_name:
           type: string
           maxLength: 120
+        first_name:
+          type: string
+          maxLength: 60
+        last_name:
+          type: string
+          maxLength: 60
         email:
           oneOf:
           - type: string
             format: email
           - type: string
             maxLength: 0
+        governorate:
+          oneOf:
+          - $ref: '#/components/schemas/GovernorateEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        city:
+          type: string
+          maxLength: 100
+        address_line:
+          type: string
+          maxLength: 255
     PatchedStaffUpdateRequest:
       type: object
       properties:
@@ -2801,15 +2950,6 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RolesEnum'
-    PhoneInputRequest:
-      type: object
-      properties:
-        phone:
-          type: string
-          minLength: 1
-          maxLength: 32
-      required:
-      - phone
     PublicArtist:
       type: object
       properties:
@@ -3106,6 +3246,54 @@ components:
       description: |-
         * `ready` - ready
         * `not_ready` - not_ready
+    RegisterInputRequest:
+      type: object
+      properties:
+        phone:
+          type: string
+          minLength: 1
+          maxLength: 32
+        first_name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        last_name:
+          type: string
+          minLength: 1
+          maxLength: 60
+        email:
+          type: string
+          format: email
+          minLength: 1
+          maxLength: 254
+        governorate:
+          $ref: '#/components/schemas/GovernorateEnum'
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        address_line:
+          type: string
+          minLength: 1
+          maxLength: 255
+        password:
+          type: string
+          minLength: 1
+          maxLength: 128
+        password_confirm:
+          type: string
+          minLength: 1
+          maxLength: 128
+      required:
+      - address_line
+      - city
+      - email
+      - first_name
+      - governorate
+      - last_name
+      - password
+      - password_confirm
+      - phone
     RevokedCount:
       type: object
       properties:
@@ -3187,6 +3375,10 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RolesEnum'
+        password:
+          type: string
+          default: ''
+          maxLength: 128
       required:
       - phone
       - roles
@@ -3200,20 +3392,6 @@ components:
       required:
       - name
       - slug
-    VerifyInputRequest:
-      type: object
-      properties:
-        phone:
-          type: string
-          minLength: 1
-          maxLength: 32
-        code:
-          type: string
-          minLength: 1
-          maxLength: 12
-      required:
-      - code
-      - phone
   securitySchemes:
     cookieAuth:
       type: apiKey

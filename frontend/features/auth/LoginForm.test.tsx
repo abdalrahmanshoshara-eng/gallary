@@ -7,10 +7,14 @@ import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import messages from "@/messages/ar.json";
 
 import { LoginForm } from "./LoginForm";
+import { RegisterForm } from "./RegisterForm";
 
 const replace = vi.fn();
 const refresh = vi.fn();
-vi.mock("@/i18n/navigation", () => ({ useRouter: () => ({ replace, refresh }) }));
+vi.mock("@/i18n/navigation", () => ({
+  useRouter: () => ({ replace, refresh }),
+  Link: ({ children }: { children: ReactNode }) => <a>{children}</a>,
+}));
 
 function json(status: number, body: unknown) {
   return new Response(JSON.stringify(body), { status, headers: { "Content-Type": "application/json" } });
@@ -25,8 +29,24 @@ function renderForm(ui: ReactNode) {
   );
 }
 
-const ME = { id: "u1", phone: "+963944567890", display_name: "", email: null, is_staff: false, roles: [], is_super_admin: false, date_joined: "2026-11-03T10:00:00Z" };
+const ME = {
+  id: "u1",
+  phone: "+963944567890",
+  display_name: "زينة المصري",
+  first_name: "زينة",
+  last_name: "المصري",
+  email: "z@example.com",
+  governorate: "damascus",
+  city: "المزة",
+  address_line: "شارع",
+  phone_verified: false,
+  is_staff: false,
+  roles: [],
+  is_super_admin: false,
+  date_joined: "2026-11-03T10:00:00Z",
+};
 let fetchMock: ReturnType<typeof vi.fn>;
+const body = (i: number) => JSON.parse(String((fetchMock.mock.calls[i] as [string, RequestInit])[1].body));
 
 beforeEach(() => {
   vi.spyOn(document, "cookie", "get").mockReturnValue("__Host-csrf=tok");
@@ -41,57 +61,85 @@ afterEach(() => {
 });
 
 describe("LoginForm", () => {
-  it("requests a code, verifies it and redirects to the safe next path", async () => {
-    fetchMock
-      .mockResolvedValueOnce(json(202, { phone: "+963944567890", expires_in_seconds: 300, resend_after_seconds: 60, channel: "whatsapp" }))
-      .mockResolvedValueOnce(json(200, { user: ME, created: true }));
+  it("signs in with phone and password and redirects to the safe next path", async () => {
+    fetchMock.mockResolvedValueOnce(json(200, ME));
     renderForm(<LoginForm next="/account" />);
-
     fireEvent.change(screen.getByLabelText("رقم الهاتف"), { target: { value: "٠٩٤٤ ٥٦٧ ٨٩٠" } });
-    fireEvent.click(screen.getByRole("button", { name: "أرسل الرمز" }));
+    fireEvent.change(screen.getByLabelText("كلمة المرور"), { target: { value: "Jasmine2026" } });
+    fireEvent.click(screen.getByRole("button", { name: "دخول" }));
 
-    const codeInput = await screen.findByLabelText("رمز التحقق");
-    expect(screen.getByText("+963944567890")).toBeInTheDocument();
-    const [, requestInit] = fetchMock.mock.calls[0] as [string, RequestInit];
-    expect(JSON.parse(String(requestInit.body))).toEqual({ phone: "0944 567 890" });
-    expect(new Headers(requestInit.headers).get("X-CSRFToken")).toBe("tok");
-
-    fireEvent.change(codeInput, { target: { value: "482913" } });
-    fireEvent.click(screen.getByRole("button", { name: "تأكيد الدخول" }));
     await waitFor(() => expect(replace).toHaveBeenCalledWith("/account"));
-    const [url, verifyInit] = fetchMock.mock.calls[1] as [string, RequestInit];
-    expect(url).toBe("/api/v1/auth/otp/verify");
-    expect(JSON.parse(String(verifyInit.body))).toEqual({ phone: "+963944567890", code: "482913" });
+    const [url, init] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(url).toContain("/auth/login");
+    expect(body(0)).toEqual({ phone: "0944 567 890", password: "Jasmine2026" });
+    expect(new Headers(init.headers).get("X-CSRFToken")).toBe("tok");
   });
 
-  it("validates locally before calling the API", async () => {
-    renderForm(<LoginForm next="/account" />);
-    fireEvent.change(screen.getByLabelText("رقم الهاتف"), { target: { value: "12" } });
-    fireEvent.click(screen.getByRole("button", { name: "أرسل الرمز" }));
-    expect(await screen.findByText("أدخِل رقم هاتف صحيحاً.")).toBeInTheDocument();
-    expect(fetchMock).not.toHaveBeenCalled();
-  });
-
-  it("shows the server message with remaining attempts", async () => {
-    fetchMock
-      .mockResolvedValueOnce(json(202, { phone: "+963944567890", expires_in_seconds: 300, resend_after_seconds: 60, channel: "whatsapp" }))
-      .mockResolvedValueOnce(json(400, { error: { code: "OTP_INVALID", message: "الرمز غير صحيح.", details: { remaining_attempts: 2 } } }));
-    renderForm(<LoginForm next="/account" />);
+  it("shows the server's generic error and clears the password", async () => {
+    fetchMock.mockResolvedValueOnce(
+      json(400, { error: { code: "INVALID_CREDENTIALS", message: "رقم الهاتف أو كلمة المرور غير صحيحة." } }),
+    );
+    renderForm(<LoginForm next="/" />);
     fireEvent.change(screen.getByLabelText("رقم الهاتف"), { target: { value: "0944567890" } });
-    fireEvent.click(screen.getByRole("button", { name: "أرسل الرمز" }));
-    fireEvent.change(await screen.findByLabelText("رمز التحقق"), { target: { value: "000000" } });
-    fireEvent.click(screen.getByRole("button", { name: "تأكيد الدخول" }));
-    expect(await screen.findByText("الرمز غير صحيح. تبقّت محاولتان.")).toBeInTheDocument();
+    fireEvent.change(screen.getByLabelText("كلمة المرور"), { target: { value: "wrong" } });
+    fireEvent.click(screen.getByRole("button", { name: "دخول" }));
+    expect(await screen.findByText("رقم الهاتف أو كلمة المرور غير صحيحة.")).toBeInTheDocument();
+    expect(screen.getByLabelText("كلمة المرور")).toHaveValue("");
     expect(replace).not.toHaveBeenCalled();
   });
 
-  it("explains when login is unavailable (WhatsApp not configured yet)", async () => {
-    fetchMock.mockResolvedValueOnce(
-      json(503, { error: { code: "OTP_UNAVAILABLE", message: "تسجيل الدخول غير متاح حالياً. يرجى المحاولة لاحقاً.", details: {} } }),
-    );
-    renderForm(<LoginForm next="/account" />);
-    fireEvent.change(screen.getByLabelText("رقم الهاتف"), { target: { value: "0944567890" } });
-    fireEvent.click(screen.getByRole("button", { name: "أرسل الرمز" }));
-    expect(await screen.findByText("تسجيل الدخول غير متاح حالياً. يرجى المحاولة لاحقاً.")).toBeInTheDocument();
+  it("validates before calling the API", async () => {
+    renderForm(<LoginForm next="/" />);
+    fireEvent.click(screen.getByRole("button", { name: "دخول" }));
+    expect(await screen.findByText("أدخِل رقم هاتف صحيحاً.")).toBeInTheDocument();
+    expect(screen.getByText("أدخِل كلمة المرور.")).toBeInTheDocument();
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+});
+
+describe("RegisterForm", () => {
+  const fill = (label: string, value: string) => fireEvent.change(screen.getByLabelText(label), { target: { value } });
+
+  it("enforces required fields and password rules on the client", async () => {
+    renderForm(<RegisterForm next="/" />);
+    fill("كلمة المرور", "abcdefgh");
+    fill("تأكيد كلمة المرور", "different1");
+    fireEvent.click(screen.getByRole("button", { name: "إنشاء الحساب" }));
+    expect(await screen.findByText("كلمة المرور يجب أن تحتوي على حرف ورقم على الأقل.")).toBeInTheDocument();
+    expect(screen.getByText("كلمتا المرور غير متطابقتين.")).toBeInTheDocument();
+    expect(screen.getAllByText("هذا الحقل مطلوب.").length).toBeGreaterThanOrEqual(5);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it("registers, signs in and maps server field errors", async () => {
+    fetchMock
+      .mockResolvedValueOnce(
+        json(400, {
+          error: {
+            code: "VALIDATION_ERROR",
+            message: "تحقق من البيانات.",
+            details: { password: ["كلمة المرور هذه شائعة جداً."] },
+          },
+        }),
+      )
+      .mockResolvedValueOnce(json(201, ME));
+    renderForm(<RegisterForm next="/artworks" />);
+    fill("الاسم الأول", "زينة");
+    fill("الكنية", "المصري");
+    fill("رقم الهاتف", "0944567890");
+    fill("البريد الإلكتروني", "z@example.com");
+    fill("المحافظة", "damascus");
+    fill("المدينة / المنطقة", "المزة");
+    fill("العنوان التفصيلي", "شارع الجلاء");
+    fill("كلمة المرور", "password1");
+    fill("تأكيد كلمة المرور", "password1");
+    fireEvent.click(screen.getByRole("button", { name: "إنشاء الحساب" }));
+    expect(await screen.findByText("كلمة المرور هذه شائعة جداً.")).toBeInTheDocument();
+
+    fill("كلمة المرور", "Jasmine2026");
+    fill("تأكيد كلمة المرور", "Jasmine2026");
+    fireEvent.click(screen.getByRole("button", { name: "إنشاء الحساب" }));
+    await waitFor(() => expect(replace).toHaveBeenCalledWith("/artworks"));
+    expect(body(1)).toMatchObject({ phone: "0944567890", governorate: "damascus", password_confirm: "Jasmine2026" });
   });
 });

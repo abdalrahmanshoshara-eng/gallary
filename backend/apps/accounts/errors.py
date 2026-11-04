@@ -38,3 +38,26 @@ class SelfModificationError(ConflictError):
 class LastSuperAdminError(ConflictError):
     code = "LAST_SUPER_ADMIN"
     message = "يجب أن يبقى مدير عام واحد على الأقل."
+
+
+class InvalidCredentialsError(AppError):
+    code = "INVALID_CREDENTIALS"
+    message = "رقم الهاتف أو كلمة المرور غير صحيحة."
+    http_status = status.HTTP_400_BAD_REQUEST
+
+
+class LoginLockedError(AppError):
+    code = "LOGIN_LOCKED"
+    message = "محاولات دخول خاطئة كثيرة. انتظر 15 دقيقة ثم حاول مجدداً."
+    http_status = status.HTTP_429_TOO_MANY_REQUESTS
+
+
+class PhoneInUseError(ConflictError):
+    code = "PHONE_IN_USE"
+    message = "هذا الرقم مسجّل بالفعل. سجّل الدخول بدلاً من ذلك."
+
+
+class WrongPasswordError(AppError):
+    code = "WRONG_PASSWORD"
+    message = "كلمة المرور الحالية غير صحيحة."
+    http_status = status.HTTP_400_BAD_REQUEST

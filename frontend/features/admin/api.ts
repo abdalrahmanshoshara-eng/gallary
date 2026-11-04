@@ -9,7 +9,7 @@ export const staffKey = ["admin", "staff"] as const;
 export const usersKey = (params: Record<string, string>) => ["admin", "users", params] as const;
 
 export const listStaff = () => apiFetch<AdminUser[]>("/admin/staff");
-export const createStaff = (body: { phone: string; display_name: string; roles: RoleName[] }) =>
+export const createStaff = (body: { phone: string; display_name: string; roles: RoleName[]; password: string }) =>
   apiFetch<AdminUser>("/admin/staff", { method: "POST", body });
 export const updateStaff = (id: string, body: { display_name?: string; roles?: RoleName[] }) =>
   apiFetch<AdminUser>(`/admin/staff/${id}`, { method: "PATCH", body });
@@ -26,3 +26,5 @@ export const setActive = (id: string, active: boolean, reason = "") =>
   });
 export const revokeUserSessions = (id: string) =>
   apiFetch<Schema<"RevokedCount">>(`/admin/users/${id}/revoke-sessions`, { method: "POST" });
+export const setUserPassword = (id: string, password: string) =>
+  apiFetch<void>(`/admin/users/${id}/set-password`, { method: "POST", body: { password } });

@@ -13,12 +13,14 @@ from collections.abc import Iterable
 from django.contrib.auth.models import Group
 from django.db import transaction
 from django.db.models import Q
+from rest_framework import serializers
 
 from apps.audit import services as audit
 from apps.core.errors import ConflictError
 
 from ..errors import LastSuperAdminError, SelfModificationError
 from ..models import SessionRevokeReason, User
+from ..passwords import check_password_policy
 from ..phone import normalize_phone
 from ..roles import ROLE_NAMES, Role, user_roles
 from .sessions import revoke_user_sessions
@@ -34,8 +36,17 @@ class AlreadyStaffError(ConflictError):
     message = "هذا الرقم مرتبط بحساب موظف بالفعل."
 
 
-def update_profile(user: User, *, display_name: str | None = None, email: str | None = None) -> User:
+PROFILE_FIELDS = ("first_name", "last_name", "governorate", "city", "address_line")
+
+
+def update_profile(user: User, *, display_name: str | None = None, email: str | None = None, **extra: str) -> User:
     fields = []
+    for name in PROFILE_FIELDS:
+        if name in extra and extra[name] is not None:
+            setattr(user, name, extra[name].strip())
+            fields.append(name)
+    if {"first_name", "last_name"} & set(fields) and display_name is None:
+        display_name = f"{user.first_name} {user.last_name}"
     if display_name is not None:
         user.display_name = display_name.strip()
         fields.append("display_name")
@@ -83,18 +94,37 @@ def _guard_super_admin_removal(target: User, new_roles: list[str] | None, deacti
 
 
 @transaction.atomic
-def create_staff(*, actor: User, raw_phone: str, display_name: str, roles: Iterable[str], ip: str | None) -> User:
+def create_staff(
+    *,
+    actor: User,
+    raw_phone: str,
+    display_name: str,
+    roles: Iterable[str],
+    ip: str | None,
+    password: str | None = None,
+) -> User:
+    """New staff get the password the Super Admin chose; a promoted customer keeps theirs
+    unless a new one is given."""
     phone = normalize_phone(raw_phone)
     roles = _validate_roles(roles)
     user = User.objects.select_for_update().filter(phone=phone).first()
     if user is not None and user.is_staff:
         raise AlreadyStaffError()
     promoted = user is not None
+    if password:
+        check_password_policy(password, user=user or User(phone=phone, display_name=display_name))
     if user is None:
         if not display_name.strip():
             raise ConflictError("اسم الموظف مطلوب.", code="NAME_REQUIRED", http_status=400)
-        user = User.objects.create_user(phone=phone, display_name=display_name.strip(), is_staff=True)
+        if not password:
+            raise serializers.ValidationError({"password": ["كلمة المرور مطلوبة للموظف الجديد."]})
+        user = User.objects.create_user(
+            phone=phone, password=password, display_name=display_name.strip(), is_staff=True
+        )
     else:
+        if password:
+            user.set_password(password)
+            user.save(update_fields=["password"])
         if user.pk == actor.pk:
             raise SelfModificationError()
         user.is_staff = True
@@ -184,23 +214,3 @@ def admin_revoke_sessions(*, actor: User, target: User, ip: str | None) -> int:
     count = revoke_user_sessions(target, SessionRevokeReason.ADMIN)
     audit.record(actor=actor, action="user.sessions_revoked", entity=target, changes={"count": count}, ip=ip)
     return count
-
-
-@transaction.atomic
-def bootstrap_super_admin(*, raw_phone: str, display_name: str) -> tuple[User, bool]:
-    """Create or promote the first Super Admin (management command; no actor)."""
-    phone = normalize_phone(raw_phone)
-    user = User.objects.select_for_update().filter(phone=phone).first()
-    created = user is None
-    if created:
-        user = User.objects.create_user(phone=phone, display_name=display_name, is_staff=True)
-    else:
-        user.is_staff = True
-        user.is_active = True
-        if display_name:
-            user.display_name = display_name
-        user.save(update_fields=["is_staff", "is_active", "display_name"])
-        revoke_user_sessions(user, SessionRevokeReason.ROLE_CHANGED)
-    user.groups.add(Group.objects.get(name=Role.SUPER_ADMIN))
-    audit.record(actor=None, action="staff.bootstrap_super_admin", entity=user, changes={"created": created})
-    return user, created

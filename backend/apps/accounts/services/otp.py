@@ -11,8 +11,8 @@ from django.conf import settings
 from django.db import connection, transaction
 from django.utils import timezone
 
-from ..errors import AccountDisabledError, OtpExpiredError, OtpInvalidError, OtpRateLimitedError, OtpUnavailableError
-from ..models import OtpChallenge, User
+from ..errors import OtpExpiredError, OtpInvalidError, OtpRateLimitedError, OtpUnavailableError
+from ..models import OtpChallenge
 from ..otp.crypto import code_matches, generate_code, hash_code, seal
 from ..otp.senders import get_otp_sender
 from ..phone import normalize_phone
@@ -93,12 +93,13 @@ def request_otp(*, raw_phone: str, ip: str | None) -> OtpRequested:
 _CODE_RE = re.compile(r"^\d+$")
 
 
-def verify_otp(*, raw_phone: str, code: str) -> tuple[User, bool]:
+def verify_otp(*, raw_phone: str, code: str) -> str:
     """
-    Check a code and return (user, created). New phones become customer accounts.
+    Check a code and return the normalised phone it was sent to.
 
-    Wrong attempts are persisted before the error is raised, so the attempt limit holds
-    across requests (BR-903).
+    Not used for login any more (phone + password since Phase 3b); kept for confirming phone
+    numbers once the WhatsApp service is subscribed (BR-901c). Wrong attempts are persisted
+    before the error is raised, so the attempt limit holds across requests (BR-903).
     """
     phone = normalize_phone(raw_phone)
     code = (code or "").strip().translate(str.maketrans("٠١٢٣٤٥٦٧٨٩", "0123456789"))
@@ -126,12 +127,6 @@ def verify_otp(*, raw_phone: str, code: str) -> tuple[User, bool]:
                 outcome = "invalid"
             challenge.save(update_fields=["attempts", "consumed_at", "invalidated_at"])
 
-        if outcome == "ok":
-            user = User.objects.filter(phone=phone).first()
-            created = user is None
-            if created:
-                user = User.objects.create_user(phone=phone)
-
     if outcome == "expired":
         raise OtpExpiredError()
     if outcome == "invalid":
@@ -139,6 +134,4 @@ def verify_otp(*, raw_phone: str, code: str) -> tuple[User, bool]:
         if remaining == 0:
             raise OtpExpiredError("أُدخل الرمز خطأً عدة مرات. اطلب رمزاً جديداً.", details={"remaining_attempts": 0})
         raise OtpInvalidError(details={"remaining_attempts": remaining})
-    if not user.is_active:
-        raise AccountDisabledError()
-    return user, created
+    return phone

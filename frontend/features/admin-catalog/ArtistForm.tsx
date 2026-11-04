@@ -12,7 +12,7 @@ import { Field } from "@/components/ui/Field";
 import { useRouter } from "@/i18n/navigation";
 
 import { artistKey, createArtist, updateArtist, type AdminArtist } from "./api";
-import { applyServerErrors } from "./form-utils";
+import { applyServerErrors } from "@/lib/forms";
 
 const schema = z.object({
   name: z.string().trim().min(1, "required").max(200),

@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Link, useRouter } from "@/i18n/navigation";
 
 import { artworkAction, artworkKey, deleteArtwork, type AdminArtwork } from "./api";
-import { errorText } from "./form-utils";
+import { errorText } from "@/lib/forms";
 
 type Problem = "primary_image_missing" | "primary_image_not_ready" | "category_inactive" | "artist_hidden" | "creator_missing" | "title_missing";
 type Status = "draft" | "published" | "hidden";

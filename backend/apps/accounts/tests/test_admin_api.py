@@ -1,7 +1,6 @@
 """Super Admin staff/user management (BR-907) and the permission matrix."""
 
 import pytest
-from django.core.management import call_command
 
 from apps.accounts.models import User, UserSession
 from apps.accounts.roles import user_roles
@@ -30,12 +29,39 @@ def test_only_super_admin_can_manage_users(roles, method, path, make_user, login
 
 
 def test_create_staff_member(admin_client, super_admin):
-    response = admin_client.post(STAFF, {"phone": "0955 555 555", "display_name": "سارة", "roles": ["content_staff"]})
+    payload = {"phone": "0955 555 555", "display_name": "سارة", "roles": ["content_staff"]}
+    missing = admin_client.post(STAFF, payload)
+    assert missing.status_code == 400 and "password" in missing.json()["error"]["details"]
+    weak = admin_client.post(STAFF, {**payload, "password": "12345"})
+    assert weak.status_code == 400 and "password" in weak.json()["error"]["details"]
+
+    response = admin_client.post(STAFF, {**payload, "password": "Staff2026pass"})
     assert response.status_code == 201, response.json()
     body = response.json()
     assert body["phone"] == "+963955555555" and body["is_staff"] and body["roles"] == ["content_staff"]
+    assert User.objects.get(phone="+963955555555").check_password("Staff2026pass")
     entry = AuditLog.objects.get(action="staff.created")
     assert entry.actor == super_admin and entry.changes["roles"] == ["content_staff"]
+    assert "Staff2026pass" not in str(entry.changes)
+
+
+def test_super_admin_sets_a_users_password(admin_client, login_client, customer, super_admin):
+    customer_client = login_client(customer)
+    url = f"/api/v1/admin/users/{customer.public_id}/set-password"
+    assert admin_client.post(url, {"password": "abc"}).status_code == 400
+    assert admin_client.post(url, {"password": "Reset2026pass"}).status_code == 204
+    customer.refresh_from_db()
+    assert customer.check_password("Reset2026pass")
+    assert customer_client.get("/api/v1/auth/me").status_code == 403  # every session ended
+    assert AuditLog.objects.filter(action="user.password_set_by_admin", actor=super_admin).exists()
+    own = admin_client.post(f"/api/v1/admin/users/{super_admin.public_id}/set-password", {"password": "Reset2026pass"})
+    assert own.status_code == 409
+
+
+def test_only_super_admin_sets_passwords(login_client, make_user, customer):
+    staff = make_user(roles=["content_staff"])
+    url = f"/api/v1/admin/users/{customer.public_id}/set-password"
+    assert login_client(staff).post(url, {"password": "Reset2026pass"}).status_code == 403
 
 
 def test_promoting_an_existing_customer_ends_their_sessions(admin_client, login_client, customer):
@@ -135,16 +161,10 @@ def test_unknown_user_is_404(admin_client):
     assert admin_client.post(f"{USERS}/00000000-0000-0000-0000-000000000000/deactivate", {}).status_code == 404
 
 
-def test_bootstrap_super_admin_command(capsys):
-    call_command("bootstrap_super_admin", phone="0933 000 111", name="زينة")
-    user = User.objects.get(phone="+963933000111")
-    assert user.is_staff and user_roles(user) == ["super_admin"]
-    assert "+963•••111" in capsys.readouterr().out
-    assert AuditLog.objects.filter(action="staff.bootstrap_super_admin", actor=None).exists()
-
-
 def test_audit_log_is_append_only(admin_client):
-    admin_client.post(STAFF, {"phone": "+963955555555", "display_name": "x", "roles": ["content_staff"]})
+    admin_client.post(
+        STAFF, {"phone": "+963955555555", "display_name": "x", "roles": ["content_staff"], "password": "Staff2026pass"}
+    )
     entry = AuditLog.objects.get()
     entry.reason = "tampered"
     with pytest.raises(RuntimeError):

@@ -73,21 +73,18 @@ docker compose down                                 # stop (data volumes are kep
 
 The scheduler check reports `degraded` until Celery beat completes its first one-minute heartbeat. That is expected right after startup.
 
-### First login (Super Admin)
+### Sign-in and accounts
 
-```bash
-docker compose exec api python manage.py bootstrap_super_admin --phone 09XXXXXXXX --name "الاسم"
-```
+Everyone signs in with **phone number + password** at http://localhost:8080/login.
 
-Open http://localhost:8080/login and enter that phone number. In development the 6-digit code is printed in the worker output:
+- **Super Admin**: created automatically by the `migrate` service (`ensure_super_admin`) from `DEFAULT_SUPER_ADMIN_PHONE` / `DEFAULT_SUPER_ADMIN_PASSWORD`. Development defaults: `0943959774` / `admin123456`. Change the password from **حسابي** after the first sign-in; restarts never reset it. **Production refuses the development password**, so set a strong one in the server's `.env`.
+- **Staff**: created by the Super Admin from **لوحة الإدارة ← الموظفون** with an initial password. There is no MFA (BR-907).
+- **Customers**: register themselves at `/register` (name, phone, email, governorate, city, address, password).
+- **Password rules**: at least 8 characters, a letter and a digit, not all digits, not a common password, and not too similar to the user's name, phone or email.
+- **Forgotten password**: the Super Admin sets a new one from **المستخدمون** or **الموظفون**, which also ends all of that user's sessions. Self-service reset needs WhatsApp (below).
+- Failed sign-ins are locked for 15 minutes after 5 attempts per phone (30 per IP).
 
-```bash
-docker compose logs worker | grep "DEV OTP"
-```
-
-After signing in, the Super Admin creates every other staff account from **لوحة الإدارة ← الموظفون**. Staff sign in with their own phone number. There is no MFA (BR-907).
-
-In production, `OTP_SENDER` stays `disabled` until the WhatsApp service is subscribed. Until then, login requests return `503 OTP_UNAVAILABLE` with a clear message. To add the provider, implement an `OtpSender` subclass in `backend/apps/accounts/otp/senders.py`, register it in `OTP_SENDERS`, and select it with `OTP_SENDER`.
+Phone numbers are **not verified yet**. The WhatsApp code service (`OTP_SENDER`, `services/otp.verify_otp`) is kept for confirming numbers once the subscription is active (BR-901c). Until then `phone_verified` stays `false`.
 
 `make help` lists shortcuts for the same commands (`make up`, `make test`, `make lint`, …). The Makefile is optional; on Windows without `make`, use the `docker compose` commands directly.
 

@@ -159,10 +159,22 @@ X_FRAME_OPTIONS = "DENY"
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
-    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 12}},
+    {"NAME": "django.contrib.auth.password_validation.MinimumLengthValidator", "OPTIONS": {"min_length": 8}},
     {"NAME": "django.contrib.auth.password_validation.CommonPasswordValidator"},
     {"NAME": "django.contrib.auth.password_validation.NumericPasswordValidator"},
+    {"NAME": "apps.accounts.passwords.LetterAndDigitValidator"},
 ]
+
+# Password login lockout (per phone and per client IP, rolling window).
+LOGIN_MAX_FAILURES_PER_PHONE = env.int("LOGIN_MAX_FAILURES_PER_PHONE", default=5)
+LOGIN_MAX_FAILURES_PER_IP = env.int("LOGIN_MAX_FAILURES_PER_IP", default=30)
+LOGIN_LOCKOUT_SECONDS = env.int("LOGIN_LOCKOUT_SECONDS", default=15 * 60)
+
+# Default Super Admin, created by `ensure_super_admin` (run by the migrate service) when the
+# phone has no account yet. Production refuses the development password (prod.py).
+DEFAULT_SUPER_ADMIN_PHONE = env.str("DEFAULT_SUPER_ADMIN_PHONE", default="0943959774")
+DEFAULT_SUPER_ADMIN_PASSWORD = env.str("DEFAULT_SUPER_ADMIN_PASSWORD", default="admin123456")
+DEFAULT_SUPER_ADMIN_NAME = env.str("DEFAULT_SUPER_ADMIN_NAME", default="المدير العام")
 
 # ---------------------------------------------------------------------------
 # Authentication — phone + OTP (BR-901…910). No MFA in the MVP (BR-907).
@@ -289,6 +301,8 @@ REST_FRAMEWORK = {
         "anon": env.str("THROTTLE_ANON", default="120/min"),
         "user": env.str("THROTTLE_USER", default="600/min"),
         # Burst protection; the durable OTP limits (BR-904) are enforced in the database.
+        "login": env.str("THROTTLE_LOGIN", default="20/min"),
+        "register": env.str("THROTTLE_REGISTER", default="10/hour"),
         "otp_request": env.str("THROTTLE_OTP_REQUEST", default="10/min"),
         "otp_verify": env.str("THROTTLE_OTP_VERIFY", default="30/min"),
     },

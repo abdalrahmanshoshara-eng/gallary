@@ -7,7 +7,6 @@ from django.utils import timezone
 from freezegun import freeze_time
 
 from apps.accounts.errors import (
-    AccountDisabledError,
     OtpExpiredError,
     OtpInvalidError,
     OtpRateLimitedError,
@@ -110,24 +109,15 @@ def test_new_code_invalidates_previous(monkeypatch, django_capture_on_commit_cal
         issue(django_capture_on_commit_callbacks)
         with pytest.raises(OtpInvalidError):
             verify_otp(raw_phone=PHONE, code="111111")
-        user, _ = verify_otp(raw_phone=PHONE, code="222222")
-    assert user.phone == PHONE
+        assert verify_otp(raw_phone=PHONE, code="222222") == PHONE
 
 
 # --- verification -------------------------------------------------------------------------
-def test_first_login_creates_customer(fixed_code, django_capture_on_commit_callbacks):
+def test_valid_code_confirms_the_phone_without_creating_accounts(fixed_code, django_capture_on_commit_callbacks):
     issue(django_capture_on_commit_callbacks)
-    user, created = verify_otp(raw_phone="+963 944 567 890", code=fixed_code)
-    assert created and not user.is_staff and not user.has_usable_password()
+    assert verify_otp(raw_phone="+963 944 567 890", code=fixed_code) == PHONE
     assert OtpChallenge.objects.get().consumed_at is not None
-
-
-def test_existing_user_is_returned(fixed_code, django_capture_on_commit_callbacks, make_user):
-    existing = make_user(phone=PHONE)
-    issue(django_capture_on_commit_callbacks)
-    user, created = verify_otp(raw_phone=PHONE, code=fixed_code)
-    assert user == existing and not created
-    assert User.objects.count() == 1
+    assert not User.objects.exists()
 
 
 def test_code_cannot_be_reused(fixed_code, django_capture_on_commit_callbacks):
@@ -168,12 +158,4 @@ def test_malformed_code_does_not_consume_an_attempt(bad, fixed_code, django_capt
 
 def test_arabic_indic_digits_are_accepted(fixed_code, django_capture_on_commit_callbacks):
     issue(django_capture_on_commit_callbacks)
-    user, _ = verify_otp(raw_phone=PHONE, code="٤٨٢٩١٣")
-    assert user.phone == PHONE
-
-
-def test_deactivated_account_cannot_log_in(fixed_code, django_capture_on_commit_callbacks, make_user):
-    make_user(phone=PHONE, active=False)
-    issue(django_capture_on_commit_callbacks)
-    with pytest.raises(AccountDisabledError):
-        verify_otp(raw_phone=PHONE, code=fixed_code)
+    assert verify_otp(raw_phone=PHONE, code="٤٨٢٩١٣") == PHONE

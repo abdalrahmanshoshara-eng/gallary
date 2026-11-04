@@ -12,6 +12,7 @@ import type { RoleName } from "@/lib/auth/types";
 
 import { createStaff, listStaff, revokeStaff, staffKey, updateStaff, type AdminUser } from "./api";
 import { RoleCheckboxes } from "./RoleCheckboxes";
+import { SetPasswordControl } from "./SetPasswordControl";
 
 const errorText = (error: unknown) => (error instanceof ApiError ? error.message : null);
 
@@ -21,7 +22,14 @@ function AddStaffForm() {
   const [phone, setPhone] = useState("");
   const [name, setName] = useState("");
   const [roles, setRoles] = useState<RoleName[]>([]);
-  const [errors, setErrors] = useState<{ phone?: string; name?: string; roles?: string; form?: string }>({});
+  const [password, setPassword] = useState("");
+  const [errors, setErrors] = useState<{
+    phone?: string;
+    name?: string;
+    roles?: string;
+    password?: string;
+    form?: string;
+  }>({});
 
   const mutation = useMutation({
     mutationFn: createStaff,
@@ -29,11 +37,14 @@ function AddStaffForm() {
       setPhone("");
       setName("");
       setRoles([]);
+      setPassword("");
       void queryClient.invalidateQueries({ queryKey: staffKey });
     },
     onError: (error) => {
       if (error instanceof ApiError && error.code === "INVALID_PHONE") setErrors({ phone: error.message });
       else if (error instanceof ApiError && error.code === "NAME_REQUIRED") setErrors({ name: error.message });
+      else if (error instanceof ApiError && error.fieldErrors.password)
+        setErrors({ password: error.fieldErrors.password.join(" ") });
       else setErrors({ form: errorText(error) ?? undefined });
     },
   });
@@ -45,7 +56,7 @@ function AddStaffForm() {
     if (!name.trim()) next.name = t("nameRequired");
     if (roles.length === 0) next.roles = t("rolesRequired");
     setErrors(next);
-    if (Object.keys(next).length === 0) mutation.mutate({ phone, display_name: name, roles });
+    if (Object.keys(next).length === 0) mutation.mutate({ phone, display_name: name, roles, password });
   }
 
   return (
@@ -57,6 +68,16 @@ function AddStaffForm() {
         <Field label={t("phone")} type="tel" dir="ltr" value={phone} error={errors.phone} onChange={(e) => setPhone(e.target.value)} />
         <Field label={t("name")} value={name} error={errors.name} onChange={(e) => setName(e.target.value)} />
       </div>
+      <Field
+        label={t("password")}
+        hint={t("passwordHint")}
+        type="password"
+        dir="ltr"
+        autoComplete="new-password"
+        value={password}
+        error={errors.password}
+        onChange={(e) => setPassword(e.target.value)}
+      />
       <RoleCheckboxes legend={t("roles")} value={roles} onChange={setRoles} error={errors.roles} />
       <div>
         <Button type="submit" loading={mutation.isPending}>
@@ -104,6 +125,7 @@ function StaffRow({ member, currentUserId }: { member: AdminUser; currentUserId:
           </div>
         ) : null}
       </div>
+      {!isSelf ? <SetPasswordControl userId={member.id} /> : null}
       {save.isError || revoke.isError ? <Alert tone="error">{errorText(save.error ?? revoke.error)}</Alert> : null}
       {editing ? (
         <div className="flex flex-col gap-4">

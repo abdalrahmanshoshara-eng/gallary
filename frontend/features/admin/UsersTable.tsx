@@ -11,6 +11,7 @@ import type { RoleName } from "@/lib/auth/types";
 import { formatDateTime } from "@/lib/formatters/datetime";
 
 import { listUsers, revokeUserSessions, setActive, usersKey, type AdminUser } from "./api";
+import { SetPasswordControl } from "./SetPasswordControl";
 
 const PAGE_SIZE = 25;
 const selectClass = "min-h-11 rounded-[var(--radius-control)] border border-border bg-white px-3";
@@ -72,6 +73,7 @@ function UserRow({ user, currentUserId, onChanged }: { user: AdminUser; currentU
                 {t("revokeSessions")}
               </Button>
             </div>
+            <SetPasswordControl userId={user.id} />
             {askReason ? (
               <div className="flex flex-wrap items-end gap-2">
                 <label className="flex flex-col gap-1 text-xs">

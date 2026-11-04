@@ -14,12 +14,15 @@ from rest_framework.views import APIView
 from apps.core.http import client_ip
 
 from .. import selectors
+from ..errors import SelfModificationError
 from ..models import User
 from ..permissions import IsSuperAdmin
 from ..roles import Role
+from ..services import auth as auth_service
 from ..services import users as user_service
 from .serializers import (
     ActivationSerializer,
+    AdminSetPasswordSerializer,
     AdminUserSerializer,
     RevokedCountSerializer,
     RoleSerializer,
@@ -60,6 +63,7 @@ class StaffListCreateView(ListAPIView):
             display_name=data.validated_data["display_name"],
             roles=data.validated_data["roles"],
             ip=client_ip(request),
+            password=data.validated_data["password"] or None,
         )
         return Response(AdminUserSerializer(user).data, status=status.HTTP_201_CREATED)
 
@@ -157,3 +161,18 @@ class UserRevokeSessionsView(_UserActionView):
             actor=request.user, target=self.target(public_id), ip=client_ip(request)
         )
         return Response({"revoked": count})
+
+
+class UserSetPasswordView(_UserActionView):
+    @extend_schema(operation_id="admin_user_set_password", request=AdminSetPasswordSerializer, responses={204: None})
+    def post(self, request: Request, public_id: str) -> Response:
+        target = self.target(public_id)
+        if target.pk == request.user.pk:
+            # Own password goes through /auth/password (requires the current one).
+            raise SelfModificationError()
+        data = AdminSetPasswordSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        auth_service.admin_set_password(
+            actor=request.user, target=target, password=data.validated_data["password"], ip=client_ip(request)
+        )
+        return Response(status=status.HTTP_204_NO_CONTENT)

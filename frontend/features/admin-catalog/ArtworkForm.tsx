@@ -24,7 +24,7 @@ import {
   type TermKind,
 } from "./api";
 import { ArtistPicker } from "./ArtistPicker";
-import { applyServerErrors, emptyToNull } from "./form-utils";
+import { applyServerErrors, emptyToNull } from "@/lib/forms";
 
 const decimal = z.string().refine((v) => v === "" || (/^\d{1,6}(\.\d{1,2})?$/.test(v) && Number(v) > 0), "number");
 const schema = z

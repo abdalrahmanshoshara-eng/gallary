@@ -12,9 +12,17 @@ export function UserMenu() {
   if (isPending) return <span className="inline-block h-5 w-24" aria-hidden />;
   if (!user) {
     return (
-      <Link href="/login" className="text-sm text-primary hover:text-secondary">
-        {t("login")}
-      </Link>
+      <div className="flex items-center gap-4 text-sm">
+        <Link href="/login" className="text-primary hover:text-secondary">
+          {t("login")}
+        </Link>
+        <Link
+          href="/register"
+          className="rounded-[var(--radius-control)] border border-secondary px-3 py-1.5 text-primary hover:bg-surface"
+        >
+          {t("register")}
+        </Link>
+      </div>
     );
   }
   return (

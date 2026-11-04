@@ -86,7 +86,7 @@ services:
 
   migrate:
     <<: *backend
-    command: ["sh", "-c", "python manage.py migrate --noinput && python manage.py ensure_buckets"]
+    command: ["sh", "-c", "python manage.py migrate --noinput && python manage.py ensure_buckets && python manage.py ensure_super_admin"]
     environment:
       <<: *backend-env
       DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}

@@ -436,6 +436,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/users/{public_id}/set-password": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_user_set_password"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/archive": {
         parameters: {
             query?: never;
@@ -533,6 +549,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auth/login": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auth_login"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/logout": {
         parameters: {
             query?: never;
@@ -565,7 +597,7 @@ export interface paths {
         patch: operations["auth_me_update"];
         trace?: never;
     };
-    "/api/v1/auth/otp/request": {
+    "/api/v1/auth/password": {
         parameters: {
             query?: never;
             header?: never;
@@ -574,14 +606,14 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["auth_otp_request"];
+        post: operations["auth_password_change"];
         delete?: never;
         options?: never;
         head?: never;
         patch?: never;
         trace?: never;
     };
-    "/api/v1/auth/otp/verify": {
+    "/api/v1/auth/register": {
         parameters: {
             query?: never;
             header?: never;
@@ -590,7 +622,8 @@ export interface paths {
         };
         get?: never;
         put?: never;
-        post: operations["auth_otp_verify"];
+        /** @description Customer self-registration. Staff accounts are created by the Super Admin only. */
+        post: operations["auth_register"];
         delete?: never;
         options?: never;
         head?: never;
@@ -967,6 +1000,9 @@ export interface components {
             /** الترتيب */
             sort_order?: number;
         };
+        AdminSetPasswordRequest: {
+            password: string;
+        };
         AdminTag: {
             readonly id: number;
             /** الاسم */
@@ -1021,6 +1057,10 @@ export interface components {
              * Format: email
              */
             readonly email: string | null;
+            /** المحافظة */
+            readonly governorate: components["schemas"]["GovernorateEnum"];
+            /** المدينة / المنطقة */
+            readonly city: string;
             /** نشط */
             readonly is_active: boolean;
             /** موظف */
@@ -1059,6 +1099,8 @@ export interface components {
          * @enum {string}
          */
         ArtistStatusEnum: "active" | "hidden";
+        /** @enum {unknown} */
+        BlankEnum: "";
         CategoryWithParent: {
             name: string;
             slug: string;
@@ -1074,6 +1116,25 @@ export interface components {
             /** Format: decimal */
             weight_kg: string | null;
         };
+        /**
+         * @description * `damascus` - دمشق
+         *     * `rif_dimashq` - ريف دمشق
+         *     * `aleppo` - حلب
+         *     * `homs` - حمص
+         *     * `hama` - حماة
+         *     * `latakia` - اللاذقية
+         *     * `tartus` - طرطوس
+         *     * `idlib` - إدلب
+         *     * `daraa` - درعا
+         *     * `suwayda` - السويداء
+         *     * `quneitra` - القنيطرة
+         *     * `deir_ez_zor` - دير الزور
+         *     * `raqqa` - الرقة
+         *     * `hasakah` - الحسكة
+         *     * `outside_syria` - خارج سوريا
+         * @enum {string}
+         */
+        GovernorateEnum: "damascus" | "rif_dimashq" | "aleppo" | "homs" | "hama" | "latakia" | "tartus" | "idlib" | "daraa" | "suwayda" | "quneitra" | "deir_ez_zor" | "raqqa" | "hasakah" | "outside_syria";
         HealthCheck: {
             name: string;
             status: components["schemas"]["HealthCheckStatusEnum"];
@@ -1112,9 +1173,9 @@ export interface components {
             /** Format: date-time */
             server_time: string;
         };
-        LoginResult: {
-            user: components["schemas"]["Me"];
-            created: boolean;
+        LoginInputRequest: {
+            phone: string;
+            password: string;
         };
         Me: {
             /** Format: uuid */
@@ -1123,11 +1184,22 @@ export interface components {
             readonly phone: string;
             /** الاسم */
             readonly display_name: string;
+            /** الاسم الأول */
+            readonly first_name: string;
+            /** الكنية */
+            readonly last_name: string;
             /**
              * البريد الإلكتروني
              * Format: email
              */
             readonly email: string | null;
+            /** المحافظة */
+            readonly governorate: components["schemas"]["GovernorateEnum"];
+            /** المدينة / المنطقة */
+            readonly city: string;
+            /** العنوان التفصيلي */
+            readonly address_line: string;
+            readonly phone_verified: boolean;
             /** موظف */
             readonly is_staff: boolean;
             readonly roles: string[];
@@ -1137,13 +1209,6 @@ export interface components {
              * Format: date-time
              */
             readonly date_joined: string;
-        };
-        OtpRequested: {
-            /** @description E.164 form of the submitted number */
-            phone: string;
-            expires_in_seconds: number;
-            resend_after_seconds: number;
-            channel: string;
         };
         PaginatedAdminArtistList: {
             /** @example 123 */
@@ -1219,6 +1284,10 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["PublicArtworkCard"][];
+        };
+        PasswordChangeRequest: {
+            current_password: string;
+            new_password: string;
         };
         PatchedAdminArtistRequest: {
             /** الاسم */
@@ -1318,14 +1387,16 @@ export interface components {
         };
         PatchedProfileUpdateRequest: {
             display_name?: string;
+            first_name?: string;
+            last_name?: string;
             email?: string;
+            governorate?: components["schemas"]["GovernorateEnum"] | components["schemas"]["BlankEnum"];
+            city?: string;
+            address_line?: string;
         };
         PatchedStaffUpdateRequest: {
             display_name?: string;
             roles?: components["schemas"]["RolesEnum"][];
-        };
-        PhoneInputRequest: {
-            phone: string;
         };
         PublicArtist: {
             /** Format: uuid */
@@ -1434,6 +1505,18 @@ export interface components {
          * @enum {string}
          */
         ReadinessStatusEnum: "ready" | "not_ready";
+        RegisterInputRequest: {
+            phone: string;
+            first_name: string;
+            last_name: string;
+            /** Format: email */
+            email: string;
+            governorate: components["schemas"]["GovernorateEnum"];
+            city: string;
+            address_line: string;
+            password: string;
+            password_confirm: string;
+        };
         RevokedCount: {
             revoked: number;
         };
@@ -1467,14 +1550,12 @@ export interface components {
             /** @default  */
             display_name: string;
             roles: components["schemas"]["RolesEnum"][];
+            /** @default  */
+            password: string;
         };
         TermRef: {
             name: string;
             slug: string;
-        };
-        VerifyInputRequest: {
-            phone: string;
-            code: string;
         };
     };
     responses: never;
@@ -2506,6 +2587,30 @@ export interface operations {
             };
         };
     };
+    admin_user_set_password: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AdminSetPasswordRequest"];
+            };
+        };
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
     archive_list: {
         parameters: {
             query?: {
@@ -2644,6 +2749,29 @@ export interface operations {
             };
         };
     };
+    auth_login: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["LoginInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
+                };
+            };
+        };
+    };
     auth_logout: {
         parameters: {
             query?: never;
@@ -2704,7 +2832,7 @@ export interface operations {
             };
         };
     };
-    auth_otp_request: {
+    auth_password_change: {
         parameters: {
             query?: never;
             header?: never;
@@ -2713,30 +2841,7 @@ export interface operations {
         };
         requestBody: {
             content: {
-                "application/json": components["schemas"]["PhoneInputRequest"];
-            };
-        };
-        responses: {
-            202: {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["OtpRequested"];
-                };
-            };
-        };
-    };
-    auth_otp_verify: {
-        parameters: {
-            query?: never;
-            header?: never;
-            path?: never;
-            cookie?: never;
-        };
-        requestBody: {
-            content: {
-                "application/json": components["schemas"]["VerifyInputRequest"];
+                "application/json": components["schemas"]["PasswordChangeRequest"];
             };
         };
         responses: {
@@ -2745,7 +2850,30 @@ export interface operations {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["LoginResult"];
+                    "application/json": components["schemas"]["RevokedCount"];
+                };
+            };
+        };
+    };
+    auth_register: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RegisterInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Me"];
                 };
             };
         };

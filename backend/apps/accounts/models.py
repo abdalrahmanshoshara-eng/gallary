@@ -24,10 +24,36 @@ e164_validator = RegexValidator(
 )
 
 
+class Governorate(models.TextChoices):
+    DAMASCUS = "damascus", "دمشق"
+    RIF_DIMASHQ = "rif_dimashq", "ريف دمشق"
+    ALEPPO = "aleppo", "حلب"
+    HOMS = "homs", "حمص"
+    HAMA = "hama", "حماة"
+    LATAKIA = "latakia", "اللاذقية"
+    TARTUS = "tartus", "طرطوس"
+    IDLIB = "idlib", "إدلب"
+    DARAA = "daraa", "درعا"
+    SUWAYDA = "suwayda", "السويداء"
+    QUNEITRA = "quneitra", "القنيطرة"
+    DEIR_EZ_ZOR = "deir_ez_zor", "دير الزور"
+    RAQQA = "raqqa", "الرقة"
+    HASAKAH = "hasakah", "الحسكة"
+    OUTSIDE_SYRIA = "outside_syria", "خارج سوريا"
+
+
 class User(AbstractBaseUser, PermissionsMixin):
     public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     phone = models.CharField("رقم الهاتف", max_length=16, unique=True, validators=[e164_validator])
     display_name = models.CharField("الاسم", max_length=120, blank=True)
+    first_name = models.CharField("الاسم الأول", max_length=60, blank=True)
+    last_name = models.CharField("الكنية", max_length=60, blank=True)
+    # Residence (customers fill it at sign-up; used later for delivery and contact).
+    governorate = models.CharField("المحافظة", max_length=20, choices=Governorate.choices, blank=True)
+    city = models.CharField("المدينة / المنطقة", max_length=100, blank=True)
+    address_line = models.CharField("العنوان التفصيلي", max_length=255, blank=True)
+    # Set once the phone is confirmed by a WhatsApp code (BR-901c: disabled until subscribed).
+    phone_verified_at = models.DateTimeField("تاريخ تأكيد الرقم", null=True, blank=True)
     # NULL (not "") when absent so the case-insensitive unique index ignores missing emails.
     email = models.EmailField("البريد الإلكتروني", blank=True, null=True)  # noqa: DJ001
     is_active = models.BooleanField("نشط", default=True)
@@ -115,6 +141,7 @@ class SessionRevokeReason(models.TextChoices):
     ADMIN = "admin", "أنهاها المدير"
     DEACTIVATED = "deactivated", "تعطيل الحساب"
     ROLE_CHANGED = "role_changed", "تغيير الصلاحيات"
+    PASSWORD_CHANGED = "password_changed", "تغيير كلمة المرور"
     EXPIRED = "expired", "انتهت المدة"
 
 

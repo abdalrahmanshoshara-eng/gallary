@@ -1,6 +1,6 @@
 # FEATURE_CHECKLIST.md — قائمة تتبع الميزات
 
-> آخر تحديث: 2026-11-04 — **Phase 3 (Catalog) مستقرة**. المرحلة التالية: Phase 4 (Listings, Search, Favorites) — بعد موافقتك.
+> آخر تحديث: 2026-11-04 — **Phase 3 (Catalog) مستقرة** + الدخول بكلمة المرور (Phase 3b). المرحلة التالية: Phase 4 (Listings, Search, Favorites) — بعد موافقتك.
 >
 > **الحالات:** `NOT_STARTED` · `IN_PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `TESTED` · `COMPLETE` — و`N/A` عندما لا ينطبق البُعد على الميزة.
 > **COMPLETE** فقط عندما تكون كل الأبعاد المنطبقة `TESTED` والتوثيق مكتملاً.
@@ -39,13 +39,16 @@
 
 | ID | الميزة | الوصف | BE | FE | DB | Perm | Tests | Docs | Overall | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| F-AUTH-01 | طلب OTP | E.164 (يقبل الأرقام العربية)، رسالة موحدة، مهلة 60 ثانية، 5/ساعة لكل رقم، 20/ساعة لكل IP، throttle + nginx | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | الإرسال الحقيقي ينتظر اشتراك WhatsApp؛ الإنتاج `disabled` ← 503 واضح (BR-901c) |
+| F-AUTH-01 | طلب OTP (لتأكيد الرقم لاحقاً؛ لم يعد للدخول) | E.164 (يقبل الأرقام العربية)، رسالة موحدة، مهلة 60 ثانية، 5/ساعة لكل رقم، 20/ساعة لكل IP، throttle + nginx | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | الإرسال الحقيقي ينتظر اشتراك WhatsApp؛ الإنتاج `disabled` ← 503 واضح (BR-901c) |
 | F-AUTH-02 | التحقق من OTP | 5 دقائق، 5 محاولات محفوظة، HMAC مربوط بالرقم، الرمز الأحدث فقط، إنشاء الحساب عند أول دخول، رفض الحساب المعطّل | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
 | F-AUTH-03 | الجلسة والخروج و`me` | Session (`cached_db`) + تدوير المفتاح + CSRF على الدخول أيضاً | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
 | F-AUTH-04 | الملف الشخصي | الاسم والبريد (فريد دون حساسية للأحرف) | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
 | F-AUTH-05 | الأدوار وإدارة المستخدمين | 4 أدوار (Groups)، Super Admin ينشئ الموظفين ويعدّل أدوارهم ويلغيها، تعطيل/تفعيل، إنهاء الجلسات، حماية من تعديل الذات ومن حذف آخر مدير عام، `bootstrap_super_admin` | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | صلاحيات كل دور على البيانات تُضاف مع ميزاتها في المراحل القادمة |
 | F-AUTH-07 | إدارة الجلسات | UserSession، الأجهزة المتصلة، الخروج من الأجهزة الأخرى، العميل 30 يوماً منزلقة، الموظف 12 ساعة/30 دقيقة خمول، الإبطال فوري (cache) ومضمون (فحص DB كل 5 دقائق) | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | |
 | F-AUTH-08 | مصادقة WebSocket | الجلسة + Origin؛ `/ws/me/` للمسجلين فقط؛ إغلاق 4409 فوراً عند الإبطال؛ لا إعادة اتصال بجلسة ملغاة | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | مختبر في المتصفح عبر nginx |
+| F-AUTH-09 | الدخول برقم الهاتف وكلمة المرور | للجميع؛ قفل بعد محاولات خاطئة؛ رسالة موحدة | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-901/911 (2026-11-04) |
+| F-AUTH-10 | تسجيل العميل | الاسم، الهاتف، البريد، السكن، كلمة المرور بشروط | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-912؛ تأكيد الرقم عبر WhatsApp لاحقاً |
+| F-AUTH-11 | كلمات المرور | تغيير ذاتي (ينهي الأجهزة الأخرى)، تعيين من المدير العام، مدير عام افتراضي | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-913 |
 | F-ADM-03 | AuditLog | append-only، كل عمليات إدارة الموظفين والمستخدمين | TESTED | N/A | TESTED | TESTED | TESTED | TESTED | IMPLEMENTED | واجهة عرض السجل في Phase 7 |
 
 ## Phase 3 — Catalog (F-CAT) — ✅ مستقرة (2026-11-04)

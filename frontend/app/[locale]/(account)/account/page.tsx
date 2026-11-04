@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Container } from "@/components/ui/Container";
+import { PasswordForm } from "@/features/account/PasswordForm";
 import { ProfileForm } from "@/features/account/ProfileForm";
 import { SessionsPanel } from "@/features/account/SessionsPanel";
 import { LogoutButton } from "@/features/auth/LogoutButton";
@@ -29,6 +30,13 @@ export default async function AccountPage({ params }: PageProps<"/[locale]/accou
           {t("profile")}
         </h2>
         <ProfileForm user={user} />
+      </section>
+      <section aria-labelledby="password" className="mt-16">
+        <h2 id="password" className="text-xl font-medium text-primary">
+          {t("password")}
+        </h2>
+        <p className="mt-2 mb-6 text-sm text-muted">{t("passwordIntro")}</p>
+        <PasswordForm />
       </section>
       <section aria-labelledby="sessions" className="mt-16">
         <h2 id="sessions" className="text-xl font-medium text-primary">

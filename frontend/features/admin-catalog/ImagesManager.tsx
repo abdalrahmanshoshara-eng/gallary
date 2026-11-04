@@ -17,7 +17,7 @@ import {
   type AdminArtwork,
   type AdminArtworkImage,
 } from "./api";
-import { errorText } from "./form-utils";
+import { errorText } from "@/lib/forms";
 
 /** Returns ids with the item at `index` moved by `delta` (bounded). */
 export function moveId(ids: string[], index: number, delta: -1 | 1): string[] {

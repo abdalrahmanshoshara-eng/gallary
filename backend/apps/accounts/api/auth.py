@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from django.contrib.auth import login, logout
+from django.contrib.auth import login, logout, update_session_auth_hash
 from django.shortcuts import get_object_or_404
 from django.utils.decorators import method_decorator
 from django.views.decorators.csrf import csrf_protect, ensure_csrf_cookie
@@ -18,19 +18,17 @@ from apps.core.http import client_ip
 
 from .. import selectors
 from ..models import SessionRevokeReason, UserSession
-from ..otp.senders import get_otp_sender
-from ..services import otp as otp_service
+from ..services import auth as auth_service
 from ..services import sessions as session_service
 from ..services import users as user_service
 from .serializers import (
-    LoginResultSerializer,
+    LoginInputSerializer,
     MeSerializer,
-    OtpRequestedSerializer,
-    PhoneInputSerializer,
+    PasswordChangeSerializer,
     ProfileUpdateSerializer,
+    RegisterInputSerializer,
     RevokedCountSerializer,
     SessionSerializer,
-    VerifyInputSerializer,
 )
 
 
@@ -48,43 +46,71 @@ class CsrfView(APIView):
 
 # Login endpoints require the CSRF token too (protects against login CSRF).
 @method_decorator(csrf_protect, name="dispatch")
-class OtpRequestView(APIView):
+class LoginView(APIView):
     authentication_classes: list = []
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
-    throttle_scope = "otp_request"
+    throttle_scope = "login"
 
-    @extend_schema(
-        operation_id="auth_otp_request", request=PhoneInputSerializer, responses={202: OtpRequestedSerializer}
-    )
+    @extend_schema(operation_id="auth_login", request=LoginInputSerializer, responses=MeSerializer)
     def post(self, request: Request) -> Response:
-        data = PhoneInputSerializer(data=request.data)
+        data = LoginInputSerializer(data=request.data)
         data.is_valid(raise_exception=True)
-        result = otp_service.request_otp(raw_phone=data.validated_data["phone"], ip=client_ip(request))
-        body = {
-            "phone": result.phone,
-            "expires_in_seconds": result.expires_in_seconds,
-            "resend_after_seconds": result.resend_after_seconds,
-            "channel": get_otp_sender().channel,
-        }
-        return Response(OtpRequestedSerializer(body).data, status=status.HTTP_202_ACCEPTED)
+        user = auth_service.login_with_password(
+            raw_phone=data.validated_data["phone"], password=data.validated_data["password"], ip=client_ip(request)
+        )
+        # login() rotates the session key (BR-910); the user_logged_in signal tracks it.
+        login(request._request, user, backend="django.contrib.auth.backends.ModelBackend")
+        return Response(MeSerializer(user).data)
 
 
 @method_decorator(csrf_protect, name="dispatch")
-class OtpVerifyView(APIView):
+class RegisterView(APIView):
+    """Customer self-registration. Staff accounts are created by the Super Admin only."""
+
     authentication_classes: list = []
     permission_classes = [AllowAny]
     throttle_classes = [ScopedRateThrottle]
-    throttle_scope = "otp_verify"
+    throttle_scope = "register"
 
-    @extend_schema(operation_id="auth_otp_verify", request=VerifyInputSerializer, responses=LoginResultSerializer)
+    @extend_schema(operation_id="auth_register", request=RegisterInputSerializer, responses={201: MeSerializer})
     def post(self, request: Request) -> Response:
-        data = VerifyInputSerializer(data=request.data)
+        data = RegisterInputSerializer(data=request.data)
         data.is_valid(raise_exception=True)
-        user, created = otp_service.verify_otp(raw_phone=data.validated_data["phone"], code=data.validated_data["code"])
-        # login() rotates the session key (BR-910); the user_logged_in signal tracks it.
+        v = data.validated_data
+        user = auth_service.register_customer(
+            raw_phone=v["phone"],
+            password=v["password"],
+            first_name=v["first_name"],
+            last_name=v["last_name"],
+            email=v["email"],
+            governorate=v["governorate"],
+            city=v["city"],
+            address_line=v["address_line"],
+            ip=client_ip(request),
+        )
         login(request._request, user, backend="django.contrib.auth.backends.ModelBackend")
-        return Response(LoginResultSerializer({"user": user, "created": created}).data)
+        return Response(MeSerializer(user).data, status=status.HTTP_201_CREATED)
+
+
+class PasswordChangeView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    @extend_schema(
+        operation_id="auth_password_change", request=PasswordChangeSerializer, responses=RevokedCountSerializer
+    )
+    def post(self, request: Request) -> Response:
+        data = PasswordChangeSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        revoked = auth_service.change_password(
+            user=request.user,
+            current_password=data.validated_data["current_password"],
+            new_password=data.validated_data["new_password"],
+            keep_session_id=session_service.current_session_id(request._request),
+        )
+        # Keep this device signed in: refresh the session's password hash (and rotate its key).
+        update_session_auth_hash(request._request, request.user)
+        return Response({"revoked": revoked})
 
 
 class LogoutView(APIView):
