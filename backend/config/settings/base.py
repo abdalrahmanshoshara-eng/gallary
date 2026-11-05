@@ -51,6 +51,8 @@ INSTALLED_APPS = [
     "apps.artworks",
     "apps.listings",
     "apps.favorites",
+    "apps.cart",
+    "apps.orders",
     "apps.realtime",
 ]
 
@@ -306,6 +308,7 @@ REST_FRAMEWORK = {
         # Burst protection; the durable OTP limits (BR-904) are enforced in the database.
         "login": env.str("THROTTLE_LOGIN", default="20/min"),
         "register": env.str("THROTTLE_REGISTER", default="10/hour"),
+        "checkout": env.str("THROTTLE_CHECKOUT", default="20/hour"),
         "otp_request": env.str("THROTTLE_OTP_REQUEST", default="10/min"),
         "otp_verify": env.str("THROTTLE_OTP_VERIFY", default="30/min"),
     },
@@ -335,6 +338,14 @@ SPECTACULAR_SETTINGS = {
         "ListingStatusEnum": "apps.listings.models.ListingStatus",
         "QuantityModeEnum": "apps.listings.models.QuantityMode",
         "SaleModeEnum": "apps.listings.models.SaleMode",
+        "OrderStatusEnum": "apps.orders.models.OrderStatus",
+        "DeliveryStatusEnum": "apps.orders.models.DeliveryStatus",
+        "DeliveryMethodEnum": "apps.orders.models.DeliveryMethod",
+        "PaymentKindEnum": "apps.orders.models.PaymentKind",
+        "PaymentMethodEnum": "apps.orders.models.PaymentMethod",
+        "PaymentRecordStatusEnum": "apps.orders.models.PaymentRecordStatus",
+        "OrderItemStatusEnum": "apps.orders.models.OrderItemStatus",
+        "GovernorateEnum": "apps.accounts.models.Governorate",
     },
 }
 
@@ -364,6 +375,11 @@ CELERY_BEAT_SCHEDULER = "django_celery_beat.schedulers:DatabaseScheduler"
 CELERY_BEAT_SCHEDULE = {
     "scheduler-heartbeat": {
         "task": "apps.core.tasks.scheduler_heartbeat",
+        "schedule": 60.0,
+        "options": {"queue": "critical", "expires": 55},
+    },
+    "expire-due-orders": {
+        "task": "apps.orders.tasks.expire_due_orders",
         "schedule": 60.0,
         "options": {"queue": "critical", "expires": 55},
     },

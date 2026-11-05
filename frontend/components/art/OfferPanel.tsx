@@ -1,12 +1,14 @@
 import { getTranslations } from "next-intl/server";
+import { Suspense } from "react";
 
+import { BuyBox } from "@/features/cart/BuyBox";
 import type { Offer } from "@/lib/catalog/types";
 import { formatDateTime } from "@/lib/formatters/datetime";
 import { formatUsd } from "@/lib/formatters/money";
 
 /**
- * Price and availability on the artwork page. The buy action (cart) arrives with Phase 5;
- * until then the panel states the price, stock and what happens next.
+ * Price and availability on the artwork page, with the buy action (BuyBox) when the offer
+ * can be bought now; otherwise the reason it cannot.
  */
 export async function OfferPanel({ offer, archived }: { offer: Offer | null | undefined; archived: boolean }) {
   const t = await getTranslations("catalog");
@@ -43,8 +45,13 @@ export async function OfferPanel({ offer, archived }: { offer: Offer | null | un
           <p className="text-sm text-olive">{stock}</p>
           {offer.max_per_order > 1 ? <p className="text-xs text-muted">{t("offer.maxPerOrder", { count: offer.max_per_order })}</p> : null}
           {offer.ends_at ? <p className="text-xs text-muted">{t("offer.endsAt", { date: formatDateTime(offer.ends_at) })}</p> : null}
+          <div className="mt-2">
+            {/* Suspense: BuyBox reads the URL (?add=) while the page itself stays cacheable. */}
+            <Suspense fallback={<div className="h-11" aria-hidden />}>
+              <BuyBox offer={offer} />
+            </Suspense>
+          </div>
           <p className="text-xs text-muted">{t("offer.depositNote")}</p>
-          <p className="text-xs text-secondary">{t("offer.buySoon")}</p>
         </>
       ) : (
         <p className="font-medium text-primary">

@@ -44,3 +44,8 @@ def test_favorites_are_private(login_client, customer, make_user, artwork_factor
     assert login_client(make_user()).get(URL).json()["results"] == []
     assert api_client.get(URL).status_code == 403
     assert api_client.put(f"{URL}/{artwork.public_id}").status_code == 403
+
+
+def test_favorites_are_for_customers(login_client, make_user, artwork_factory):
+    artwork = artwork_factory(published=True)
+    assert login_client(make_user(roles=["content_staff"])).put(f"{URL}/{artwork.public_id}").status_code == 403

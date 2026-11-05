@@ -277,6 +277,12 @@ CHECK: طلب `source=AUCTION` يحتوي عنصراً واحداً فقط (يُ
 
 **Delivery**: `order_id` UNIQUE, `method`, `carrier_name`, `status` (`NOT_STARTED`,`IN_TRANSIT`,`DELIVERED`), `delivered_at`, `notes`.
 
+> **مُنفَّذ في Phase 5** مع إضافات:
+> - **Order**: `public_id`، نسخة بيانات التواصل والتسليم (`contact_name/phone/email`، `governorate`، `city`، `address_line`)، `confirmed_at`، `closed_at`، و`deposit_type=per_item` لطلبات العربة (BR-409). `deposit_status` يضيف `REFUND_DUE`.
+> - **OrderItem/CartItem/PaymentRecord**: `public_id` للعناوين العامة.
+> - **PaymentRecord**: `recorded_by`، `void_reason` (الإلغاء للسجلات غير المؤكدة فقط).
+> - **IdempotencyRecord** في `core` (`user`، `scope`، `key` فريد، الاستجابة المخزنة).
+
 ### auctions
 
 **Auction**

@@ -1,6 +1,6 @@
 # FEATURE_CHECKLIST.md — قائمة تتبع الميزات
 
-> آخر تحديث: 2026-11-04 — **Phase 4 (Listings, Search, Favorites) مستقرة**. المرحلة التالية: Phase 5 (العربة والطلبات) — بعد موافقتك.
+> آخر تحديث: 2026-11-05 — **Phase 5 (العربة والطلبات) مستقرة**. المرحلة التالية: Phase 6 (المزادات واللحظية) — بعد موافقتك.
 >
 > **الحالات:** `NOT_STARTED` · `IN_PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `TESTED` · `COMPLETE` — و`N/A` عندما لا ينطبق البُعد على الميزة.
 > **COMPLETE** فقط عندما تكون كل الأبعاد المنطبقة `TESTED` والتوثيق مكتملاً.
@@ -75,22 +75,22 @@
 | F-CAT-09 | البحث والفلاتر | تطبيع عربي + pg_trgm + فلاتر §21 | TESTED | TESTED | TESTED | N/A | TESTED | TESTED | IMPLEMENTED | كل الفلاتر عدا "حالة المزاد" (تُضاف مع المزادات Phase 6) |
 | F-FAV-01 | المفضلة | إضافة/حذف/عرض، فريدة، منع IDOR | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | الأعمال المخفية تختفي من القائمة وتعود عند إظهارها |
 
-## Phase 5 — Cart & Orders (F-CART / F-ORD)
+## Phase 5 — Cart & Orders (F-CART / F-ORD) — ✅ مستقرة (2026-11-05)
 
 | ID | الميزة | الوصف | BE | FE | DB | Perm | Tests | Docs | Overall | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| F-CART-01 | عربة التسوق | إضافة/تعديل/حذف، سعر ثابت فقط، لا مزادات، لا حجز | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-321..324, 328 |
-| F-CART-02 | Checkout | طلب متعدد العناصر، كل-شيء-أو-لا-شيء، PRICE_CHANGED، Idempotency | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-325..327 |
-| F-ORD-01 | إنشاء الطلب | قفل المخزون لكل العناصر، Snapshot، رقم الطلب، مصدر CART/AUCTION | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-301..306, 310/311 |
-| F-ORD-02 | سياسة العربون وإقرارها | عرض السياسة المُصدَرة قبل الحجز | NOT_STARTED | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-313 |
-| F-ORD-03 | صفحة الطلب للعميل | العدّاد، العربون، WhatsApp Deep Link | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-312, Q14 |
-| F-ORD-04 | انتهاء 24 ساعة | للعربون فقط؛ Celery Beat + فحص كسول، تحرير مخزون كل العناصر | NOT_STARTED | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-307/308 |
-| F-ORD-05 | إلغاء العميل قبل العربون | من حسابه | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | Q9 |
-| F-ORD-06 | إدارة الطلبات | بحث، فلترة، تفاصيل، سجل الحالات، ملاحظات | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-ORD-07 | الدفعات اليدوية | عربون، دفعات، استرداد؛ سجلات غير قابلة للتعديل | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-401..408 |
-| F-ORD-08 | انتقالات الحالة والإلغاء | آلة الحالات + OrderStatusHistory | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BUSINESS_RULES §3.1 |
-| F-ORD-09 | التسليم | طريقة، جهة، حالة، تاريخ، ملاحظات | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-801 |
-| F-ORD-10 | إزالة عنصر من طلب | قبل تأكيد العربون، إعادة حساب الإجمالي والعربون | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-303/409 |
+| F-CART-01 | عربة التسوق | إضافة/تعديل/حذف، سعر ثابت فقط، لا مزادات، لا حجز | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-321..324/328؛ للعملاء فقط؛ إكمال الإضافة تلقائياً بعد الدخول |
+| F-CART-02 | Checkout | طلب متعدد العناصر، كل-شيء-أو-لا-شيء، PRICE_CHANGED، Idempotency | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | اختبار تزامن: عميلان على قطعة واحدة ← طلب واحد |
+| F-ORD-01 | إنشاء الطلب | قفل المخزون لكل العناصر، Snapshot، رقم الطلب، مصدر CART/AUCTION | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-301..306/310/311؛ مصدر AUCTION يُستخدم في Phase 6 |
+| F-ORD-02 | سياسة العربون وإقرارها | عرض السياسة المُصدَرة قبل الحجز | TESTED | TESTED | TESTED | N/A | TESTED | TESTED | COMPLETE | BR-313؛ الإصدار يُحفظ مع وقت الإقرار |
+| F-ORD-03 | صفحة الطلب للعميل | العدّاد، العربون، WhatsApp Deep Link | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | BR-312؛ العدّاد بساعة الخادم |
+| F-ORD-04 | انتهاء 24 ساعة | للعربون فقط؛ Celery Beat + فحص كسول، تحرير مخزون كل العناصر | TESTED | TESTED | TESTED | N/A | TESTED | TESTED | COMPLETE | الانتهاء يُثبَّت في معاملة مستقلة قبل أي إجراء |
+| F-ORD-05 | إلغاء العميل قبل العربون | من حسابه | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | Q9 |
+| F-ORD-06 | إدارة الطلبات | بحث، فلترة، تفاصيل، سجل الحالات، ملاحظات | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | العمليات + المدير العام؛ الإجراءات حسب الحالة من الخادم |
+| F-ORD-07 | الدفعات اليدوية | عربون، دفعات، استرداد؛ سجلات غير قابلة للتعديل | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-401..408؛ تقدم تلقائي للحالة؛ Idempotency |
+| F-ORD-08 | انتقالات الحالة والإلغاء | آلة الحالات + OrderStatusHistory | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | التسويات عند CONFIRMED مع مرحلة العمولات |
+| F-ORD-09 | التسليم | طريقة، جهة، حالة، تاريخ، ملاحظات | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-801 |
+| F-ORD-10 | إزالة عنصر من طلب | قبل تأكيد العربون، إعادة حساب الإجمالي والعربون | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-303/409 |
 
 ## Phase 6 — Auctions & Realtime (F-AUC / F-RT)
 

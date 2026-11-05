@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
+import { AccountTabs } from "@/components/layout/AccountTabs";
 import { Container } from "@/components/ui/Container";
 import { PasswordForm } from "@/features/account/PasswordForm";
 import { ProfileForm } from "@/features/account/ProfileForm";
@@ -20,7 +21,9 @@ export default async function AccountPage({ params }: PageProps<"/[locale]/accou
   const t = await getTranslations("account");
 
   return (
-    <Container className="max-w-3xl py-16">
+    <Container className="py-12">
+      <AccountTabs />
+      <div className="max-w-3xl">
       <div className="flex flex-wrap items-center justify-between gap-4">
         <h1 className="text-3xl font-semibold text-primary">{t("title")}</h1>
         <LogoutButton />
@@ -45,6 +48,7 @@ export default async function AccountPage({ params }: PageProps<"/[locale]/accou
         <p className="mt-2 mb-6 text-sm text-muted">{t("sessionsIntro")}</p>
         <SessionsPanel />
       </section>
+      </div>
     </Container>
   );
 }

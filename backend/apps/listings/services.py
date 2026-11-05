@@ -413,3 +413,16 @@ def release(listing_id: int, quantity: int) -> Listing:
     _derive_sold_out(listing)
     listing.save(update_fields=["quantity_available", "quantity_reserved", "status", "closed_at", "updated_at"])
     return listing
+
+
+def revert_sale(listing_id: int, quantity: int) -> Listing:
+    """A confirmed sale is cancelled by the platform: sold −= q, available += q."""
+    listing = Listing.objects.select_for_update().get(pk=listing_id)
+    if quantity < 1 or listing.quantity_sold < quantity:
+        raise ListingStateError("لا توجد كمية مباعة كافية لإلغائها.")
+    listing.quantity_sold -= quantity
+    if listing.tracks_stock:
+        listing.quantity_available += quantity
+    _derive_sold_out(listing)
+    listing.save(update_fields=["quantity_available", "quantity_sold", "status", "closed_at", "updated_at"])
+    return listing

@@ -14,10 +14,12 @@ from apps.accounts.urls import admin_urls as accounts_admin_urls
 from apps.accounts.urls import auth_urls
 from apps.artists import urls as artists_urls
 from apps.artworks import urls as artworks_urls
+from apps.cart import urls as cart_urls
 from apps.catalog import urls as catalog_urls
 from apps.core.exceptions import api_not_found
 from apps.favorites import urls as favorites_urls
 from apps.listings import urls as listings_urls
+from apps.orders import urls as orders_urls
 
 admin_v1 = [
     *accounts_admin_urls,
@@ -25,6 +27,7 @@ admin_v1 = [
     *artists_urls.admin_urls,
     *artworks_urls.admin_urls,
     *listings_urls.admin_urls,
+    *orders_urls.admin_urls,
 ]
 public_v1 = [
     *catalog_urls.public_urls,
@@ -32,6 +35,8 @@ public_v1 = [
     *listings_urls.public_urls,  # storefront: artworks list/detail with offers and search
     *artworks_urls.public_urls,
     *favorites_urls.urls,
+    *cart_urls.urls,
+    *orders_urls.urls,
 ]
 
 api_v1 = [

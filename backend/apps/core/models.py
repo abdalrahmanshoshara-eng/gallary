@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal
 
+from django.core.serializers.json import DjangoJSONEncoder
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 
@@ -61,3 +62,24 @@ class SiteSetting(models.Model):
     def load(cls) -> SiteSetting:
         obj, _ = cls.objects.get_or_create(pk=1)
         return obj
+
+
+class IdempotencyRecord(models.Model):
+    """
+    Stored result of a sensitive POST keyed by the client's Idempotency-Key (ARCHITECTURE §4):
+    a retry after a timeout or a double click returns the first result instead of acting twice.
+    """
+
+    user = models.ForeignKey("accounts.User", on_delete=models.CASCADE, related_name="+")
+    scope = models.CharField(max_length=40)
+    key = models.CharField(max_length=64)
+    status_code = models.PositiveSmallIntegerField()
+    response = models.JSONField(encoder=DjangoJSONEncoder)  # UUIDs, decimals, datetimes as the API renders them
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        constraints = [models.UniqueConstraint(fields=["user", "scope", "key"], name="idempotency_unique_key")]
+        indexes = [models.Index(fields=["created_at"], name="idempotency_created_idx")]
+
+    def __str__(self) -> str:
+        return f"{self.scope}:{self.key}"

@@ -10,11 +10,11 @@ from django.shortcuts import get_object_or_404
 from drf_spectacular.utils import extend_schema
 from rest_framework import serializers, status
 from rest_framework.generics import ListAPIView
-from rest_framework.permissions import IsAuthenticated
 from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from apps.accounts.permissions import IsCustomer
 from apps.artworks import selectors as artwork_selectors
 from apps.artworks.models import Artwork
 from apps.listings.api.serializers import StorefrontCardSerializer
@@ -33,7 +33,7 @@ class FavoriteIdsSerializer(serializers.Serializer):
 
 
 class FavoriteListView(ListAPIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCustomer]
     serializer_class = StorefrontCardSerializer
 
     def get_queryset(self):
@@ -49,7 +49,7 @@ class FavoriteListView(ListAPIView):
 class FavoriteIdsView(APIView):
     """Lets cached public pages mark hearts client-side without personalising the page."""
 
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCustomer]
 
     @extend_schema(operation_id="favorites_ids", responses=FavoriteIdsSerializer)
     def get(self, request: Request) -> Response:
@@ -60,7 +60,7 @@ class FavoriteIdsView(APIView):
 
 
 class FavoriteDetailView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [IsCustomer]
 
     @extend_schema(operation_id="favorites_add", request=None, responses={201: None, 204: None})
     def put(self, request: Request, artwork_id: str) -> Response:

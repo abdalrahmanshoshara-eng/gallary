@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/server";
-import { isCatalogEditor } from "@/lib/auth/types";
+import { isCatalogEditor, isOrdersStaff } from "@/lib/auth/types";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -19,6 +19,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
 
   const links = [
     { href: "/admin" as const, label: t("home") },
+    ...(isOrdersStaff(user) ? [{ href: "/admin/orders" as const, label: t("orders.title") }] : []),
     ...(isCatalogEditor(user)
       ? [
           { href: "/admin/artworks" as const, label: t("artworks.title") },

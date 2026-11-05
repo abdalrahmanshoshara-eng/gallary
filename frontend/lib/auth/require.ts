@@ -33,3 +33,17 @@ export async function requireCatalogEditor(locale: string, path: string): Promis
   if (!user.roles.some((r) => r === "content_staff" || r === "super_admin")) notFound();
   return user;
 }
+
+/** Shopping pages (cart, checkout, orders, favourites): customer accounts only (PRD §8). */
+export async function requireCustomer(locale: string, path: string): Promise<CurrentUser> {
+  const user = await requireUser(locale, path);
+  if (user.is_staff) notFound();
+  return user;
+}
+
+/** Orders, payments and delivery: operations staff and Super Admin (PRD §8). */
+export async function requireOrdersStaff(locale: string, path: string): Promise<CurrentUser> {
+  const user = await requireStaff(locale, path);
+  if (!user.roles.some((r) => r === "operations_staff" || r === "super_admin")) notFound();
+  return user;
+}

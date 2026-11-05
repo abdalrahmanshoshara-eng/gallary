@@ -405,6 +405,166 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_orders_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_order_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["admin_order_notes"];
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_order_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/complete": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_order_complete"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/delivery": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: operations["admin_order_delivery"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/deposit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_order_custom_deposit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/items/{item_id}/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_order_item_remove"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/payments": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_order_payment_record"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/payments/{payment_id}/confirm": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_order_payment_confirm"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/orders/{number}/payments/{payment_id}/void": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_order_payment_void"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/roles": {
         parameters: {
             query?: never;
@@ -778,6 +938,87 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/cart": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["cart_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/accept-prices": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["cart_accept_prices"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Header badge; cheap and cache-free. */
+        get: operations["cart_count"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/items": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["cart_add"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/cart/items/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["cart_remove"];
+        options?: never;
+        head?: never;
+        patch: operations["cart_update"];
+        trace?: never;
+    };
     "/api/v1/catalog/categories": {
         parameters: {
             query?: never;
@@ -909,6 +1150,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orders_mine"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orders_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/{number}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["orders_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/checkout": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["orders_checkout"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/orders/policy": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["orders_policy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
 }
 export type webhooks = Record<string, never>;
 export interface components {
@@ -916,6 +1237,12 @@ export interface components {
         ActivationRequest: {
             /** @default  */
             reason: string;
+        };
+        AddToCartRequest: {
+            /** Format: uuid */
+            listing: string;
+            /** @default 1 */
+            quantity: number;
         };
         AdminArtist: {
             /** Format: uuid */
@@ -1109,6 +1436,14 @@ export interface components {
             /** الوصف */
             description?: string;
         };
+        AdminDelivery: {
+            method: string;
+            carrier_name: string;
+            status: string;
+            /** Format: date-time */
+            delivered_at: string | null;
+            notes: string;
+        };
         /** @description Responsive image for the frontend: variants are listed by ascending width (srcset). */
         AdminImage: {
             /** Format: uuid */
@@ -1190,6 +1525,106 @@ export interface components {
             is_active?: boolean;
             /** الترتيب */
             sort_order?: number;
+        };
+        AdminOrder: {
+            number: string;
+            readonly status: components["schemas"]["OrderStatusEnum"];
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly deposit_due: string;
+            /** Format: decimal */
+            readonly amount_paid: string;
+            readonly item_count: number;
+            /** Format: date-time */
+            readonly reservation_expires_at: string;
+            readonly needs_action: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly deposit_status: components["schemas"]["DepositStatusEnum"];
+            readonly payment_status: components["schemas"]["PaymentStatusEnum"];
+            /** Format: decimal */
+            readonly remaining: string;
+            /** @description Server clock for the countdown (do not trust the device). */
+            readonly server_now: string;
+            readonly can_cancel: boolean;
+            /** Format: uri */
+            readonly whatsapp_url: string | null;
+            readonly contact_name: string;
+            readonly contact_phone: string;
+            /** Format: email */
+            readonly contact_email: string;
+            readonly governorate: string;
+            readonly city: string;
+            readonly address_line: string;
+            readonly customer_notes: string;
+            readonly cancelled_reason: string;
+            readonly items: components["schemas"]["AdminOrderItem"][];
+            readonly history: components["schemas"]["HistoryEntry"][];
+            readonly delivery: components["schemas"]["AdminDelivery"];
+            /** Format: uuid */
+            readonly customer_id: string;
+            readonly deposit_type: components["schemas"]["AdminOrderDepositTypeEnum"];
+            readonly internal_notes: string;
+            readonly policy_version: string;
+            /** Format: date-time */
+            readonly policy_accepted_at: string;
+            /** Format: date-time */
+            readonly confirmed_at: string | null;
+            /** Format: date-time */
+            readonly closed_at: string | null;
+            readonly payments: components["schemas"]["PaymentRecord"][];
+            readonly actions: components["schemas"]["AvailableActions"];
+        };
+        /**
+         * @description * `per_item` - حسب إعداد كل عرض
+         *     * `fixed` - مبلغ ثابت
+         *     * `percentage` - نسبة
+         *     * `custom` - مخصص
+         * @enum {string}
+         */
+        AdminOrderDepositTypeEnum: "per_item" | "fixed" | "percentage" | "custom";
+        AdminOrderItem: {
+            /** Format: uuid */
+            readonly id: string;
+            artwork_slug: string;
+            title: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            readonly quantity: number;
+            /** Format: decimal */
+            unit_price: string;
+            /** Format: decimal */
+            readonly line_total: string;
+            readonly status: components["schemas"]["OrderItemStatusEnum"];
+            /** Format: decimal */
+            readonly commission_rate_snapshot: string;
+            /** Format: decimal */
+            readonly commission_amount_snapshot: string;
+            /** Format: decimal */
+            readonly payee_amount_snapshot: string;
+            /** Format: decimal */
+            readonly deposit_amount_snapshot: string;
+            readonly removed_reason: string;
+        };
+        AdminOrderList: {
+            number: string;
+            readonly status: components["schemas"]["OrderStatusEnum"];
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly deposit_due: string;
+            /** Format: decimal */
+            readonly amount_paid: string;
+            readonly item_count: number;
+            /** Format: date-time */
+            readonly reservation_expires_at: string;
+            readonly needs_action: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            customer: string;
+            phone: string;
+            readonly deposit_status: components["schemas"]["DepositStatusEnum"];
+            readonly payment_status: components["schemas"]["PaymentStatusEnum"];
         };
         AdminSetPasswordRequest: {
             password: string;
@@ -1290,13 +1725,162 @@ export interface components {
          * @enum {string}
          */
         ArtistStatusEnum: "active" | "hidden";
+        AvailableActions: {
+            /** @description Money is still owed on an open order */
+            record_payment: boolean;
+            /** @description A refund is due (platform cancellation after payment) */
+            record_refund: boolean;
+            remove_items: boolean;
+            custom_deposit: boolean;
+            cancel_by_platform: boolean;
+            cancel_for_customer: boolean;
+            delivery: boolean;
+            complete: boolean;
+        };
         /** @enum {unknown} */
         BlankEnum: "";
+        CancelRequest: {
+            /** @default  */
+            reason: string;
+        };
+        Cart: {
+            lines: components["schemas"]["CartLine"][];
+            count: number;
+            /**
+             * Format: decimal
+             * @description Orderable lines only
+             */
+            subtotal: string;
+            /** Format: decimal */
+            deposit_due: string;
+            /** Format: decimal */
+            remaining_after_deposit: string;
+            can_checkout: boolean;
+            /** @description price_changed / unavailable / empty */
+            blocking: string[];
+            max_items: number;
+        };
+        CartCount: {
+            count: number;
+        };
+        CartLine: {
+            /** Format: uuid */
+            id: string;
+            /** Format: uuid */
+            listing: string;
+            artwork_slug: string;
+            title: string;
+            creator_name: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            quantity: number;
+            readonly max_quantity: number;
+            quantity_mode: string;
+            /** Format: decimal */
+            unit_price: string | null;
+            /** Format: decimal */
+            price_at_add: string;
+            price_changed: boolean;
+            /** Format: decimal */
+            readonly line_total: string;
+            /** Format: decimal */
+            readonly deposit: string;
+            /** @description Why this line cannot be ordered now; null when it can. */
+            problem: string | null;
+        };
         CategoryWithParent: {
             name: string;
             slug: string;
             parent: components["schemas"]["TermRef"] | null;
         };
+        CheckoutRequest: {
+            policy_version: string;
+            accept_policy: boolean;
+            governorate: components["schemas"]["GovernorateEnum"];
+            city: string;
+            address_line: string;
+            /** @default  */
+            customer_notes: string;
+        };
+        CustomDepositRequest: {
+            reason: string;
+            /** Format: decimal */
+            amount: string;
+        };
+        CustomerOrder: {
+            number: string;
+            readonly status: components["schemas"]["OrderStatusEnum"];
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly deposit_due: string;
+            /** Format: decimal */
+            readonly amount_paid: string;
+            readonly item_count: number;
+            /** Format: date-time */
+            readonly reservation_expires_at: string;
+            readonly needs_action: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+            readonly deposit_status: components["schemas"]["DepositStatusEnum"];
+            readonly payment_status: components["schemas"]["PaymentStatusEnum"];
+            /** Format: decimal */
+            readonly remaining: string;
+            /** @description Server clock for the countdown (do not trust the device). */
+            readonly server_now: string;
+            readonly can_cancel: boolean;
+            /** Format: uri */
+            readonly whatsapp_url: string | null;
+            readonly contact_name: string;
+            readonly contact_phone: string;
+            /** Format: email */
+            readonly contact_email: string;
+            readonly governorate: string;
+            readonly city: string;
+            readonly address_line: string;
+            readonly customer_notes: string;
+            readonly cancelled_reason: string;
+            readonly items: components["schemas"]["OrderItem"][];
+            readonly history: components["schemas"]["StatusStep"][];
+            readonly delivery: components["schemas"]["DeliveryPublic"] | null;
+        };
+        DeliveryInputRequest: {
+            method?: components["schemas"]["DeliveryMethodEnum"] | components["schemas"]["BlankEnum"];
+            carrier_name?: string;
+            status?: components["schemas"]["DeliveryStatusEnum"];
+            /** Format: date-time */
+            delivered_at?: string | null;
+            notes?: string;
+        };
+        /**
+         * @description * `pickup` - استلام من المنصة
+         *     * `courier` - شركة توصيل
+         *     * `platform` - توصيل من المنصة
+         *     * `other` - أخرى
+         * @enum {string}
+         */
+        DeliveryMethodEnum: "pickup" | "courier" | "platform" | "other";
+        DeliveryPublic: {
+            status: string;
+            method: string;
+            /** Format: date-time */
+            delivered_at: string | null;
+        };
+        /**
+         * @description * `not_started` - لم يبدأ
+         *     * `in_transit` - قيد التوصيل
+         *     * `delivered` - تم التسليم
+         * @enum {string}
+         */
+        DeliveryStatusEnum: "not_started" | "in_transit" | "delivered";
+        /**
+         * @description * `pending` - بانتظار الدفع
+         *     * `confirmed` - مؤكد
+         *     * `forfeited` - مُصادَر
+         *     * `refund_due` - مستحق الاسترداد
+         *     * `refunded` - مُسترد
+         * @enum {string}
+         */
+        DepositStatusEnum: "pending" | "confirmed" | "forfeited" | "refund_due" | "refunded";
         DepositTerms: {
             type: string;
             /** Format: decimal */
@@ -1358,6 +1942,14 @@ export interface components {
         HideInputRequest: {
             /** @default  */
             reason: string;
+        };
+        HistoryEntry: {
+            from_status: string;
+            to_status: string;
+            actor: string | null;
+            reason: string;
+            /** Format: date-time */
+            created_at: string;
         };
         ImageOrderRequest: {
             ids: string[];
@@ -1435,6 +2027,56 @@ export interface components {
              */
             readonly date_joined: string;
         };
+        OrderItem: {
+            /** Format: uuid */
+            readonly id: string;
+            artwork_slug: string;
+            title: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            readonly quantity: number;
+            /** Format: decimal */
+            unit_price: string;
+            /** Format: decimal */
+            readonly line_total: string;
+            readonly status: components["schemas"]["OrderItemStatusEnum"];
+        };
+        /**
+         * @description * `active` - فعّال
+         *     * `removed` - أُزيل
+         * @enum {string}
+         */
+        OrderItemStatusEnum: "active" | "removed";
+        OrderReasonRequest: {
+            reason: string;
+        };
+        /**
+         * @description * `pending_deposit` - بانتظار العربون
+         *     * `deposit_confirmed` - تم تأكيد العربون
+         *     * `payment_pending` - بانتظار استكمال الدفع
+         *     * `confirmed` - مؤكد
+         *     * `completed` - مكتمل
+         *     * `expired` - منتهي المهلة
+         *     * `cancelled_by_customer` - ألغاه العميل
+         *     * `cancelled_by_platform` - ألغته المنصة
+         * @enum {string}
+         */
+        OrderStatusEnum: "pending_deposit" | "deposit_confirmed" | "payment_pending" | "confirmed" | "completed" | "expired" | "cancelled_by_customer" | "cancelled_by_platform";
+        OrderSummary: {
+            number: string;
+            readonly status: components["schemas"]["OrderStatusEnum"];
+            /** Format: decimal */
+            readonly subtotal: string;
+            /** Format: decimal */
+            readonly deposit_due: string;
+            /** Format: decimal */
+            readonly amount_paid: string;
+            readonly item_count: number;
+            /** Format: date-time */
+            readonly reservation_expires_at: string;
+            readonly needs_action: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
         PaginatedAdminArtistList: {
             /** @example 123 */
             count: number;
@@ -1465,6 +2107,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["AdminArtworkList"][];
         };
+        PaginatedAdminOrderListList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AdminOrderList"][];
+        };
         PaginatedAdminUserList: {
             /** @example 123 */
             count: number;
@@ -1479,6 +2136,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["AdminUser"][];
+        };
+        PaginatedOrderSummaryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["OrderSummary"][];
         };
         PaginatedPublicArtistList: {
             /** @example 123 */
@@ -1635,6 +2307,9 @@ export interface components {
             ends_at?: string | null;
             internal_notes?: string;
         };
+        PatchedNotesRequest: {
+            internal_notes?: string;
+        };
         PatchedProfileUpdateRequest: {
             display_name?: string;
             first_name?: string;
@@ -1643,6 +2318,9 @@ export interface components {
             governorate?: components["schemas"]["GovernorateEnum"] | components["schemas"]["BlankEnum"];
             city?: string;
             address_line?: string;
+        };
+        PatchedQuantityRequest: {
+            quantity?: number;
         };
         PatchedSiteSettingRequest: {
             /**
@@ -1665,6 +2343,72 @@ export interface components {
         PatchedStaffUpdateRequest: {
             display_name?: string;
             roles?: components["schemas"]["RolesEnum"][];
+        };
+        PaymentInputRequest: {
+            kind: components["schemas"]["PaymentKindEnum"];
+            /** Format: decimal */
+            amount: string;
+            method: components["schemas"]["PaymentMethodEnum"];
+            /** @default  */
+            reference: string;
+            /** @default  */
+            notes: string;
+            /** @default true */
+            confirm: boolean;
+        };
+        /**
+         * @description * `deposit` - عربون
+         *     * `payment` - دفعة
+         *     * `refund` - استرداد
+         * @enum {string}
+         */
+        PaymentKindEnum: "deposit" | "payment" | "refund";
+        /**
+         * @description * `cash` - نقداً
+         *     * `bank_transfer` - تحويل مصرفي
+         *     * `money_transfer` - حوالة مالية
+         *     * `other` - أخرى
+         * @enum {string}
+         */
+        PaymentMethodEnum: "cash" | "bank_transfer" | "money_transfer" | "other";
+        PaymentRecord: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly kind: components["schemas"]["PaymentKindEnum"];
+            /** Format: decimal */
+            readonly amount: string;
+            readonly method: components["schemas"]["PaymentMethodEnum"];
+            readonly reference: string;
+            readonly notes: string;
+            readonly status: components["schemas"]["PaymentRecordStatusEnum"];
+            readonly recorded_by: string;
+            readonly confirmed_by: string;
+            /** Format: date-time */
+            readonly confirmed_at: string | null;
+            readonly void_reason: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        /**
+         * @description * `recorded` - مسجّل (بانتظار التأكيد)
+         *     * `confirmed` - مؤكد
+         *     * `voided` - مُلغى
+         * @enum {string}
+         */
+        PaymentRecordStatusEnum: "recorded" | "confirmed" | "voided";
+        /**
+         * @description * `unpaid` - غير مدفوع
+         *     * `partially_paid` - مدفوع جزئياً
+         *     * `paid` - مدفوع بالكامل
+         *     * `refunded` - مُسترد
+         * @enum {string}
+         */
+        PaymentStatusEnum: "unpaid" | "partially_paid" | "paid" | "refunded";
+        Policy: {
+            version: string;
+            title: string;
+            points: string[];
+            reservation_hours: number;
         };
         PricingRequest: {
             /** Format: decimal */
@@ -1852,6 +2596,16 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
+        /**
+         * @description * `platform` - platform
+         *     * `customer` - customer
+         * @enum {string}
+         */
+        StaffCancelKindEnum: "platform" | "customer";
+        StaffCancelRequest: {
+            reason: string;
+            kind: components["schemas"]["StaffCancelKindEnum"];
+        };
         StaffCreateRequest: {
             phone: string;
             /** @default  */
@@ -1859,6 +2613,11 @@ export interface components {
             roles: components["schemas"]["RolesEnum"][];
             /** @default  */
             password: string;
+        };
+        StatusStep: {
+            status: string;
+            /** Format: date-time */
+            at: string;
         };
         StorefrontCard: {
             /** Format: uuid */
@@ -2916,6 +3675,276 @@ export interface operations {
             };
         };
     };
+    admin_orders_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                search?: string;
+                status?: "cancelled_by_customer" | "cancelled_by_platform" | "completed" | "confirmed" | "deposit_confirmed" | "expired" | "open" | "payment_pending" | "pending_deposit";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAdminOrderListList"];
+                };
+            };
+        };
+    };
+    admin_order_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_notes: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedNotesRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StaffCancelRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_complete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_delivery: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["DeliveryInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_custom_deposit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CustomDepositRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_item_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                item_id: string;
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderReasonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_payment_record: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description UUID per attempt */
+                "Idempotency-Key": string;
+            };
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PaymentInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_payment_confirm: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+                payment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
+    admin_order_payment_void: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+                payment_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderReasonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminOrder"];
+                };
+            };
+        };
+    };
     admin_roles_list: {
         parameters: {
             query?: never;
@@ -3520,6 +4549,131 @@ export interface operations {
             };
         };
     };
+    cart_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cart"];
+                };
+            };
+        };
+    };
+    cart_accept_prices: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cart"];
+                };
+            };
+        };
+    };
+    cart_count: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CartCount"];
+                };
+            };
+        };
+    };
+    cart_add: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AddToCartRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cart"];
+                };
+            };
+        };
+    };
+    cart_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    cart_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedQuantityRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Cart"];
+                };
+            };
+        };
+    };
     catalog_categories: {
         parameters: {
             query?: never;
@@ -3709,6 +4863,121 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Readiness"];
+                };
+            };
+        };
+    };
+    orders_mine: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedOrderSummaryList"];
+                };
+            };
+        };
+    };
+    orders_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerOrder"];
+                };
+            };
+        };
+    };
+    orders_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["CancelRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerOrder"];
+                };
+            };
+        };
+    };
+    orders_checkout: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description UUID per attempt */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CheckoutRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["CustomerOrder"];
+                };
+            };
+        };
+    };
+    orders_policy: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Policy"];
                 };
             };
         };

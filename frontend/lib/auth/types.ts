@@ -12,3 +12,7 @@ export function hasRole(user: CurrentUser | null, role: RoleName): boolean {
 export function isCatalogEditor(user: CurrentUser | null): boolean {
   return hasRole(user, "content_staff") || hasRole(user, "super_admin");
 }
+
+export function isOrdersStaff(user: CurrentUser | null): boolean {
+  return hasRole(user, "operations_staff") || hasRole(user, "super_admin");
+}

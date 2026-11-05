@@ -16,7 +16,12 @@ export function FavoriteButton({ artworkId, title, size = "md" }: { artworkId: s
   const t = useTranslations("favorites");
   const queryClient = useQueryClient();
   const { data: user } = useCurrentUser();
-  const ids = useQuery({ queryKey: favoriteIdsKey, queryFn: listFavoriteIds, enabled: Boolean(user), staleTime: 60_000 });
+  const ids = useQuery({
+    queryKey: favoriteIdsKey,
+    queryFn: listFavoriteIds,
+    enabled: Boolean(user && !user.is_staff),
+    staleTime: 60_000,
+  });
   const active = Boolean(ids.data?.ids.includes(artworkId));
 
   const toggle = useMutation({
@@ -45,6 +50,7 @@ export function FavoriteButton({ artworkId, title, size = "md" }: { artworkId: s
   );
   const className = `inline-flex ${box} items-center justify-center rounded-full border border-border bg-white/90 text-primary transition-colors duration-300 ease-calm hover:border-secondary`;
 
+  if (user?.is_staff) return null; // favourites are a customer feature (PRD §8)
   if (!user) {
     return (
       <Link href={{ pathname: "/login" }} className={className} aria-label={t("loginToSave")} title={t("loginToSave")}>

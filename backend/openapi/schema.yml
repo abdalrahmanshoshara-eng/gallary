@@ -989,6 +989,314 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminListing'
           description: ''
+  /api/v1/admin/orders:
+    get:
+      operationId: admin_orders_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - cancelled_by_customer
+          - cancelled_by_platform
+          - completed
+          - confirmed
+          - deposit_confirmed
+          - expired
+          - open
+          - payment_pending
+          - pending_deposit
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminOrderListList'
+          description: ''
+  /api/v1/admin/orders/{number}:
+    get:
+      operationId: admin_order_detail
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+    patch:
+      operationId: admin_order_notes
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedNotesRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/cancel:
+    post:
+      operationId: admin_order_cancel
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/StaffCancelRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/complete:
+    post:
+      operationId: admin_order_complete
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/delivery:
+    put:
+      operationId: admin_order_delivery
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DeliveryInputRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/deposit:
+    post:
+      operationId: admin_order_custom_deposit
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CustomDepositRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/items/{item_id}/remove:
+    post:
+      operationId: admin_order_item_remove
+      parameters:
+      - in: path
+        name: item_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderReasonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/payments:
+    post:
+      operationId: admin_order_payment_record
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: UUID per attempt
+        required: true
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/payments/{payment_id}/confirm:
+    post:
+      operationId: admin_order_payment_confirm
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: payment_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
+  /api/v1/admin/orders/{number}/payments/{payment_id}/void:
+    post:
+      operationId: admin_order_payment_void
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      - in: path
+        name: payment_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderReasonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminOrder'
+          description: ''
   /api/v1/admin/roles:
     get:
       operationId: admin_roles_list
@@ -1614,6 +1922,111 @@ paths:
               schema:
                 $ref: '#/components/schemas/RevokedCount'
           description: ''
+  /api/v1/cart:
+    get:
+      operationId: cart_get
+      tags:
+      - cart
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+  /api/v1/cart/accept-prices:
+    post:
+      operationId: cart_accept_prices
+      tags:
+      - cart
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+  /api/v1/cart/count:
+    get:
+      operationId: cart_count
+      description: Header badge; cheap and cache-free.
+      tags:
+      - cart
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartCount'
+          description: ''
+  /api/v1/cart/items:
+    post:
+      operationId: cart_add
+      tags:
+      - cart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AddToCartRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+  /api/v1/cart/items/{public_id}:
+    patch:
+      operationId: cart_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cart
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedQuantityRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Cart'
+          description: ''
+    delete:
+      operationId: cart_remove
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - cart
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
   /api/v1/catalog/categories:
     get:
       operationId: catalog_categories
@@ -1779,6 +2192,119 @@ paths:
               schema:
                 $ref: '#/components/schemas/Readiness'
           description: ''
+  /api/v1/orders:
+    get:
+      operationId: orders_mine
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      tags:
+      - orders
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedOrderSummaryList'
+          description: ''
+  /api/v1/orders/{number}:
+    get:
+      operationId: orders_detail
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - orders
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOrder'
+          description: ''
+  /api/v1/orders/{number}/cancel:
+    post:
+      operationId: orders_cancel
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: string
+        required: true
+      tags:
+      - orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CancelRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOrder'
+          description: ''
+  /api/v1/orders/checkout:
+    post:
+      operationId: orders_checkout
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: UUID per attempt
+        required: true
+      tags:
+      - orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CheckoutRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CustomerOrder'
+          description: ''
+  /api/v1/orders/policy:
+    get:
+      operationId: orders_policy
+      tags:
+      - orders
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Policy'
+          description: ''
 components:
   schemas:
     ActivationRequest:
@@ -1788,6 +2314,19 @@ components:
           type: string
           default: ''
           maxLength: 500
+    AddToCartRequest:
+      type: object
+      properties:
+        listing:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+          maximum: 100
+          minimum: 1
+          default: 1
+      required:
+      - listing
     AdminArtist:
       type: object
       properties:
@@ -2298,6 +2837,27 @@ components:
           title: الوصف
       required:
       - name
+    AdminDelivery:
+      type: object
+      properties:
+        method:
+          type: string
+        carrier_name:
+          type: string
+        status:
+          type: string
+        delivered_at:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+      required:
+      - carrier_name
+      - delivered_at
+      - method
+      - notes
+      - status
     AdminImage:
       type: object
       description: 'Responsive image for the frontend: variants are listed by ascending
@@ -2553,6 +3113,326 @@ components:
           title: الترتيب
       required:
       - name
+    AdminOrder:
+      type: object
+      properties:
+        number:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderStatusEnum'
+          readOnly: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        deposit_due:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        amount_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        item_count:
+          type: integer
+          readOnly: true
+        reservation_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+        needs_action:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deposit_status:
+          allOf:
+          - $ref: '#/components/schemas/DepositStatusEnum'
+          readOnly: true
+        payment_status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          readOnly: true
+        remaining:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        server_now:
+          type: string
+          readOnly: true
+          description: Server clock for the countdown (do not trust the device).
+        can_cancel:
+          type: boolean
+          readOnly: true
+        whatsapp_url:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+        contact_name:
+          type: string
+          readOnly: true
+        contact_phone:
+          type: string
+          readOnly: true
+        contact_email:
+          type: string
+          format: email
+          readOnly: true
+        governorate:
+          type: string
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        address_line:
+          type: string
+          readOnly: true
+        customer_notes:
+          type: string
+          readOnly: true
+        cancelled_reason:
+          type: string
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminOrderItem'
+          readOnly: true
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/HistoryEntry'
+          readOnly: true
+        delivery:
+          allOf:
+          - $ref: '#/components/schemas/AdminDelivery'
+          readOnly: true
+        customer_id:
+          type: string
+          format: uuid
+          readOnly: true
+        deposit_type:
+          allOf:
+          - $ref: '#/components/schemas/AdminOrderDepositTypeEnum'
+          readOnly: true
+        internal_notes:
+          type: string
+          readOnly: true
+        policy_version:
+          type: string
+          readOnly: true
+        policy_accepted_at:
+          type: string
+          format: date-time
+          readOnly: true
+        confirmed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        closed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        payments:
+          type: array
+          items:
+            $ref: '#/components/schemas/PaymentRecord'
+          readOnly: true
+        actions:
+          allOf:
+          - $ref: '#/components/schemas/AvailableActions'
+          readOnly: true
+      required:
+      - actions
+      - address_line
+      - amount_paid
+      - can_cancel
+      - cancelled_reason
+      - city
+      - closed_at
+      - confirmed_at
+      - contact_email
+      - contact_name
+      - contact_phone
+      - created_at
+      - customer_id
+      - customer_notes
+      - delivery
+      - deposit_due
+      - deposit_status
+      - deposit_type
+      - governorate
+      - history
+      - internal_notes
+      - item_count
+      - items
+      - needs_action
+      - number
+      - payment_status
+      - payments
+      - policy_accepted_at
+      - policy_version
+      - remaining
+      - reservation_expires_at
+      - server_now
+      - status
+      - subtotal
+      - whatsapp_url
+    AdminOrderDepositTypeEnum:
+      enum:
+      - per_item
+      - fixed
+      - percentage
+      - custom
+      type: string
+      description: |-
+        * `per_item` - حسب إعداد كل عرض
+        * `fixed` - مبلغ ثابت
+        * `percentage` - نسبة
+        * `custom` - مخصص
+    AdminOrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        artwork_slug:
+          type: string
+        title:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        quantity:
+          type: integer
+          readOnly: true
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        line_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderItemStatusEnum'
+          readOnly: true
+        commission_rate_snapshot:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+        commission_amount_snapshot:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        payee_amount_snapshot:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        deposit_amount_snapshot:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        removed_reason:
+          type: string
+          readOnly: true
+      required:
+      - artwork_slug
+      - commission_amount_snapshot
+      - commission_rate_snapshot
+      - deposit_amount_snapshot
+      - id
+      - image
+      - line_total
+      - payee_amount_snapshot
+      - quantity
+      - removed_reason
+      - status
+      - title
+      - unit_price
+    AdminOrderList:
+      type: object
+      properties:
+        number:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderStatusEnum'
+          readOnly: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        deposit_due:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        amount_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        item_count:
+          type: integer
+          readOnly: true
+        reservation_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+        needs_action:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        customer:
+          type: string
+        phone:
+          type: string
+        deposit_status:
+          allOf:
+          - $ref: '#/components/schemas/DepositStatusEnum'
+          readOnly: true
+        payment_status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          readOnly: true
+      required:
+      - amount_paid
+      - created_at
+      - customer
+      - deposit_due
+      - deposit_status
+      - item_count
+      - needs_action
+      - number
+      - payment_status
+      - phone
+      - reservation_expires_at
+      - status
+      - subtotal
     AdminSetPasswordRequest:
       type: object
       properties:
@@ -2781,9 +3661,161 @@ components:
       description: |-
         * `active` - ظاهر
         * `hidden` - مخفي
+    AvailableActions:
+      type: object
+      properties:
+        record_payment:
+          type: boolean
+          description: Money is still owed on an open order
+        record_refund:
+          type: boolean
+          description: A refund is due (platform cancellation after payment)
+        remove_items:
+          type: boolean
+        custom_deposit:
+          type: boolean
+        cancel_by_platform:
+          type: boolean
+        cancel_for_customer:
+          type: boolean
+        delivery:
+          type: boolean
+        complete:
+          type: boolean
+      required:
+      - cancel_by_platform
+      - cancel_for_customer
+      - complete
+      - custom_deposit
+      - delivery
+      - record_payment
+      - record_refund
+      - remove_items
     BlankEnum:
       enum:
       - ''
+    CancelRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          default: ''
+          maxLength: 500
+    Cart:
+      type: object
+      properties:
+        lines:
+          type: array
+          items:
+            $ref: '#/components/schemas/CartLine'
+        count:
+          type: integer
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          description: Orderable lines only
+        deposit_due:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        remaining_after_deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        can_checkout:
+          type: boolean
+        blocking:
+          type: array
+          items:
+            type: string
+          description: price_changed / unavailable / empty
+        max_items:
+          type: integer
+      required:
+      - blocking
+      - can_checkout
+      - count
+      - deposit_due
+      - lines
+      - max_items
+      - remaining_after_deposit
+      - subtotal
+    CartCount:
+      type: object
+      properties:
+        count:
+          type: integer
+      required:
+      - count
+    CartLine:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        listing:
+          type: string
+          format: uuid
+        artwork_slug:
+          type: string
+        title:
+          type: string
+        creator_name:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        quantity:
+          type: integer
+        max_quantity:
+          type: integer
+          readOnly: true
+        quantity_mode:
+          type: string
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        price_at_add:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        price_changed:
+          type: boolean
+        line_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        deposit:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        problem:
+          type: string
+          nullable: true
+          description: Why this line cannot be ordered now; null when it can.
+      required:
+      - artwork_slug
+      - creator_name
+      - deposit
+      - id
+      - image
+      - line_total
+      - listing
+      - max_quantity
+      - price_at_add
+      - price_changed
+      - problem
+      - quantity
+      - quantity_mode
+      - title
+      - unit_price
     CategoryWithParent:
       type: object
       properties:
@@ -2799,6 +3831,247 @@ components:
       - name
       - parent
       - slug
+    CheckoutRequest:
+      type: object
+      properties:
+        policy_version:
+          type: string
+          minLength: 1
+          maxLength: 20
+        accept_policy:
+          type: boolean
+        governorate:
+          $ref: '#/components/schemas/GovernorateEnum'
+        city:
+          type: string
+          minLength: 1
+          maxLength: 100
+        address_line:
+          type: string
+          minLength: 1
+          maxLength: 255
+        customer_notes:
+          type: string
+          default: ''
+          maxLength: 2000
+      required:
+      - accept_policy
+      - address_line
+      - city
+      - governorate
+      - policy_version
+    CustomDepositRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          maxLength: 1000
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+      required:
+      - amount
+      - reason
+    CustomerOrder:
+      type: object
+      properties:
+        number:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderStatusEnum'
+          readOnly: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        deposit_due:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        amount_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        item_count:
+          type: integer
+          readOnly: true
+        reservation_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+        needs_action:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        deposit_status:
+          allOf:
+          - $ref: '#/components/schemas/DepositStatusEnum'
+          readOnly: true
+        payment_status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentStatusEnum'
+          readOnly: true
+        remaining:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        server_now:
+          type: string
+          readOnly: true
+          description: Server clock for the countdown (do not trust the device).
+        can_cancel:
+          type: boolean
+          readOnly: true
+        whatsapp_url:
+          type: string
+          format: uri
+          nullable: true
+          readOnly: true
+        contact_name:
+          type: string
+          readOnly: true
+        contact_phone:
+          type: string
+          readOnly: true
+        contact_email:
+          type: string
+          format: email
+          readOnly: true
+        governorate:
+          type: string
+          readOnly: true
+        city:
+          type: string
+          readOnly: true
+        address_line:
+          type: string
+          readOnly: true
+        customer_notes:
+          type: string
+          readOnly: true
+        cancelled_reason:
+          type: string
+          readOnly: true
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+          readOnly: true
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/StatusStep'
+          readOnly: true
+        delivery:
+          allOf:
+          - $ref: '#/components/schemas/DeliveryPublic'
+          nullable: true
+          readOnly: true
+      required:
+      - address_line
+      - amount_paid
+      - can_cancel
+      - cancelled_reason
+      - city
+      - contact_email
+      - contact_name
+      - contact_phone
+      - created_at
+      - customer_notes
+      - delivery
+      - deposit_due
+      - deposit_status
+      - governorate
+      - history
+      - item_count
+      - items
+      - needs_action
+      - number
+      - payment_status
+      - remaining
+      - reservation_expires_at
+      - server_now
+      - status
+      - subtotal
+      - whatsapp_url
+    DeliveryInputRequest:
+      type: object
+      properties:
+        method:
+          oneOf:
+          - $ref: '#/components/schemas/DeliveryMethodEnum'
+          - $ref: '#/components/schemas/BlankEnum'
+        carrier_name:
+          type: string
+          maxLength: 120
+        status:
+          $ref: '#/components/schemas/DeliveryStatusEnum'
+        delivered_at:
+          type: string
+          format: date-time
+          nullable: true
+        notes:
+          type: string
+    DeliveryMethodEnum:
+      enum:
+      - pickup
+      - courier
+      - platform
+      - other
+      type: string
+      description: |-
+        * `pickup` - استلام من المنصة
+        * `courier` - شركة توصيل
+        * `platform` - توصيل من المنصة
+        * `other` - أخرى
+    DeliveryPublic:
+      type: object
+      properties:
+        status:
+          type: string
+        method:
+          type: string
+        delivered_at:
+          type: string
+          format: date-time
+          nullable: true
+      required:
+      - delivered_at
+      - method
+      - status
+    DeliveryStatusEnum:
+      enum:
+      - not_started
+      - in_transit
+      - delivered
+      type: string
+      description: |-
+        * `not_started` - لم يبدأ
+        * `in_transit` - قيد التوصيل
+        * `delivered` - تم التسليم
+    DepositStatusEnum:
+      enum:
+      - pending
+      - confirmed
+      - forfeited
+      - refund_due
+      - refunded
+      type: string
+      description: |-
+        * `pending` - بانتظار الدفع
+        * `confirmed` - مؤكد
+        * `forfeited` - مُصادَر
+        * `refund_due` - مستحق الاسترداد
+        * `refunded` - مُسترد
     DepositTerms:
       type: object
       properties:
@@ -2928,6 +4201,27 @@ components:
           type: string
           default: ''
           maxLength: 500
+    HistoryEntry:
+      type: object
+      properties:
+        from_status:
+          type: string
+        to_status:
+          type: string
+        actor:
+          type: string
+          nullable: true
+        reason:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - actor
+      - created_at
+      - from_status
+      - reason
+      - to_status
     ImageOrderRequest:
       type: object
       properties:
@@ -3103,6 +4397,131 @@ components:
       - phone
       - phone_verified
       - roles
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        artwork_slug:
+          type: string
+        title:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        quantity:
+          type: integer
+          readOnly: true
+        unit_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        line_total:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderItemStatusEnum'
+          readOnly: true
+      required:
+      - artwork_slug
+      - id
+      - image
+      - line_total
+      - quantity
+      - status
+      - title
+      - unit_price
+    OrderItemStatusEnum:
+      enum:
+      - active
+      - removed
+      type: string
+      description: |-
+        * `active` - فعّال
+        * `removed` - أُزيل
+    OrderReasonRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          maxLength: 1000
+      required:
+      - reason
+    OrderStatusEnum:
+      enum:
+      - pending_deposit
+      - deposit_confirmed
+      - payment_pending
+      - confirmed
+      - completed
+      - expired
+      - cancelled_by_customer
+      - cancelled_by_platform
+      type: string
+      description: |-
+        * `pending_deposit` - بانتظار العربون
+        * `deposit_confirmed` - تم تأكيد العربون
+        * `payment_pending` - بانتظار استكمال الدفع
+        * `confirmed` - مؤكد
+        * `completed` - مكتمل
+        * `expired` - منتهي المهلة
+        * `cancelled_by_customer` - ألغاه العميل
+        * `cancelled_by_platform` - ألغته المنصة
+    OrderSummary:
+      type: object
+      properties:
+        number:
+          type: string
+        status:
+          allOf:
+          - $ref: '#/components/schemas/OrderStatusEnum'
+          readOnly: true
+        subtotal:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        deposit_due:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        amount_paid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        item_count:
+          type: integer
+          readOnly: true
+        reservation_expires_at:
+          type: string
+          format: date-time
+          readOnly: true
+        needs_action:
+          type: boolean
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount_paid
+      - created_at
+      - deposit_due
+      - item_count
+      - needs_action
+      - number
+      - reservation_expires_at
+      - status
+      - subtotal
     PaginatedAdminArtistList:
       type: object
       required:
@@ -3149,6 +4568,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdminArtworkList'
+    PaginatedAdminOrderListList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminOrderList'
     PaginatedAdminUserList:
       type: object
       required:
@@ -3172,6 +4614,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdminUser'
+    PaginatedOrderSummaryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderSummary'
     PaginatedPublicArtistList:
       type: object
       required:
@@ -3513,6 +4978,11 @@ components:
           nullable: true
         internal_notes:
           type: string
+    PatchedNotesRequest:
+      type: object
+      properties:
+        internal_notes:
+          type: string
     PatchedProfileUpdateRequest:
       type: object
       properties:
@@ -3541,6 +5011,13 @@ components:
         address_line:
           type: string
           maxLength: 255
+    PatchedQuantityRequest:
+      type: object
+      properties:
+        quantity:
+          type: integer
+          maximum: 100
+          minimum: 1
     PatchedSiteSettingRequest:
       type: object
       properties:
@@ -3578,6 +5055,155 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RolesEnum'
+    PaymentInputRequest:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/PaymentKindEnum'
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        method:
+          $ref: '#/components/schemas/PaymentMethodEnum'
+        reference:
+          type: string
+          default: ''
+          maxLength: 120
+        notes:
+          type: string
+          default: ''
+          maxLength: 2000
+        confirm:
+          type: boolean
+          default: true
+      required:
+      - amount
+      - kind
+      - method
+    PaymentKindEnum:
+      enum:
+      - deposit
+      - payment
+      - refund
+      type: string
+      description: |-
+        * `deposit` - عربون
+        * `payment` - دفعة
+        * `refund` - استرداد
+    PaymentMethodEnum:
+      enum:
+      - cash
+      - bank_transfer
+      - money_transfer
+      - other
+      type: string
+      description: |-
+        * `cash` - نقداً
+        * `bank_transfer` - تحويل مصرفي
+        * `money_transfer` - حوالة مالية
+        * `other` - أخرى
+    PaymentRecord:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        kind:
+          allOf:
+          - $ref: '#/components/schemas/PaymentKindEnum'
+          readOnly: true
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        method:
+          allOf:
+          - $ref: '#/components/schemas/PaymentMethodEnum'
+          readOnly: true
+        reference:
+          type: string
+          readOnly: true
+        notes:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/PaymentRecordStatusEnum'
+          readOnly: true
+        recorded_by:
+          type: string
+          readOnly: true
+        confirmed_by:
+          type: string
+          readOnly: true
+        confirmed_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        void_reason:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - amount
+      - confirmed_at
+      - confirmed_by
+      - created_at
+      - id
+      - kind
+      - method
+      - notes
+      - recorded_by
+      - reference
+      - status
+      - void_reason
+    PaymentRecordStatusEnum:
+      enum:
+      - recorded
+      - confirmed
+      - voided
+      type: string
+      description: |-
+        * `recorded` - مسجّل (بانتظار التأكيد)
+        * `confirmed` - مؤكد
+        * `voided` - مُلغى
+    PaymentStatusEnum:
+      enum:
+      - unpaid
+      - partially_paid
+      - paid
+      - refunded
+      type: string
+      description: |-
+        * `unpaid` - غير مدفوع
+        * `partially_paid` - مدفوع جزئياً
+        * `paid` - مدفوع بالكامل
+        * `refunded` - مُسترد
+    Policy:
+      type: object
+      properties:
+        version:
+          type: string
+        title:
+          type: string
+        points:
+          type: array
+          items:
+            type: string
+        reservation_hours:
+          type: integer
+      required:
+      - points
+      - reservation_hours
+      - title
+      - version
     PricingRequest:
       type: object
       properties:
@@ -4030,6 +5656,25 @@ components:
           readOnly: true
       required:
       - updated_at
+    StaffCancelKindEnum:
+      enum:
+      - platform
+      - customer
+      type: string
+      description: |-
+        * `platform` - platform
+        * `customer` - customer
+    StaffCancelRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          maxLength: 1000
+        kind:
+          $ref: '#/components/schemas/StaffCancelKindEnum'
+      required:
+      - kind
+      - reason
     StaffCreateRequest:
       type: object
       properties:
@@ -4052,6 +5697,17 @@ components:
       required:
       - phone
       - roles
+    StatusStep:
+      type: object
+      properties:
+        status:
+          type: string
+        at:
+          type: string
+          format: date-time
+      required:
+      - at
+      - status
     StorefrontCard:
       type: object
       properties:

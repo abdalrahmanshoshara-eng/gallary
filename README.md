@@ -110,6 +110,16 @@ In production, set `S3_ENDPOINT_URL`, the keys and `MEDIA_PUBLIC_BASE_URL` for y
 - **Favorites**: the heart button on cards and artwork pages, plus `/favorites`.
 - Public catalogue pages are cached for 60 seconds, so a new price shows up within a minute. Checkout (Phase 5) always re-checks price and stock on the server.
 
+## Cart and orders (Phase 5)
+
+Workflow and UX analysis: `docs/ux/PHASE5_CART_ORDERS.md`.
+
+- **Customers** add fixed-price offers to the cart, which does not reserve stock. Checkout creates one order and reserves the stock for 24 hours until the deposit is paid. The customer must accept the deposit and cancellation policy; the accepted version is stored with the order. The order page shows a countdown (from the server clock) and a WhatsApp deep link to arrange payment; set the number in **إعدادات المنصة**.
+- **Operations staff and the Super Admin** manage orders in **لوحة الإدارة ← الطلبات**: they record payments (deposit, payment, refund), and the order advances automatically as money is confirmed. They also manage delivery, completion, cancellation and internal notes. Removing an item is possible before the deposit. Custom deposits are for the Super Admin only.
+- Staff accounts cannot buy. They see prices with a note instead of a buy button.
+- Checkout and payment recording take an `Idempotency-Key` header, so retries never create duplicates.
+- Expired reservations are released by Celery Beat every minute, and also lazily before any action on an order.
+
 ## Run without Docker
 
 You need Python 3.12+, Node 22.12+, PostgreSQL 16 and Redis 7 running locally.
