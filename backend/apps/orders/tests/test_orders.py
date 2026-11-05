@@ -382,7 +382,7 @@ def test_staff_api_flow(login_client, customer, offer, ops, super_admin):
     assert AuditLog.objects.filter(action="payment.confirmed").exists()
 
 
-@pytest.mark.parametrize("roles", [None, [], ["content_staff"], ["auction_manager"]])
+@pytest.mark.parametrize("roles", [None, [], ["content_staff"]])  # auction managers: auction orders only
 def test_order_admin_requires_operations_role(roles, api_client, login_client, make_user):
     client = api_client if roles is None else login_client(make_user(roles=roles))
     assert client.get(ADMIN).status_code == 403

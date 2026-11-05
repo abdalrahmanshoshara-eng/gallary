@@ -22,3 +22,31 @@ export function formatCountdown(remainingMs: number): string {
   const pad = (n: number) => n.toString().padStart(2, "0");
   return h > 0 ? `${h}:${pad(m)}:${pad(s)}` : `${m}:${pad(s)}`;
 }
+
+/** Offset of Damascus time from UTC at `date`, in minutes (from the time-zone database). */
+function damascusOffsetMinutes(date: Date): number {
+  const part = new Intl.DateTimeFormat("en-US", { timeZone: DISPLAY_TIME_ZONE, timeZoneName: "longOffset" })
+    .formatToParts(date)
+    .find((p) => p.type === "timeZoneName")?.value;
+  const match = /GMT([+-])(\d{2}):?(\d{2})?/.exec(part ?? "");
+  if (!match) return 0;
+  const minutes = Number(match[2]) * 60 + Number(match[3] ?? 0);
+  return match[1] === "-" ? -minutes : minutes;
+}
+
+/** ISO instant → "YYYY-MM-DDTHH:mm" in Damascus time, for <input type="datetime-local">. */
+export function toDamascusInput(iso: string): string {
+  const date = new Date(iso);
+  const local = new Date(date.getTime() + damascusOffsetMinutes(date) * 60_000);
+  return local.toISOString().slice(0, 16);
+}
+
+/** "YYYY-MM-DDTHH:mm" typed in Damascus time → ISO instant (UTC). */
+export function fromDamascusInput(value: string): string | null {
+  if (!/^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}$/.test(value)) return null;
+  const asUtc = new Date(`${value}:00Z`);
+  if (Number.isNaN(asUtc.getTime())) return null;
+  const guess = new Date(asUtc.getTime() - damascusOffsetMinutes(asUtc) * 60_000);
+  // Re-check at the resulting instant (offset changes across DST boundaries).
+  return new Date(asUtc.getTime() - damascusOffsetMinutes(guess) * 60_000).toISOString();
+}

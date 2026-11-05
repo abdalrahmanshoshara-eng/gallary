@@ -13,5 +13,6 @@ const usd = new Intl.NumberFormat("ar-SY-u-nu-latn", {
 export function formatUsd(amount: string | number): string {
   const value = typeof amount === "string" ? Number(amount) : amount;
   if (!Number.isFinite(value)) throw new RangeError(`invalid amount: ${String(amount)}`);
-  return usd.format(value);
+  // Isolated as left-to-right text so it reads "280 US$" inside Arabic sentences too.
+  return `\u2066${usd.format(value)}\u2069`;
 }

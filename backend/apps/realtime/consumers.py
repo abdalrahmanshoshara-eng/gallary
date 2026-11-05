@@ -19,7 +19,8 @@ from channels.generic.websocket import AsyncJsonWebsocketConsumer
 from apps.accounts.services.sessions import SESSION_ID_KEY, session_is_active
 
 from .mappers.accounts import session_group, user_group
-from .protocol import CLOSE_SESSION_REVOKED, CLOSE_UNAUTHORIZED, envelope
+from .mappers.auctions import auction_group
+from .protocol import CLOSE_NOT_FOUND, CLOSE_SESSION_REVOKED, CLOSE_UNAUTHORIZED, envelope
 
 logger = logging.getLogger(__name__)
 
@@ -108,3 +109,36 @@ class MeConsumer(BaseJsonConsumer):
 
     async def on_connected(self, authenticated: bool) -> None:
         await self.send_json(envelope("me.hello", {}))
+
+
+def _auction_snapshot(public_id) -> dict | None:
+    from apps.auctions import selectors, services
+    from apps.auctions.api.serializers import AuctionSnapshotSerializer
+    from apps.auctions.models import Auction
+
+    try:
+        auction = selectors.public_auction(public_id)
+    except Auction.DoesNotExist:
+        return None
+    seen = auction.version
+    services.refresh(auction)
+    if auction.version != seen:
+        auction = selectors.public_auction(public_id)
+    return dict(AuctionSnapshotSerializer(selectors.snapshot(auction)).data)
+
+
+class AuctionConsumer(BaseJsonConsumer):
+    """`/ws/auctions/<id>/` — one auction's public stream (anonymous allowed, read-only).
+
+    The group is joined *before* the snapshot is read, so no event can fall between them;
+    clients drop stream messages whose `seq` is not newer than the snapshot's.
+    """
+
+    async def on_connected(self, authenticated: bool) -> None:
+        public_id = self.scope["url_route"]["kwargs"]["public_id"]
+        await self._join(auction_group(public_id))
+        snapshot = await database_sync_to_async(_auction_snapshot)(public_id)
+        if snapshot is None:
+            await self.close(code=CLOSE_NOT_FOUND)
+            return
+        await self.send_json(envelope("auction.snapshot", snapshot, seq=snapshot["seq"]))

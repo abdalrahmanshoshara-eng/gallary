@@ -24,6 +24,12 @@ class PublicOfferSerializer(serializers.Serializer):
     ends_at = serializers.DateTimeField(allow_null=True)
     purchasable = serializers.SerializerMethodField()
     unavailable_reason = serializers.SerializerMethodField()
+    auction_id = serializers.SerializerMethodField(help_text="Set when the offer is an auction: link to its page.")
+
+    @extend_schema_field(serializers.UUIDField(allow_null=True))
+    def get_auction_id(self, listing: Listing):
+        auction = getattr(listing, "auction", None)  # reverse one-to-one; listings never import auctions
+        return str(auction.public_id) if auction is not None else None
 
     def get_available(self, listing: Listing) -> int | None:
         return None if listing.quantity_mode == QuantityMode.UNLIMITED else listing.quantity_available

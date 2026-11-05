@@ -236,8 +236,7 @@ UNIQUE `(cart_id, listing_id)`. لا حجز مخزون (BR-323).
 | order_number | varchar(20) | **UNIQUE** `ART-2026-000125` |
 | user_id | FK User | PROTECT |
 | source | enum | `CART`, `AUCTION` (BR-302) |
-| auction_id | FK Auction null | قد يتعدد عند الانتقال للمزايد التالي (BR-514)؛ طلب واحد فقط غير نهائي لكل مزاد (partial unique) |
-| winning_bid_id | FK Bid null | **UNIQUE** |
+| ~~auction_id, winning_bid_id~~ | — | **تغيّر في Phase 6:** الربط من جهة المزاد (`Auction.winner_order_id`، والمزايدة الفائزة `current_winner_bid`) حتى لا تعتمد الطلبات على المزادات. طلب جديد لكل فائز عند الانتقال للمزايد التالي |
 | status | enum | BR §3.1 |
 | currency | char(3) | ثابت `USD` (ADR — مخاطرة 8) |
 | subtotal | numeric(12,2) | مجموع العناصر `ACTIVE` |
@@ -332,9 +331,11 @@ UNIQUE `(user_id, idempotency_key)` (BR-507a). Index: `(auction_id, amount DESC,
 | contact_phone, contact_notes | |
 | customer_notes | |
 | status | `SUBMITTED`,`UNDER_REVIEW`,`NEEDS_MORE_INFO`,`NEGOTIATION`,`APPROVED`,`REJECTED`,`WITHDRAWN` |
+| resulting_artwork_id | FK Artwork null — العمل المسودة المُنشأ من الطلب (Phase 6) |
 | resulting_auction_id | FK Auction null |
 
-**AuctionRequestImage**: `request_id`, `image_key`, `sort_order`.
+**AuctionRequestImage**: `request_id`, `asset_id` (OneToOne ImageAsset، غرض `auction_request`)، `sort_order`.
+**RequestStatusHistory**: `request_id`, `from_status`, `to_status`, `actor_id`, `created_at`.
 **AuctionRequestNote**: `request_id`, `author_id`, `visibility` (`INTERNAL`,`CUSTOMER`), `body`, `created_at`.
 
 ### settlements

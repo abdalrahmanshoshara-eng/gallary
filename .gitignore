@@ -35,3 +35,4 @@ Thumbs.db
 
 # Production SeaweedFS credentials (never commit)
 infra/seaweedfs/s3.json
+dump.rdb

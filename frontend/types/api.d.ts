@@ -212,6 +212,183 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/auction-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_auction_requests_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auction-requests/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_auction_requests_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auction-requests/{public_id}/artwork": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_auction_requests_create_artwork"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auction-requests/{public_id}/commission": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_auction_requests_commission"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auction-requests/{public_id}/notes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_auction_requests_note"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auction-requests/{public_id}/transition": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_auction_requests_transition"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auctions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_auctions_list"];
+        put?: never;
+        post: operations["admin_auctions_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auctions/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_auctions_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["admin_auctions_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/auctions/{public_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_auctions_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auctions/{public_id}/schedule": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_auctions_schedule"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/auctions/eligible-artworks": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Artwork picker for a new auction: published, not archived, no live offer or open auction. */
+        get: operations["admin_auctions_eligible_artworks"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/catalog/categories": {
         parameters: {
             query?: never;
@@ -792,6 +969,119 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/auction-requests": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auction_requests_mine"];
+        put?: never;
+        post: operations["auction_requests_submit"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auction-requests/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auction_requests_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["auction_requests_update"];
+        trace?: never;
+    };
+    "/api/v1/auction-requests/{public_id}/withdraw": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auction_requests_withdraw"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auctions_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auctions_detail"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions/{public_id}/bids": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["auctions_bid"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/auctions/{public_id}/state": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description REST resync (ARCHITECTURE §5.4): after a reconnect or a `seq` gap. */
+        get: operations["auctions_state"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/auth/csrf": {
         parameters: {
             query?: never;
@@ -1150,6 +1440,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/me/bids": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["auctions_my_bids"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orders": {
         parameters: {
             query?: never;
@@ -1409,6 +1715,115 @@ export interface components {
             /** ملاحظات داخلية */
             internal_notes?: string;
         };
+        AdminAuction: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly title: string;
+            artwork_slug: string;
+            creator_name: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            readonly status: components["schemas"]["AuctionStatusEnum"];
+            readonly outcome: components["schemas"]["AuctionOutcomeEnum"];
+            /** Format: decimal */
+            readonly starting_price: string;
+            /** Format: decimal */
+            readonly current_price: string | null;
+            /** Format: decimal */
+            minimum_next_bid: string;
+            readonly bid_count: number;
+            /** Format: date-time */
+            readonly starts_at: string;
+            /** Format: date-time */
+            readonly ends_at: string;
+            description: string;
+            readonly images: components["schemas"]["PublicArtworkImage"][];
+            readonly terms: string;
+            /** Format: decimal */
+            readonly minimum_increment: string;
+            readonly extension_window_sec: number;
+            readonly extension_duration_sec: number;
+            readonly max_extensions: number;
+            readonly extensions_count: number;
+            /** Format: decimal */
+            readonly winner_deposit_percent: string;
+            readonly winner_payment_window_sec: number;
+            readonly non_payment_policy: components["schemas"]["NonPaymentPolicyEnum"];
+            /** @description null when there is no reserve; the reserve itself stays private */
+            readonly reserve_met: boolean | null;
+            readonly version: number;
+            /** Format: uuid */
+            artwork_id: string;
+            /** Format: decimal */
+            readonly reserve_price: string | null;
+            /** Format: date-time */
+            readonly original_ends_at: string;
+            /** Format: decimal */
+            commission_rate: string | null;
+            /** Format: date-time */
+            readonly winner_declared_at: string | null;
+            /** Format: date-time */
+            readonly payment_deadline: string | null;
+            readonly cancelled_reason: string;
+            readonly bids: components["schemas"]["AdminBid"][];
+            readonly history: {
+                [key: string]: unknown;
+            }[];
+            readonly winner_order: string | null;
+            readonly schedule_problems: string[];
+            readonly editable: boolean;
+        };
+        AdminAuctionRequest: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly work_title: string;
+            readonly work_description: string;
+            readonly artist_name: string;
+            readonly artist_info: string;
+            readonly category_hint: string;
+            readonly dimensions_text: string;
+            readonly year_text: string;
+            /** Format: decimal */
+            readonly expected_price: string | null;
+            readonly customer_notes: string;
+            readonly status: components["schemas"]["AuctionRequestStatusEnum"];
+            readonly images: components["schemas"]["AdminImage"][];
+            /** @description Messages from the platform to the customer */
+            readonly messages: components["schemas"]["RequestNote"][];
+            readonly history: {
+                [key: string]: unknown;
+            }[];
+            readonly can_edit: boolean;
+            readonly can_withdraw: boolean;
+            /** Format: uuid */
+            readonly auction_id: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+            customer: string;
+            customer_email: string;
+            contact_phone: string;
+            /** Format: decimal */
+            agreed_commission_rate: string | null;
+            /** Format: date-time */
+            commission_agreed_at: string | null;
+            /** Format: uuid */
+            readonly artwork_id: string | null;
+            readonly notes: components["schemas"]["RequestNote"][];
+            readonly actions: string[];
+        };
+        AdminBid: {
+            /** Format: uuid */
+            id: string;
+            /** Format: decimal */
+            amount: string;
+            alias: number;
+            /** Format: date-time */
+            created_at: string;
+            status: string;
+            readonly bidder: string;
+            bidder_phone: string;
+        };
         AdminCategory: {
             readonly id: number;
             /** الاسم */
@@ -1528,6 +1943,7 @@ export interface components {
         };
         AdminOrder: {
             number: string;
+            readonly source: components["schemas"]["SourceEnum"];
             readonly status: components["schemas"]["OrderStatusEnum"];
             /** Format: decimal */
             readonly subtotal: string;
@@ -1608,6 +2024,7 @@ export interface components {
         };
         AdminOrderList: {
             number: string;
+            readonly source: components["schemas"]["SourceEnum"];
             readonly status: components["schemas"]["OrderStatusEnum"];
             /** Format: decimal */
             readonly subtotal: string;
@@ -1725,6 +2142,190 @@ export interface components {
          * @enum {string}
          */
         ArtistStatusEnum: "active" | "hidden";
+        AuctionCard: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly title: string;
+            artwork_slug: string;
+            creator_name: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            readonly status: components["schemas"]["AuctionStatusEnum"];
+            readonly outcome: components["schemas"]["AuctionOutcomeEnum"];
+            /** Format: decimal */
+            readonly starting_price: string;
+            /** Format: decimal */
+            readonly current_price: string | null;
+            /** Format: decimal */
+            minimum_next_bid: string;
+            readonly bid_count: number;
+            /** Format: date-time */
+            readonly starts_at: string;
+            /** Format: date-time */
+            readonly ends_at: string;
+        };
+        AuctionCreateRequest: {
+            title?: string;
+            terms?: string;
+            /** Format: decimal */
+            starting_price: string;
+            /** Format: decimal */
+            minimum_increment: string;
+            /** Format: decimal */
+            reserve_price?: string | null;
+            /** Format: date-time */
+            starts_at: string;
+            /** Format: date-time */
+            ends_at: string;
+            extension_window_sec?: number;
+            extension_duration_sec?: number;
+            max_extensions?: number;
+            /** Format: decimal */
+            winner_deposit_percent?: string;
+            non_payment_policy?: components["schemas"]["NonPaymentPolicyEnum"];
+            /** Format: uuid */
+            artwork: string;
+            /** Format: uuid */
+            request?: string | null;
+            /** Format: decimal */
+            commission_rate?: string | null;
+        };
+        AuctionDetail: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly title: string;
+            artwork_slug: string;
+            creator_name: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            readonly status: components["schemas"]["AuctionStatusEnum"];
+            readonly outcome: components["schemas"]["AuctionOutcomeEnum"];
+            /** Format: decimal */
+            readonly starting_price: string;
+            /** Format: decimal */
+            readonly current_price: string | null;
+            /** Format: decimal */
+            minimum_next_bid: string;
+            readonly bid_count: number;
+            /** Format: date-time */
+            readonly starts_at: string;
+            /** Format: date-time */
+            readonly ends_at: string;
+            description: string;
+            readonly images: components["schemas"]["PublicArtworkImage"][];
+            readonly terms: string;
+            /** Format: decimal */
+            readonly minimum_increment: string;
+            readonly extension_window_sec: number;
+            readonly extension_duration_sec: number;
+            readonly max_extensions: number;
+            readonly extensions_count: number;
+            /** Format: decimal */
+            readonly winner_deposit_percent: string;
+            readonly winner_payment_window_sec: number;
+            readonly non_payment_policy: components["schemas"]["NonPaymentPolicyEnum"];
+            /** @description null when there is no reserve; the reserve itself stays private */
+            readonly reserve_met: boolean | null;
+            readonly version: number;
+        };
+        /**
+         * @description * `sold` - بيع
+         *     * `no_sale` - لا مزايدات
+         *     * `reserve_not_met` - لم يُبلغ السعر الأدنى
+         *     * `unpaid` - لم يُدفع
+         * @enum {string}
+         */
+        AuctionOutcomeEnum: "sold" | "no_sale" | "reserve_not_met" | "unpaid";
+        AuctionReasonRequest: {
+            reason: string;
+        };
+        AuctionRequest: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly work_title: string;
+            readonly work_description: string;
+            readonly artist_name: string;
+            readonly artist_info: string;
+            readonly category_hint: string;
+            readonly dimensions_text: string;
+            readonly year_text: string;
+            /** Format: decimal */
+            readonly expected_price: string | null;
+            readonly customer_notes: string;
+            readonly status: components["schemas"]["AuctionRequestStatusEnum"];
+            readonly images: components["schemas"]["AdminImage"][];
+            /** @description Messages from the platform to the customer */
+            readonly messages: components["schemas"]["RequestNote"][];
+            readonly history: {
+                [key: string]: unknown;
+            }[];
+            readonly can_edit: boolean;
+            readonly can_withdraw: boolean;
+            /** Format: uuid */
+            readonly auction_id: string | null;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        AuctionRequestInputRequest: {
+            work_title: string;
+            work_description: string;
+            artist_name: string;
+            artist_info?: string;
+            category_hint?: string;
+            dimensions_text?: string;
+            year_text?: string;
+            /** Format: decimal */
+            expected_price?: string | null;
+            customer_notes?: string;
+            images?: string[];
+        };
+        /**
+         * @description * `submitted` - مُرسل
+         *     * `under_review` - قيد المراجعة
+         *     * `needs_more_info` - بحاجة لمعلومات إضافية
+         *     * `negotiation` - قيد التفاوض
+         *     * `approved` - مقبول
+         *     * `rejected` - مرفوض
+         *     * `withdrawn` - مسحوب
+         * @enum {string}
+         */
+        AuctionRequestStatusEnum: "submitted" | "under_review" | "needs_more_info" | "negotiation" | "approved" | "rejected" | "withdrawn";
+        /** @description The WebSocket snapshot (ARCHITECTURE §5.4); the REST resync adds `me`. */
+        AuctionState: {
+            seq: number;
+            /** Format: date-time */
+            server_time: string;
+            status: string;
+            outcome: string;
+            /** Format: decimal */
+            current_price: string | null;
+            /** Format: decimal */
+            minimum_next_bid: string;
+            bid_count: number;
+            /** Format: date-time */
+            starts_at: string;
+            /** Format: date-time */
+            ends_at: string;
+            extensions_count: number;
+            /** @description null without a reserve */
+            reserve_met: boolean | null;
+            /** Format: date-time */
+            payment_deadline: string | null;
+            winner_alias: number | null;
+            bids: components["schemas"]["PublicBid"][];
+            me: components["schemas"]["MyAuctionState"] | null;
+        };
+        /**
+         * @description * `draft` - مسودة
+         *     * `scheduled` - مجدول
+         *     * `live` - جارٍ
+         *     * `ended` - انتهى
+         *     * `pending_winner_payment` - بانتظار دفع الفائز
+         *     * `awarded` - مُرسى
+         *     * `cancelled` - ملغى
+         * @enum {string}
+         */
+        AuctionStatusEnum: "draft" | "scheduled" | "live" | "ended" | "pending_winner_payment" | "awarded" | "cancelled";
         AvailableActions: {
             /** @description Money is still owed on an open order */
             record_payment: boolean;
@@ -1736,6 +2337,15 @@ export interface components {
             cancel_for_customer: boolean;
             delivery: boolean;
             complete: boolean;
+        };
+        BidInputRequest: {
+            /** Format: decimal */
+            amount: string;
+        };
+        BidResult: {
+            bid: components["schemas"]["PublicBid"];
+            state: components["schemas"]["AuctionState"];
+            replayed: boolean;
         };
         /** @enum {unknown} */
         BlankEnum: "";
@@ -1801,6 +2411,12 @@ export interface components {
             /** @default  */
             customer_notes: string;
         };
+        CommissionInputRequest: {
+            /** Format: decimal */
+            rate: string;
+            /** @default  */
+            note: string;
+        };
         CustomDepositRequest: {
             reason: string;
             /** Format: decimal */
@@ -1808,6 +2424,7 @@ export interface components {
         };
         CustomerOrder: {
             number: string;
+            readonly source: components["schemas"]["SourceEnum"];
             readonly status: components["schemas"]["OrderStatusEnum"];
             /** Format: decimal */
             readonly subtotal: string;
@@ -1902,6 +2519,13 @@ export interface components {
             depth_cm: string | null;
             /** Format: decimal */
             weight_kg: string | null;
+        };
+        EligibleArtwork: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            creator_name: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
         };
         FavoriteIds: {
             ids: string[];
@@ -2027,6 +2651,47 @@ export interface components {
              */
             readonly date_joined: string;
         };
+        MyAuctionState: {
+            alias: number | null;
+            /** Format: decimal */
+            my_top_bid: string | null;
+            is_highest: boolean;
+            is_winner: boolean;
+            order_number: string | null;
+            can_bid: boolean;
+        };
+        MyBidAuction: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly title: string;
+            artwork_slug: string;
+            creator_name: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            readonly status: components["schemas"]["AuctionStatusEnum"];
+            readonly outcome: components["schemas"]["AuctionOutcomeEnum"];
+            /** Format: decimal */
+            readonly starting_price: string;
+            /** Format: decimal */
+            readonly current_price: string | null;
+            /** Format: decimal */
+            minimum_next_bid: string;
+            readonly bid_count: number;
+            /** Format: date-time */
+            readonly starts_at: string;
+            /** Format: date-time */
+            readonly ends_at: string;
+            /** Format: decimal */
+            my_top_bid: string;
+            /** @description highest / outbid / won / lost / pending_payment / unpaid */
+            my_status: string;
+            order_number: string | null;
+        };
+        /**
+         * @description * `offer_next_bidder` - عرض على المزايد التالي
+         *     * `cancel_award` - إلغاء الإرساء
+         * @enum {string}
+         */
+        NonPaymentPolicyEnum: "offer_next_bidder" | "cancel_award";
         OrderItem: {
             /** Format: uuid */
             readonly id: string;
@@ -2063,6 +2728,7 @@ export interface components {
         OrderStatusEnum: "pending_deposit" | "deposit_confirmed" | "payment_pending" | "confirmed" | "completed" | "expired" | "cancelled_by_customer" | "cancelled_by_platform";
         OrderSummary: {
             number: string;
+            readonly source: components["schemas"]["SourceEnum"];
             readonly status: components["schemas"]["OrderStatusEnum"];
             /** Format: decimal */
             readonly subtotal: string;
@@ -2107,6 +2773,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["AdminArtworkList"][];
         };
+        PaginatedAdminAuctionRequestList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AdminAuctionRequest"][];
+        };
         PaginatedAdminOrderListList: {
             /** @example 123 */
             count: number;
@@ -2136,6 +2817,36 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["AdminUser"][];
+        };
+        PaginatedAuctionCardList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AuctionCard"][];
+        };
+        PaginatedEligibleArtworkList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["EligibleArtwork"][];
         };
         PaginatedOrderSummaryList: {
             /** @example 123 */
@@ -2292,6 +3003,39 @@ export interface components {
             is_active?: boolean;
             /** الترتيب */
             sort_order?: number;
+        };
+        PatchedAuctionRequestInputRequest: {
+            work_title?: string;
+            work_description?: string;
+            artist_name?: string;
+            artist_info?: string;
+            category_hint?: string;
+            dimensions_text?: string;
+            year_text?: string;
+            /** Format: decimal */
+            expected_price?: string | null;
+            customer_notes?: string;
+            images?: string[];
+        };
+        PatchedAuctionWriteRequest: {
+            title?: string;
+            terms?: string;
+            /** Format: decimal */
+            starting_price?: string;
+            /** Format: decimal */
+            minimum_increment?: string;
+            /** Format: decimal */
+            reserve_price?: string | null;
+            /** Format: date-time */
+            starts_at?: string;
+            /** Format: date-time */
+            ends_at?: string;
+            extension_window_sec?: number;
+            extension_duration_sec?: number;
+            max_extensions?: number;
+            /** Format: decimal */
+            winner_deposit_percent?: string;
+            non_payment_policy?: components["schemas"]["NonPaymentPolicyEnum"];
         };
         PatchedImageUpdateRequest: {
             alt_text?: string;
@@ -2460,6 +3204,16 @@ export interface components {
             alt_text: string;
             image: components["schemas"]["PublicImage"];
         };
+        /** @description A bid as every viewer sees it: amount and a stable per-auction alias, never identity (BR-509). */
+        PublicBid: {
+            /** Format: uuid */
+            id: string;
+            /** Format: decimal */
+            amount: string;
+            alias: number;
+            /** Format: date-time */
+            created_at: string;
+        };
         PublicCategory: {
             /** الاسم */
             readonly name: string;
@@ -2495,6 +3249,11 @@ export interface components {
             ends_at: string | null;
             readonly purchasable: boolean;
             readonly unavailable_reason: string | null;
+            /**
+             * Format: uuid
+             * @description Set when the offer is an auction: link to its page.
+             */
+            readonly auction_id: string | null;
         };
         PublicTerm: {
             name: string;
@@ -2541,6 +3300,32 @@ export interface components {
             address_line: string;
             password: string;
             password_confirm: string;
+        };
+        RequestArtworkInputRequest: {
+            /** المعرّف */
+            category: string;
+        };
+        RequestNote: {
+            body: string;
+            visibility: string;
+            author: string | null;
+            /** Format: date-time */
+            created_at: string;
+        };
+        RequestNoteInputRequest: {
+            body: string;
+            visibility: components["schemas"]["RequestNoteInputVisibilityEnum"];
+        };
+        /**
+         * @description * `internal` - internal
+         *     * `customer` - customer
+         * @enum {string}
+         */
+        RequestNoteInputVisibilityEnum: "internal" | "customer";
+        RequestTransitionRequest: {
+            to: components["schemas"]["AuctionRequestStatusEnum"];
+            /** @default  */
+            message: string;
         };
         RevokedCount: {
             revoked: number;
@@ -2596,6 +3381,12 @@ export interface components {
             /** Format: date-time */
             readonly updated_at: string;
         };
+        /**
+         * @description * `cart` - العربة
+         *     * `auction` - مزاد
+         * @enum {string}
+         */
+        SourceEnum: "cart" | "auction";
         /**
          * @description * `platform` - platform
          *     * `customer` - customer
@@ -3190,6 +3981,319 @@ export interface operations {
             };
         };
     };
+    admin_auction_requests_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                search?: string;
+                status?: "approved" | "needs_more_info" | "negotiation" | "open" | "rejected" | "submitted" | "under_review" | "withdrawn";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAdminAuctionRequestList"];
+                };
+            };
+        };
+    };
+    admin_auction_requests_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuctionRequest"];
+                };
+            };
+        };
+    };
+    admin_auction_requests_create_artwork: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestArtworkInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuctionRequest"];
+                };
+            };
+        };
+    };
+    admin_auction_requests_commission: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["CommissionInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuctionRequest"];
+                };
+            };
+        };
+    };
+    admin_auction_requests_note: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestNoteInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuctionRequest"];
+                };
+            };
+        };
+    };
+    admin_auction_requests_transition: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["RequestTransitionRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuctionRequest"];
+                };
+            };
+        };
+    };
+    admin_auctions_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                search?: string;
+                status?: "active" | "awarded" | "cancelled" | "draft" | "ended" | "live" | "pending_winner_payment" | "scheduled";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAuctionCardList"];
+                };
+            };
+        };
+    };
+    admin_auctions_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionCreateRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuction"];
+                };
+            };
+        };
+    };
+    admin_auctions_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuction"];
+                };
+            };
+        };
+    };
+    admin_auctions_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAuctionWriteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuction"];
+                };
+            };
+        };
+    };
+    admin_auctions_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionReasonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuction"];
+                };
+            };
+        };
+    };
+    admin_auctions_schedule: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuction"];
+                };
+            };
+        };
+    };
+    admin_auctions_eligible_artworks: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                search?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedEligibleArtworkList"];
+                };
+            };
+        };
+    };
     admin_categories_list: {
         parameters: {
             query?: never;
@@ -3683,6 +4787,7 @@ export interface operations {
                 /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
                 page_size?: number;
                 search?: string;
+                source?: "auction" | "cart";
                 status?: "cancelled_by_customer" | "cancelled_by_platform" | "completed" | "confirmed" | "deposit_confirmed" | "expired" | "open" | "payment_pending" | "pending_deposit";
             };
             header?: never;
@@ -4344,6 +5449,218 @@ export interface operations {
             };
         };
     };
+    auction_requests_mine: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionRequest"][];
+                };
+            };
+        };
+    };
+    auction_requests_submit: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "multipart/form-data": components["schemas"]["AuctionRequestInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionRequest"];
+                };
+            };
+        };
+    };
+    auction_requests_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionRequest"];
+                };
+            };
+        };
+    };
+    auction_requests_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["PatchedAuctionRequestInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionRequest"];
+                };
+            };
+        };
+    };
+    auction_requests_withdraw: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionRequest"];
+                };
+            };
+        };
+    };
+    auctions_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                status?: "ended" | "live" | "upcoming";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAuctionCardList"];
+                };
+            };
+        };
+    };
+    auctions_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionDetail"];
+                };
+            };
+        };
+    };
+    auctions_bid: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description UUID per bid attempt */
+                "Idempotency-Key": string;
+            };
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["BidInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BidResult"];
+                };
+            };
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["BidResult"];
+                };
+            };
+        };
+    };
+    auctions_state: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuctionState"];
+                };
+            };
+        };
+    };
     auth_csrf: {
         parameters: {
             query?: never;
@@ -4863,6 +6180,25 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Readiness"];
+                };
+            };
+        };
+    };
+    auctions_my_bids: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MyBidAuction"][];
                 };
             };
         };

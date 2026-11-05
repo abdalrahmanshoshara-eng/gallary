@@ -10,7 +10,7 @@ from rest_framework.response import Response
 from rest_framework.throttling import ScopedRateThrottle
 from rest_framework.views import APIView
 
-from apps.accounts.permissions import IsCustomer, IsOrdersStaff, IsSuperAdmin
+from apps.accounts.permissions import IsCustomer, IsOrderDesk, IsSuperAdmin, orders_scope
 from apps.accounts.roles import is_super_admin
 from apps.artworks.models import ArtworkImage
 from apps.core import idempotency
@@ -166,18 +166,27 @@ def _staff_out(request: Request, order: Order) -> dict:
     return AdminOrderSerializer(order, context=context).data
 
 
-def _staff_order(number: str) -> Order:
-    return services.refresh(get_object_or_404(Order, order_number=number))
+def _desk_orders(request: Request):
+    qs = Order.objects.all()
+    if orders_scope(request.user) == "auction":
+        qs = qs.filter(source="auction")
+    return qs
+
+
+def _staff_order(request: Request, number: str) -> Order:
+    return services.refresh(get_object_or_404(_desk_orders(request), order_number=number))
 
 
 class AdminOrderListView(ListAPIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
     serializer_class = AdminOrderListSerializer
 
     def get_queryset(self):
         p = self.request.query_params
-        qs = Order.objects.prefetch_related("items")
+        qs = _desk_orders(self.request).prefetch_related("items")
         state = p.get("status", "")
+        if p.get("source") in ("cart", "auction"):
+            qs = qs.filter(source=p["source"])
         if state == "open":
             qs = qs.exclude(status__in=[s for s in OrderStatus.values if s in services.FINAL_STATUSES])
         elif state in OrderStatus.values:
@@ -198,6 +207,7 @@ class AdminOrderListView(ListAPIView):
         operation_id="admin_orders_list",
         parameters=[
             OpenApiParameter("status", str, enum=["open", *OrderStatus.values]),
+            OpenApiParameter("source", str, enum=["cart", "auction"]),
             OpenApiParameter("search", str),
         ],
     )
@@ -207,24 +217,24 @@ class AdminOrderListView(ListAPIView):
 
 
 class AdminOrderDetailView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(operation_id="admin_order_detail", responses=AdminOrderSerializer)
     def get(self, request: Request, number: str) -> Response:
-        return Response(_staff_out(request, _staff_order(number)))
+        return Response(_staff_out(request, _staff_order(request, number)))
 
     @extend_schema(operation_id="admin_order_notes", request=NotesSerializer, responses=AdminOrderSerializer)
     def patch(self, request: Request, number: str) -> Response:
         data = NotesSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         order = services.update_internal_notes(
-            _staff_order(number), actor=request.user, notes=data.validated_data["internal_notes"]
+            _staff_order(request, number), actor=request.user, notes=data.validated_data["internal_notes"]
         )
         return Response(_staff_out(request, order))
 
 
 class AdminPaymentsView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(
         operation_id="admin_order_payment_record",
@@ -235,7 +245,7 @@ class AdminPaymentsView(APIView):
     def post(self, request: Request, number: str) -> Response:
         data = PaymentInputSerializer(data=request.data)
         data.is_valid(raise_exception=True)
-        order = _staff_order(number)
+        order = _staff_order(request, number)
 
         def action():
             services.record_payment(order, actor=request.user, **data.validated_data)
@@ -252,7 +262,7 @@ def _payment(number: str, payment_id) -> PaymentRecord:
 
 
 class AdminPaymentConfirmView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(operation_id="admin_order_payment_confirm", request=None, responses=AdminOrderSerializer)
     def post(self, request: Request, number: str, payment_id: str) -> Response:
@@ -261,7 +271,7 @@ class AdminPaymentConfirmView(APIView):
 
 
 class AdminPaymentVoidView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(
         operation_id="admin_order_payment_void", request=OrderReasonSerializer, responses=AdminOrderSerializer
@@ -276,7 +286,7 @@ class AdminPaymentVoidView(APIView):
 
 
 class AdminOrderItemRemoveView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(
         operation_id="admin_order_item_remove", request=OrderReasonSerializer, responses=AdminOrderSerializer
@@ -284,7 +294,7 @@ class AdminOrderItemRemoveView(APIView):
     def post(self, request: Request, number: str, item_id: str) -> Response:
         data = OrderReasonSerializer(data=request.data)
         data.is_valid(raise_exception=True)
-        order = _staff_order(number)
+        order = _staff_order(request, number)
         item = get_object_or_404(OrderItem, public_id=item_id, order=order)
         order = services.remove_item(order, item, actor=request.user, reason=data.validated_data["reason"])
         return Response(_staff_out(request, order))
@@ -300,7 +310,7 @@ class AdminOrderDepositView(APIView):
         data = CustomDepositSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         order = services.set_custom_deposit(
-            _staff_order(number),
+            _staff_order(request, number),
             actor=request.user,
             amount=data.validated_data["amount"],
             reason=data.validated_data["reason"],
@@ -309,33 +319,33 @@ class AdminOrderDepositView(APIView):
 
 
 class AdminOrderCancelView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(operation_id="admin_order_cancel", request=StaffCancelSerializer, responses=AdminOrderSerializer)
     def post(self, request: Request, number: str) -> Response:
         data = StaffCancelSerializer(data=request.data)
         data.is_valid(raise_exception=True)
         fn = services.cancel_by_platform if data.validated_data["kind"] == "platform" else services.cancel_for_customer
-        order = fn(_staff_order(number), actor=request.user, reason=data.validated_data["reason"])
+        order = fn(_staff_order(request, number), actor=request.user, reason=data.validated_data["reason"])
         return Response(_staff_out(request, order))
 
 
 class AdminOrderDeliveryView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(operation_id="admin_order_delivery", request=DeliveryInputSerializer, responses=AdminOrderSerializer)
     def put(self, request: Request, number: str) -> Response:
         data = DeliveryInputSerializer(data=request.data, partial=True)
         data.is_valid(raise_exception=True)
-        order = _staff_order(number)
+        order = _staff_order(request, number)
         services.update_delivery(order, actor=request.user, data=data.validated_data)
         return Response(_staff_out(request, order))
 
 
 class AdminOrderCompleteView(APIView):
-    permission_classes = [IsOrdersStaff]
+    permission_classes = [IsOrderDesk]
 
     @extend_schema(operation_id="admin_order_complete", request=None, responses=AdminOrderSerializer)
     def post(self, request: Request, number: str) -> Response:
-        order = services.complete(_staff_order(number), actor=request.user)
+        order = services.complete(_staff_order(request, number), actor=request.user)
         return Response(_staff_out(request, order))

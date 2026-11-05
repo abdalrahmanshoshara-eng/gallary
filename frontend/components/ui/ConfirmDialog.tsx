@@ -13,10 +13,12 @@ type Props = {
   onConfirm: () => void;
   onCancel: () => void;
   busy?: boolean;
+  /** Keeps the confirm action off until required input (e.g. a reason) is given. */
+  confirmDisabled?: boolean;
 };
 
 /** Native <dialog>: focus trap, Esc to close and focus return come from the browser. */
-export function ConfirmDialog({ open, title, children, confirmLabel, cancelLabel, onConfirm, onCancel, busy }: Props) {
+export function ConfirmDialog({ open, title, children, confirmLabel, cancelLabel, onConfirm, onCancel, busy, confirmDisabled }: Props) {
   const ref = useRef<HTMLDialogElement>(null);
   useEffect(() => {
     const dialog = ref.current;
@@ -42,7 +44,7 @@ export function ConfirmDialog({ open, title, children, confirmLabel, cancelLabel
         <Button variant="ghost" onClick={onCancel} disabled={busy}>
           {cancelLabel}
         </Button>
-        <Button variant="primary" loading={busy} onClick={onConfirm}>
+        <Button variant="primary" loading={busy} disabled={confirmDisabled} onClick={onConfirm}>
           {confirmLabel}
         </Button>
       </div>

@@ -120,6 +120,17 @@ Workflow and UX analysis: `docs/ux/PHASE5_CART_ORDERS.md`.
 - Checkout and payment recording take an `Idempotency-Key` header, so retries never create duplicates.
 - Expired reservations are released by Celery Beat every minute, and also lazily before any action on an order.
 
+## Auctions and auction requests (Phase 6)
+
+Workflow and UX analysis: `docs/ux/PHASE6_AUCTIONS.md`.
+
+- **Auction managers and the Super Admin** create auctions in **لوحة الإدارة ← المزادات** for a published artwork that has no active offer, save a draft, then schedule it. Terms (prices, hidden reserve, extension rule, winner deposit 50–100%, non-payment policy) can change only before the start.
+- **Bidding** is an HTTP request with an `Idempotency-Key`. The server locks the auction row and decides with the PostgreSQL clock, so no bid is accepted after the end even if the scheduler is late. A bid in the last minutes extends the auction (capped).
+- **Live updates** go over `/ws/auctions/<id>/` (snapshot + ordered events with `seq`; clients resync over REST after a gap or reconnect). Outbid and win notices go to `/ws/me/` and appear on any page.
+- **The winner** gets an auction order with a deposit of at least 50% due within one hour. A confirmed deposit awards the auction; an unpaid one goes to the next bidder or ends the auction, per the auction's policy. Celery Beat runs `auction_tick` every 5 seconds; reads also apply due transitions.
+- **Customers** offer their own works through **طلبات المزاد**. Staff review, ask for more information, record the agreed platform share (required before approval), create the artwork for the owner, then the auction.
+- Auction managers see the auction orders (only) on the order desk.
+
 ## Run without Docker
 
 You need Python 3.12+, Node 22.12+, PostgreSQL 16 and Redis 7 running locally.

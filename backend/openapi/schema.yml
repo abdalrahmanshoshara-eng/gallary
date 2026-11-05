@@ -552,6 +552,370 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminArtwork'
           description: ''
+  /api/v1/admin/auction-requests:
+    get:
+      operationId: admin_auction_requests_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - approved
+          - needs_more_info
+          - negotiation
+          - open
+          - rejected
+          - submitted
+          - under_review
+          - withdrawn
+          default: open
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAdminAuctionRequestList'
+          description: ''
+  /api/v1/admin/auction-requests/{public_id}:
+    get:
+      operationId: admin_auction_requests_detail
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuctionRequest'
+          description: ''
+  /api/v1/admin/auction-requests/{public_id}/artwork:
+    post:
+      operationId: admin_auction_requests_create_artwork
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestArtworkInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuctionRequest'
+          description: ''
+  /api/v1/admin/auction-requests/{public_id}/commission:
+    post:
+      operationId: admin_auction_requests_commission
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CommissionInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuctionRequest'
+          description: ''
+  /api/v1/admin/auction-requests/{public_id}/notes:
+    post:
+      operationId: admin_auction_requests_note
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestNoteInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuctionRequest'
+          description: ''
+  /api/v1/admin/auction-requests/{public_id}/transition:
+    post:
+      operationId: admin_auction_requests_transition
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RequestTransitionRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuctionRequest'
+          description: ''
+  /api/v1/admin/auctions:
+    get:
+      operationId: admin_auctions_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - active
+          - awarded
+          - cancelled
+          - draft
+          - ended
+          - live
+          - pending_winner_payment
+          - scheduled
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuctionCardList'
+          description: ''
+    post:
+      operationId: admin_auctions_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuctionCreateRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuction'
+          description: ''
+  /api/v1/admin/auctions/{public_id}:
+    get:
+      operationId: admin_auctions_detail
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuction'
+          description: ''
+    patch:
+      operationId: admin_auctions_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAuctionWriteRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuction'
+          description: ''
+  /api/v1/admin/auctions/{public_id}/cancel:
+    post:
+      operationId: admin_auctions_cancel
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuctionReasonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuction'
+          description: ''
+  /api/v1/admin/auctions/{public_id}/schedule:
+    post:
+      operationId: admin_auctions_schedule
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuction'
+          description: ''
+  /api/v1/admin/auctions/eligible-artworks:
+    get:
+      operationId: admin_auctions_eligible_artworks
+      description: 'Artwork picker for a new auction: published, not archived, no
+        live offer or open auction.'
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedEligibleArtworkList'
+          description: ''
   /api/v1/admin/catalog/categories:
     get:
       operationId: admin_categories_list
@@ -1009,6 +1373,13 @@ paths:
         name: search
         schema:
           type: string
+      - in: query
+        name: source
+        schema:
+          type: string
+          enum:
+          - auction
+          - cart
       - in: query
         name: status
         schema:
@@ -1759,6 +2130,230 @@ paths:
               schema:
                 $ref: '#/components/schemas/StorefrontDetail'
           description: ''
+  /api/v1/auction-requests:
+    get:
+      operationId: auction_requests_mine
+      tags:
+      - auction-requests
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AuctionRequest'
+          description: ''
+    post:
+      operationId: auction_requests_submit
+      tags:
+      - auction-requests
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AuctionRequestInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionRequest'
+          description: ''
+  /api/v1/auction-requests/{public_id}:
+    get:
+      operationId: auction_requests_detail
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auction-requests
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionRequest'
+          description: ''
+    patch:
+      operationId: auction_requests_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auction-requests
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAuctionRequestInputRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionRequest'
+          description: ''
+  /api/v1/auction-requests/{public_id}/withdraw:
+    post:
+      operationId: auction_requests_withdraw
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auction-requests
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionRequest'
+          description: ''
+  /api/v1/auctions:
+    get:
+      operationId: auctions_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - ended
+          - live
+          - upcoming
+          default: live
+      tags:
+      - auctions
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuctionCardList'
+          description: ''
+  /api/v1/auctions/{public_id}:
+    get:
+      operationId: auctions_detail
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auctions
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionDetail'
+          description: ''
+  /api/v1/auctions/{public_id}/bids:
+    post:
+      operationId: auctions_bid
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: UUID per bid attempt
+        required: true
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auctions
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/BidInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidResult'
+          description: ''
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/BidResult'
+          description: ''
+  /api/v1/auctions/{public_id}/state:
+    get:
+      operationId: auctions_state
+      description: 'REST resync (ARCHITECTURE §5.4): after a reconnect or a `seq`
+        gap.'
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - auctions
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuctionState'
+          description: ''
   /api/v1/auth/csrf:
     get:
       operationId: auth_csrf
@@ -2191,6 +2786,22 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Readiness'
+          description: ''
+  /api/v1/me/bids:
+    get:
+      operationId: auctions_my_bids
+      tags:
+      - me
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MyBidAuction'
           description: ''
   /api/v1/orders:
     get:
@@ -2767,6 +3378,364 @@ components:
       required:
       - category
       - title
+    AdminAuction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        artwork_slug:
+          type: string
+        creator_name:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AuctionStatusEnum'
+          readOnly: true
+        outcome:
+          allOf:
+          - $ref: '#/components/schemas/AuctionOutcomeEnum'
+          readOnly: true
+        starting_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        current_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        minimum_next_bid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        bid_count:
+          type: integer
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+        description:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicArtworkImage'
+          readOnly: true
+        terms:
+          type: string
+          readOnly: true
+        minimum_increment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        extension_window_sec:
+          type: integer
+          readOnly: true
+        extension_duration_sec:
+          type: integer
+          readOnly: true
+        max_extensions:
+          type: integer
+          readOnly: true
+        extensions_count:
+          type: integer
+          readOnly: true
+        winner_deposit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+        winner_payment_window_sec:
+          type: integer
+          readOnly: true
+        non_payment_policy:
+          allOf:
+          - $ref: '#/components/schemas/NonPaymentPolicyEnum'
+          readOnly: true
+        reserve_met:
+          type: boolean
+          nullable: true
+          readOnly: true
+          description: null when there is no reserve; the reserve itself stays private
+        version:
+          type: integer
+          readOnly: true
+        artwork_id:
+          type: string
+          format: uuid
+        reserve_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        original_ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+        commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        winner_declared_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        payment_deadline:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        cancelled_reason:
+          type: string
+          readOnly: true
+        bids:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminBid'
+          readOnly: true
+        history:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        winner_order:
+          type: string
+          nullable: true
+          readOnly: true
+        schedule_problems:
+          type: array
+          items:
+            type: string
+          readOnly: true
+        editable:
+          type: boolean
+          readOnly: true
+      required:
+      - artwork_id
+      - artwork_slug
+      - bid_count
+      - bids
+      - cancelled_reason
+      - commission_rate
+      - creator_name
+      - current_price
+      - description
+      - editable
+      - ends_at
+      - extension_duration_sec
+      - extension_window_sec
+      - extensions_count
+      - history
+      - id
+      - image
+      - images
+      - max_extensions
+      - minimum_increment
+      - minimum_next_bid
+      - non_payment_policy
+      - original_ends_at
+      - outcome
+      - payment_deadline
+      - reserve_met
+      - reserve_price
+      - schedule_problems
+      - starting_price
+      - starts_at
+      - status
+      - terms
+      - title
+      - version
+      - winner_declared_at
+      - winner_deposit_percent
+      - winner_order
+      - winner_payment_window_sec
+    AdminAuctionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        work_title:
+          type: string
+          readOnly: true
+        work_description:
+          type: string
+          readOnly: true
+        artist_name:
+          type: string
+          readOnly: true
+        artist_info:
+          type: string
+          readOnly: true
+        category_hint:
+          type: string
+          readOnly: true
+        dimensions_text:
+          type: string
+          readOnly: true
+        year_text:
+          type: string
+          readOnly: true
+        expected_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        customer_notes:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AuctionRequestStatusEnum'
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminImage'
+          readOnly: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestNote'
+          readOnly: true
+          description: Messages from the platform to the customer
+        history:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        can_edit:
+          type: boolean
+          readOnly: true
+        can_withdraw:
+          type: boolean
+          readOnly: true
+        auction_id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+        customer:
+          type: string
+        customer_email:
+          type: string
+        contact_phone:
+          type: string
+        agreed_commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+        commission_agreed_at:
+          type: string
+          format: date-time
+          nullable: true
+        artwork_id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        notes:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestNote'
+          readOnly: true
+        actions:
+          type: array
+          items:
+            type: string
+          readOnly: true
+      required:
+      - actions
+      - agreed_commission_rate
+      - artist_info
+      - artist_name
+      - artwork_id
+      - auction_id
+      - can_edit
+      - can_withdraw
+      - category_hint
+      - commission_agreed_at
+      - contact_phone
+      - created_at
+      - customer
+      - customer_email
+      - customer_notes
+      - dimensions_text
+      - expected_price
+      - history
+      - id
+      - images
+      - messages
+      - notes
+      - status
+      - updated_at
+      - work_description
+      - work_title
+      - year_text
+    AdminBid:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        alias:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+        status:
+          type: string
+        bidder:
+          type: string
+          readOnly: true
+        bidder_phone:
+          type: string
+      required:
+      - alias
+      - amount
+      - bidder
+      - bidder_phone
+      - created_at
+      - id
+      - status
     AdminCategory:
       type: object
       properties:
@@ -3118,6 +4087,10 @@ components:
       properties:
         number:
           type: string
+        source:
+          allOf:
+          - $ref: '#/components/schemas/SourceEnum'
+          readOnly: true
         status:
           allOf:
           - $ref: '#/components/schemas/OrderStatusEnum'
@@ -3285,6 +4258,7 @@ components:
       - remaining
       - reservation_expires_at
       - server_now
+      - source
       - status
       - subtotal
       - whatsapp_url
@@ -3374,6 +4348,10 @@ components:
       properties:
         number:
           type: string
+        source:
+          allOf:
+          - $ref: '#/components/schemas/SourceEnum'
+          readOnly: true
         status:
           allOf:
           - $ref: '#/components/schemas/OrderStatusEnum'
@@ -3431,6 +4409,7 @@ components:
       - payment_status
       - phone
       - reservation_expires_at
+      - source
       - status
       - subtotal
     AdminSetPasswordRequest:
@@ -3661,6 +4640,530 @@ components:
       description: |-
         * `active` - ظاهر
         * `hidden` - مخفي
+    AuctionCard:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        artwork_slug:
+          type: string
+        creator_name:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AuctionStatusEnum'
+          readOnly: true
+        outcome:
+          allOf:
+          - $ref: '#/components/schemas/AuctionOutcomeEnum'
+          readOnly: true
+        starting_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        current_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        minimum_next_bid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        bid_count:
+          type: integer
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - artwork_slug
+      - bid_count
+      - creator_name
+      - current_price
+      - ends_at
+      - id
+      - image
+      - minimum_next_bid
+      - outcome
+      - starting_price
+      - starts_at
+      - status
+      - title
+    AuctionCreateRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        terms:
+          type: string
+        starting_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        minimum_increment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        reserve_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+        extension_window_sec:
+          type: integer
+          maximum: 3600
+          minimum: 0
+        extension_duration_sec:
+          type: integer
+          maximum: 3600
+          minimum: 0
+        max_extensions:
+          type: integer
+          maximum: 50
+          minimum: 0
+        winner_deposit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        non_payment_policy:
+          $ref: '#/components/schemas/NonPaymentPolicyEnum'
+        artwork:
+          type: string
+          format: uuid
+        request:
+          type: string
+          format: uuid
+          nullable: true
+        commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          nullable: true
+      required:
+      - artwork
+      - ends_at
+      - minimum_increment
+      - starting_price
+      - starts_at
+    AuctionDetail:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        artwork_slug:
+          type: string
+        creator_name:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AuctionStatusEnum'
+          readOnly: true
+        outcome:
+          allOf:
+          - $ref: '#/components/schemas/AuctionOutcomeEnum'
+          readOnly: true
+        starting_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        current_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        minimum_next_bid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        bid_count:
+          type: integer
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+        description:
+          type: string
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicArtworkImage'
+          readOnly: true
+        terms:
+          type: string
+          readOnly: true
+        minimum_increment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        extension_window_sec:
+          type: integer
+          readOnly: true
+        extension_duration_sec:
+          type: integer
+          readOnly: true
+        max_extensions:
+          type: integer
+          readOnly: true
+        extensions_count:
+          type: integer
+          readOnly: true
+        winner_deposit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+        winner_payment_window_sec:
+          type: integer
+          readOnly: true
+        non_payment_policy:
+          allOf:
+          - $ref: '#/components/schemas/NonPaymentPolicyEnum'
+          readOnly: true
+        reserve_met:
+          type: boolean
+          nullable: true
+          readOnly: true
+          description: null when there is no reserve; the reserve itself stays private
+        version:
+          type: integer
+          readOnly: true
+      required:
+      - artwork_slug
+      - bid_count
+      - creator_name
+      - current_price
+      - description
+      - ends_at
+      - extension_duration_sec
+      - extension_window_sec
+      - extensions_count
+      - id
+      - image
+      - images
+      - max_extensions
+      - minimum_increment
+      - minimum_next_bid
+      - non_payment_policy
+      - outcome
+      - reserve_met
+      - starting_price
+      - starts_at
+      - status
+      - terms
+      - title
+      - version
+      - winner_deposit_percent
+      - winner_payment_window_sec
+    AuctionOutcomeEnum:
+      enum:
+      - sold
+      - no_sale
+      - reserve_not_met
+      - unpaid
+      type: string
+      description: |-
+        * `sold` - بيع
+        * `no_sale` - لا مزايدات
+        * `reserve_not_met` - لم يُبلغ السعر الأدنى
+        * `unpaid` - لم يُدفع
+    AuctionReasonRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          maxLength: 1000
+      required:
+      - reason
+    AuctionRequest:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        work_title:
+          type: string
+          readOnly: true
+        work_description:
+          type: string
+          readOnly: true
+        artist_name:
+          type: string
+          readOnly: true
+        artist_info:
+          type: string
+          readOnly: true
+        category_hint:
+          type: string
+          readOnly: true
+        dimensions_text:
+          type: string
+          readOnly: true
+        year_text:
+          type: string
+          readOnly: true
+        expected_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        customer_notes:
+          type: string
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AuctionRequestStatusEnum'
+          readOnly: true
+        images:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminImage'
+          readOnly: true
+        messages:
+          type: array
+          items:
+            $ref: '#/components/schemas/RequestNote'
+          readOnly: true
+          description: Messages from the platform to the customer
+        history:
+          type: array
+          items:
+            type: object
+            additionalProperties: {}
+          readOnly: true
+        can_edit:
+          type: boolean
+          readOnly: true
+        can_withdraw:
+          type: boolean
+          readOnly: true
+        auction_id:
+          type: string
+          format: uuid
+          readOnly: true
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - artist_info
+      - artist_name
+      - auction_id
+      - can_edit
+      - can_withdraw
+      - category_hint
+      - created_at
+      - customer_notes
+      - dimensions_text
+      - expected_price
+      - history
+      - id
+      - images
+      - messages
+      - status
+      - updated_at
+      - work_description
+      - work_title
+      - year_text
+    AuctionRequestInputRequest:
+      type: object
+      properties:
+        work_title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        work_description:
+          type: string
+          minLength: 1
+          maxLength: 5000
+        artist_name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        artist_info:
+          type: string
+          maxLength: 3000
+        category_hint:
+          type: string
+          maxLength: 120
+        dimensions_text:
+          type: string
+          maxLength: 120
+        year_text:
+          type: string
+          maxLength: 40
+        expected_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        customer_notes:
+          type: string
+          maxLength: 3000
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 10
+      required:
+      - artist_name
+      - work_description
+      - work_title
+    AuctionRequestStatusEnum:
+      enum:
+      - submitted
+      - under_review
+      - needs_more_info
+      - negotiation
+      - approved
+      - rejected
+      - withdrawn
+      type: string
+      description: |-
+        * `submitted` - مُرسل
+        * `under_review` - قيد المراجعة
+        * `needs_more_info` - بحاجة لمعلومات إضافية
+        * `negotiation` - قيد التفاوض
+        * `approved` - مقبول
+        * `rejected` - مرفوض
+        * `withdrawn` - مسحوب
+    AuctionState:
+      type: object
+      description: The WebSocket snapshot (ARCHITECTURE §5.4); the REST resync adds
+        `me`.
+      properties:
+        seq:
+          type: integer
+        server_time:
+          type: string
+          format: date-time
+        status:
+          type: string
+        outcome:
+          type: string
+        current_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        minimum_next_bid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        bid_count:
+          type: integer
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+        extensions_count:
+          type: integer
+        reserve_met:
+          type: boolean
+          nullable: true
+          description: null without a reserve
+        payment_deadline:
+          type: string
+          format: date-time
+          nullable: true
+        winner_alias:
+          type: integer
+          nullable: true
+        bids:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicBid'
+        me:
+          allOf:
+          - $ref: '#/components/schemas/MyAuctionState'
+          nullable: true
+      required:
+      - bid_count
+      - bids
+      - current_price
+      - ends_at
+      - extensions_count
+      - me
+      - minimum_next_bid
+      - outcome
+      - payment_deadline
+      - reserve_met
+      - seq
+      - server_time
+      - starts_at
+      - status
+      - winner_alias
+    AuctionStatusEnum:
+      enum:
+      - draft
+      - scheduled
+      - live
+      - ended
+      - pending_winner_payment
+      - awarded
+      - cancelled
+      type: string
+      description: |-
+        * `draft` - مسودة
+        * `scheduled` - مجدول
+        * `live` - جارٍ
+        * `ended` - انتهى
+        * `pending_winner_payment` - بانتظار دفع الفائز
+        * `awarded` - مُرسى
+        * `cancelled` - ملغى
     AvailableActions:
       type: object
       properties:
@@ -3691,6 +5194,28 @@ components:
       - record_payment
       - record_refund
       - remove_items
+    BidInputRequest:
+      type: object
+      properties:
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+      required:
+      - amount
+    BidResult:
+      type: object
+      properties:
+        bid:
+          $ref: '#/components/schemas/PublicBid'
+        state:
+          $ref: '#/components/schemas/AuctionState'
+        replayed:
+          type: boolean
+      required:
+      - bid
+      - replayed
+      - state
     BlankEnum:
       enum:
       - ''
@@ -3860,6 +5385,18 @@ components:
       - city
       - governorate
       - policy_version
+    CommissionInputRequest:
+      type: object
+      properties:
+        rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        note:
+          type: string
+          default: ''
+      required:
+      - rate
     CustomDepositRequest:
       type: object
       properties:
@@ -3878,6 +5415,10 @@ components:
       properties:
         number:
           type: string
+        source:
+          allOf:
+          - $ref: '#/components/schemas/SourceEnum'
+          readOnly: true
         status:
           allOf:
           - $ref: '#/components/schemas/OrderStatusEnum'
@@ -4000,6 +5541,7 @@ components:
       - remaining
       - reservation_expires_at
       - server_now
+      - source
       - status
       - subtotal
       - whatsapp_url
@@ -4123,6 +5665,26 @@ components:
       - height_cm
       - weight_kg
       - width_cm
+    EligibleArtwork:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        creator_name:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+      required:
+      - creator_name
+      - id
+      - image
+      - title
     FavoriteIds:
       type: object
       properties:
@@ -4397,6 +5959,121 @@ components:
       - phone
       - phone_verified
       - roles
+    MyAuctionState:
+      type: object
+      properties:
+        alias:
+          type: integer
+          nullable: true
+        my_top_bid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        is_highest:
+          type: boolean
+        is_winner:
+          type: boolean
+        order_number:
+          type: string
+          nullable: true
+        can_bid:
+          type: boolean
+      required:
+      - alias
+      - can_bid
+      - is_highest
+      - is_winner
+      - my_top_bid
+      - order_number
+    MyBidAuction:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        artwork_slug:
+          type: string
+        creator_name:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/AuctionStatusEnum'
+          readOnly: true
+        outcome:
+          allOf:
+          - $ref: '#/components/schemas/AuctionOutcomeEnum'
+          readOnly: true
+        starting_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        current_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+          nullable: true
+        minimum_next_bid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        bid_count:
+          type: integer
+          readOnly: true
+        starts_at:
+          type: string
+          format: date-time
+          readOnly: true
+        ends_at:
+          type: string
+          format: date-time
+          readOnly: true
+        my_top_bid:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        my_status:
+          type: string
+          description: highest / outbid / won / lost / pending_payment / unpaid
+        order_number:
+          type: string
+          nullable: true
+      required:
+      - artwork_slug
+      - bid_count
+      - creator_name
+      - current_price
+      - ends_at
+      - id
+      - image
+      - minimum_next_bid
+      - my_status
+      - my_top_bid
+      - order_number
+      - outcome
+      - starting_price
+      - starts_at
+      - status
+      - title
+    NonPaymentPolicyEnum:
+      enum:
+      - offer_next_bidder
+      - cancel_award
+      type: string
+      description: |-
+        * `offer_next_bidder` - عرض على المزايد التالي
+        * `cancel_award` - إلغاء الإرساء
     OrderItem:
       type: object
       properties:
@@ -4479,6 +6156,10 @@ components:
       properties:
         number:
           type: string
+        source:
+          allOf:
+          - $ref: '#/components/schemas/SourceEnum'
+          readOnly: true
         status:
           allOf:
           - $ref: '#/components/schemas/OrderStatusEnum'
@@ -4520,6 +6201,7 @@ components:
       - needs_action
       - number
       - reservation_expires_at
+      - source
       - status
       - subtotal
     PaginatedAdminArtistList:
@@ -4568,6 +6250,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdminArtworkList'
+    PaginatedAdminAuctionRequestList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AdminAuctionRequest'
     PaginatedAdminOrderListList:
       type: object
       required:
@@ -4614,6 +6319,52 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AdminUser'
+    PaginatedAuctionCardList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuctionCard'
+    PaginatedEligibleArtworkList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/EligibleArtwork'
     PaginatedOrderSummaryList:
       type: object
       required:
@@ -4947,6 +6698,93 @@ components:
           maximum: 2147483647
           minimum: 0
           title: الترتيب
+    PatchedAuctionRequestInputRequest:
+      type: object
+      properties:
+        work_title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        work_description:
+          type: string
+          minLength: 1
+          maxLength: 5000
+        artist_name:
+          type: string
+          minLength: 1
+          maxLength: 200
+        artist_info:
+          type: string
+          maxLength: 3000
+        category_hint:
+          type: string
+          maxLength: 120
+        dimensions_text:
+          type: string
+          maxLength: 120
+        year_text:
+          type: string
+          maxLength: 40
+        expected_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        customer_notes:
+          type: string
+          maxLength: 3000
+        images:
+          type: array
+          items:
+            type: string
+            format: binary
+          maxItems: 10
+    PatchedAuctionWriteRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 250
+        terms:
+          type: string
+        starting_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        minimum_increment:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        reserve_price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          nullable: true
+        starts_at:
+          type: string
+          format: date-time
+        ends_at:
+          type: string
+          format: date-time
+        extension_window_sec:
+          type: integer
+          maximum: 3600
+          minimum: 0
+        extension_duration_sec:
+          type: integer
+          maximum: 3600
+          minimum: 0
+        max_extensions:
+          type: integer
+          maximum: 50
+          minimum: 0
+        winner_deposit_percent:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        non_payment_policy:
+          $ref: '#/components/schemas/NonPaymentPolicyEnum'
     PatchedImageUpdateRequest:
       type: object
       properties:
@@ -5340,6 +7178,28 @@ components:
       - alt_text
       - id
       - image
+    PublicBid:
+      type: object
+      description: 'A bid as every viewer sees it: amount and a stable per-auction
+        alias, never identity (BR-509).'
+      properties:
+        id:
+          type: string
+          format: uuid
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+        alias:
+          type: integer
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - alias
+      - amount
+      - created_at
+      - id
     PublicCategory:
       type: object
       properties:
@@ -5429,7 +7289,14 @@ components:
           type: string
           nullable: true
           readOnly: true
+        auction_id:
+          type: string
+          format: uuid
+          nullable: true
+          readOnly: true
+          description: 'Set when the offer is an auction: link to its page.'
       required:
+      - auction_id
       - available
       - ends_at
       - id
@@ -5550,6 +7417,62 @@ components:
       - password
       - password_confirm
       - phone
+    RequestArtworkInputRequest:
+      type: object
+      properties:
+        category:
+          type: string
+          minLength: 1
+          title: المعرّف
+      required:
+      - category
+    RequestNote:
+      type: object
+      properties:
+        body:
+          type: string
+        visibility:
+          type: string
+        author:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - author
+      - body
+      - created_at
+      - visibility
+    RequestNoteInputRequest:
+      type: object
+      properties:
+        body:
+          type: string
+          minLength: 1
+        visibility:
+          $ref: '#/components/schemas/RequestNoteInputVisibilityEnum'
+      required:
+      - body
+      - visibility
+    RequestNoteInputVisibilityEnum:
+      enum:
+      - internal
+      - customer
+      type: string
+      description: |-
+        * `internal` - internal
+        * `customer` - customer
+    RequestTransitionRequest:
+      type: object
+      properties:
+        to:
+          $ref: '#/components/schemas/AuctionRequestStatusEnum'
+        message:
+          type: string
+          default: ''
+      required:
+      - to
     RevokedCount:
       type: object
       properties:
@@ -5656,6 +7579,14 @@ components:
           readOnly: true
       required:
       - updated_at
+    SourceEnum:
+      enum:
+      - cart
+      - auction
+      type: string
+      description: |-
+        * `cart` - العربة
+        * `auction` - مزاد
     StaffCancelKindEnum:
       enum:
       - platform

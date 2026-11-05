@@ -68,6 +68,7 @@ const OFFER = {
   ends_at: null,
   purchasable: true,
   unavailable_reason: null,
+  auction_id: null,
 };
 const line = (over: Record<string, unknown> = {}) => ({
   id: "line-1",

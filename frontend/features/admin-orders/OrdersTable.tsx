@@ -30,12 +30,13 @@ export function OrdersTable() {
   const [filter, setFilter] = useState<Filter>("open");
   const [search, setSearch] = useState("");
   const [debounced, setDebounced] = useState("");
+  const [source, setSource] = useState<"all" | "cart" | "auction">("all");
   const [page, setPage] = useState(1);
   useEffect(() => {
     const timer = setTimeout(() => setDebounced(search.trim()), 300);
     return () => clearTimeout(timer);
   }, [search]);
-  const params = { status: filter, search: debounced, page };
+  const params = { status: filter, source, search: debounced, page };
   const orders = useQuery({
     queryKey: adminOrdersKey(params),
     queryFn: () => listAdminOrders(params),
@@ -59,6 +60,23 @@ export function OrdersTable() {
               setPage(1);
             }}
           />
+        </label>
+        <label className="flex max-w-xs flex-col gap-1 text-sm">
+          {t("sourceLabel")}
+          <select
+            className="min-h-11 rounded-[var(--radius-control)] border border-border bg-white px-3"
+            value={source}
+            onChange={(e) => {
+              setSource(e.target.value as typeof source);
+              setPage(1);
+            }}
+          >
+            {(["all", "cart", "auction"] as const).map((s) => (
+              <option key={s} value={s}>
+                {t(`filters.source.${s}`)}
+              </option>
+            ))}
+          </select>
         </label>
         <div role="tablist" aria-label={tc("status")} className="flex gap-2 overflow-x-auto pb-1">
           {FILTERS.map((f) => (
@@ -94,8 +112,11 @@ export function OrdersTable() {
                   href={`/admin/orders/${order.number}`}
                   className="grid grid-cols-2 items-center gap-x-4 gap-y-2 py-4 hover:bg-surface/40 md:grid-cols-[10rem_minmax(0,1fr)_9rem_8rem_10rem]"
                 >
-                  <span className="font-medium text-primary" dir="ltr">
-                    {order.number}
+                  <span className="flex flex-col">
+                    <span className="font-medium text-primary" dir="ltr">
+                      {order.number}
+                    </span>
+                    {order.source === "auction" ? <span className="text-xs text-secondary">{to("source.auction")}</span> : null}
                   </span>
                   <span className="min-w-0 truncate text-sm">
                     {order.customer} · <bdi dir="ltr" className="text-muted">{order.phone}</bdi>

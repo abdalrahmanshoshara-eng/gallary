@@ -21,6 +21,11 @@ export async function SiteHeader() {
         <nav aria-label={t("nav.label")} className="flex items-center gap-6 text-sm md:gap-8">
           <ul className="hidden items-center gap-6 sm:flex">
             <li>
+              <Link href="/auctions" className="text-text hover:text-secondary">
+                {t("nav.auctions")}
+              </Link>
+            </li>
+            <li>
               <Link href="/artworks" className="text-text hover:text-secondary">
                 {t("nav.artworks")}
               </Link>

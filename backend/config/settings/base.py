@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     "apps.favorites",
     "apps.cart",
     "apps.orders",
+    "apps.auctions",
     "apps.realtime",
 ]
 
@@ -309,6 +310,7 @@ REST_FRAMEWORK = {
         "login": env.str("THROTTLE_LOGIN", default="20/min"),
         "register": env.str("THROTTLE_REGISTER", default="10/hour"),
         "checkout": env.str("THROTTLE_CHECKOUT", default="20/hour"),
+        "bids": env.str("THROTTLE_BIDS", default="30/min"),
         "otp_request": env.str("THROTTLE_OTP_REQUEST", default="10/min"),
         "otp_verify": env.str("THROTTLE_OTP_VERIFY", default="30/min"),
     },
@@ -346,6 +348,12 @@ SPECTACULAR_SETTINGS = {
         "PaymentRecordStatusEnum": "apps.orders.models.PaymentRecordStatus",
         "OrderItemStatusEnum": "apps.orders.models.OrderItemStatus",
         "GovernorateEnum": "apps.accounts.models.Governorate",
+        "AuctionStatusEnum": "apps.auctions.models.AuctionStatus",
+        "AuctionOutcomeEnum": "apps.auctions.models.AuctionOutcome",
+        "BidStatusEnum": "apps.auctions.models.BidStatus",
+        "NonPaymentPolicyEnum": "apps.auctions.models.NonPaymentPolicy",
+        "AuctionRequestStatusEnum": "apps.auctions.models.RequestStatus",
+        "NoteVisibilityEnum": "apps.auctions.models.NoteVisibility",
     },
 }
 
@@ -382,6 +390,12 @@ CELERY_BEAT_SCHEDULE = {
         "task": "apps.orders.tasks.expire_due_orders",
         "schedule": 60.0,
         "options": {"queue": "critical", "expires": 55},
+    },
+    # Auction start/end/winner-deadline transitions (BR-505, 511, 514); reads also apply them lazily.
+    "auction-tick": {
+        "task": "apps.auctions.tasks.auction_tick",
+        "schedule": 5.0,
+        "options": {"queue": "critical", "expires": 4},
     },
     "end-expired-listings": {
         "task": "apps.listings.tasks.end_expired_listings",

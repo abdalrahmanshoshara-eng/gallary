@@ -14,6 +14,7 @@ from apps.accounts.urls import admin_urls as accounts_admin_urls
 from apps.accounts.urls import auth_urls
 from apps.artists import urls as artists_urls
 from apps.artworks import urls as artworks_urls
+from apps.auctions import urls as auctions_urls
 from apps.cart import urls as cart_urls
 from apps.catalog import urls as catalog_urls
 from apps.core.exceptions import api_not_found
@@ -28,6 +29,7 @@ admin_v1 = [
     *artworks_urls.admin_urls,
     *listings_urls.admin_urls,
     *orders_urls.admin_urls,
+    *auctions_urls.admin_urls,
 ]
 public_v1 = [
     *catalog_urls.public_urls,
@@ -37,6 +39,7 @@ public_v1 = [
     *favorites_urls.urls,
     *cart_urls.urls,
     *orders_urls.urls,
+    *auctions_urls.urls,
 ]
 
 api_v1 = [

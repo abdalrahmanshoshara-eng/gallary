@@ -11,6 +11,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { SiteFooter } from "@/components/layout/SiteFooter";
 import { SiteHeader } from "@/components/layout/SiteHeader";
 import { Providers } from "@/components/Providers";
+import { LiveNotices } from "@/features/auctions/LiveNotices";
 import { directionOf, routing } from "@/i18n/routing";
 
 export function generateStaticParams() {
@@ -40,6 +41,7 @@ export default async function LocaleLayout({ children, params }: LayoutProps<"/[
               {children}
             </main>
             <SiteFooter />
+            <LiveNotices />
           </Providers>
         </NextIntlClientProvider>
       </body>

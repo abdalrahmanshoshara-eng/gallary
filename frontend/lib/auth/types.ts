@@ -16,3 +16,12 @@ export function isCatalogEditor(user: CurrentUser | null): boolean {
 export function isOrdersStaff(user: CurrentUser | null): boolean {
   return hasRole(user, "operations_staff") || hasRole(user, "super_admin");
 }
+
+export function isAuctionStaff(user: CurrentUser | null): boolean {
+  return hasRole(user, "auction_manager") || hasRole(user, "super_admin");
+}
+
+/** Order desk: operations and Super Admin see every order, auction managers their winners' orders. */
+export function canUseOrderDesk(user: CurrentUser | null): boolean {
+  return isOrdersStaff(user) || hasRole(user, "auction_manager");
+}

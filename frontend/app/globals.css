@@ -55,3 +55,13 @@
     }
   }
 }
+
+/* A changed auction price glows briefly (motion-safe only, see AuctionLive). */
+@keyframes price-flash {
+  0% {
+    background-color: color-mix(in srgb, var(--color-secondary) 28%, transparent);
+  }
+  100% {
+    background-color: transparent;
+  }
+}

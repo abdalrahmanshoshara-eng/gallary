@@ -42,13 +42,16 @@ from .models import (
     OrderItem,
     OrderItemStatus,
     OrderNumberSequence,
+    OrderSource,
     OrderStatus,
     OrderStatusHistory,
+    PayeeType,
     PaymentKind,
     PaymentRecord,
     PaymentRecordStatus,
     PaymentStatus,
 )
+from .signals import order_status_changed
 
 ZERO = Decimal("0.00")
 
@@ -110,6 +113,7 @@ def _transition(order: Order, to: str, *, actor, reason: str = "") -> None:
         order.closed_at = timezone.now()
     OrderStatusHistory.objects.create(order=order, from_status=before, to_status=to, actor=actor, reason=reason)
     audit.record(actor=actor, action=f"order.{to}", entity=order, changes={"from": before, "to": to}, reason=reason)
+    order_status_changed.send(sender=Order, order=order, from_status=before, to_status=to, actor=actor)
 
 
 def _lock(order: Order) -> Order:
@@ -233,7 +237,8 @@ def expire_if_due(order: Order, now=None) -> bool:
     now = now or timezone.now()
     if order.status == OrderStatus.PENDING_DEPOSIT and order.reservation_expires_at <= now:
         _release_stock(order)
-        _transition(order, OrderStatus.EXPIRED, actor=None, reason="انتهت مهلة العربون (24 ساعة).")
+        reason = "انتهت مهلة عربون الفائز." if order.source == OrderSource.AUCTION else "انتهت مهلة العربون (24 ساعة)."
+        _transition(order, OrderStatus.EXPIRED, actor=None, reason=reason)
         order.save()
         return True
     return False
@@ -285,6 +290,8 @@ def cancel_by_customer(order: Order, *, user, reason: str = "") -> Order:
         raise PermissionDeniedError()
     if _expired(order):
         raise OrderExpiredError("انتهت مهلة هذا الطلب بالفعل.")
+    if order.source == OrderSource.AUCTION:  # BR-507: a winning bid is binding
+        raise OrderStateError("طلب المزاد ناتج عن مزايدة ملزمة ولا يُلغى من الحساب. تواصل معنا لأي استفسار.")
     if order.status != OrderStatus.PENDING_DEPOSIT or _confirmed_sum(order) > 0:
         raise OrderStateError("يمكن إلغاء الطلب من حسابك قبل دفع العربون فقط. تواصل معنا لأي تغيير.")
     _release_stock(order)
@@ -435,8 +442,9 @@ def cancel_by_platform(order: Order, *, actor, reason: str) -> Order:
             listing_services.revert_sale(item.listing_id, item.quantity)
     else:
         _release_stock(order)
-    if order.deposit_status == DepositStatus.CONFIRMED:
-        order.deposit_status = DepositStatus.REFUND_DUE  # BR-405: refunded manually, recorded as REFUND
+    if order.deposit_status == DepositStatus.CONFIRMED or order.amount_paid > 0:
+        # BR-405/517: any money received is refunded manually and recorded as REFUND.
+        order.deposit_status = DepositStatus.REFUND_DUE
     order.cancelled_reason = reason
     _transition(order, OrderStatus.CANCELLED_BY_PLATFORM, actor=actor, reason=reason)
     order.save()
@@ -494,6 +502,13 @@ def set_custom_deposit(order: Order, *, actor, amount: Decimal, reason: str) -> 
     order = _lock(order)
     if _expired(order) or order.status != OrderStatus.PENDING_DEPOSIT:
         raise OrderStateError("يُعدَّل العربون قبل تأكيده فقط.")
+    if order.source == OrderSource.AUCTION and amount < (order.subtotal / 2).quantize(Decimal("0.01")):
+        raise ConflictError(
+            "عربون الفائز في المزاد لا يقل عن 50% من السعر (BR-410).",
+            code="VALIDATION_ERROR",
+            http_status=400,
+            details={"amount": ["عربون الفائز في المزاد لا يقل عن 50% من السعر."]},
+        )
     if not (ZERO < amount <= order.subtotal):
         raise ConflictError(
             "العربون يجب أن يكون أكبر من صفر ولا يتجاوز المجموع.",
@@ -550,4 +565,55 @@ def complete(order: Order, *, actor) -> Order:
 def update_internal_notes(order: Order, *, actor, notes: str) -> Order:
     order.internal_notes = notes
     order.save(update_fields=["internal_notes", "updated_at"])
+    return order
+
+
+# --- auction orders (BR-512/513) -----------------------------------------------------------------------
+def create_auction_order(*, user, listing_id: int, amount: Decimal, deposit_percent: Decimal, deadline) -> Order:
+    """One-item order for an auction winner: stock reserved, deposit ≥ 50% due within the hour.
+    Called inside the auction's transaction."""
+    listing = listing_services.reserve_for_auction(listing_id)
+    rate = listing_services.commission_rate(listing)
+    commission, payee = listing_services.split_commission(amount, rate)
+    deposit = min((amount * deposit_percent / Decimal(100)).quantize(Decimal("0.01")), amount)
+    now = timezone.now()
+    order = Order.objects.create(
+        order_number=_next_number(now),
+        user=user,
+        source=OrderSource.AUCTION,
+        subtotal=amount,
+        deposit_type=OrderDepositType.PERCENTAGE,
+        deposit_value=deposit_percent,
+        deposit_due=deposit,
+        created_at=now,
+        reservation_expires_at=deadline,
+        payment_deadline=deadline,
+        policy_version=policy.VERSION,
+        policy_accepted_at=now,
+        contact_name=user.display_name or user.phone,
+        contact_phone=user.phone,
+        contact_email=user.email or "",
+        governorate=user.governorate,
+        city=user.city,
+        address_line=user.address_line,
+    )
+    OrderItem.objects.create(
+        order=order,
+        listing=listing,
+        artwork=listing.artwork,
+        quantity=1,
+        title_snapshot=listing.artwork.title,
+        unit_price_snapshot=amount,
+        line_total=amount,
+        commission_rate_snapshot=rate,
+        commission_amount_snapshot=commission,
+        payee_amount_snapshot=payee,
+        payee_type_snapshot=PayeeType.OWNER if listing.artwork.owner_user_id else PayeeType.ARTIST,
+        deposit_amount_snapshot=deposit,
+    )
+    Delivery.objects.create(order=order)
+    OrderStatusHistory.objects.create(
+        order=order, from_status="", to_status=order.status, actor=None, reason="فوز بمزاد"
+    )
+    audit.record(actor=None, action="order.created", entity=order, changes={"source": "auction", "amount": str(amount)})
     return order

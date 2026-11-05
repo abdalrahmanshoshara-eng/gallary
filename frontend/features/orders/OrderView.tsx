@@ -108,9 +108,14 @@ export function OrderView({ number, justCreated }: { number: string; justCreated
       </header>
 
       {justCreated && pending ? <Alert tone="success">{t("created")}</Alert> : null}
+      {o.source === "auction" && pending ? (
+        <Alert tone="info">
+          <span className="font-medium">{t("auctionOrder")}</span> — {t("auctionDeadlineHint")}
+        </Alert>
+      ) : null}
       {cancel.isSuccess ? <Alert tone="success">{t("cancelled")}</Alert> : null}
 
-      <div className="grid gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-8 lg:grid-cols-[minmax(0,1fr)_22rem]">
         <div className="flex flex-col gap-8">
           {pending ? (
             <section aria-labelledby="next-step" className="rounded-[var(--radius-card)] border border-secondary/50 bg-white/70 p-6">
@@ -157,7 +162,7 @@ export function OrderView({ number, justCreated }: { number: string; justCreated
             </section>
           ) : null}
 
-          {status === "expired" ? <Alert tone="info">{t("expiredBody")}</Alert> : null}
+          {status === "expired" ? <Alert tone="info">{o.source === "auction" ? t("auctionExpiredBody") : t("expiredBody")}</Alert> : null}
           {status.startsWith("cancelled") ? (
             <Alert tone="info">
               {t("cancelledBody")}

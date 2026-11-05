@@ -426,3 +426,59 @@ def revert_sale(listing_id: int, quantity: int) -> Listing:
     _derive_sold_out(listing)
     listing.save(update_fields=["quantity_available", "quantity_sold", "status", "closed_at", "updated_at"])
     return listing
+
+
+def reserve_for_auction(listing_id: int) -> Listing:
+    """The auction's own path to the stock: the winner's order reserves the single piece
+    (purchase rules for fixed prices do not apply; the auction already decided the buyer)."""
+    listing = Listing.objects.select_for_update(of=("self",)).select_related("artwork").get(pk=listing_id)
+    if listing.sale_mode != SaleMode.AUCTION or listing.quantity_available < 1:
+        raise InsufficientStockError(details={"reason": "auction_stock"})
+    listing.quantity_available -= 1
+    listing.quantity_reserved += 1
+    listing.save(update_fields=["quantity_available", "quantity_reserved", "updated_at"])
+    return listing
+
+
+@transaction.atomic
+def create_auction_listing(*, actor, artwork, commission_rate_override=None) -> Listing:
+    """A unique-piece listing sold by auction. Pricing is the auction's (starting price), so
+    it is approved by the auction manager who schedules it (PRD §8)."""
+    if artwork.archived_at is not None:
+        raise ConflictError("لا يمكن عرض عمل مؤرشف في مزاد.", code="ARTWORK_ARCHIVED")
+    listing = Listing.objects.create(
+        artwork=artwork,
+        sale_mode=SaleMode.AUCTION,
+        quantity_mode=QuantityMode.UNIQUE,
+        quantity_total=1,
+        quantity_available=1,
+        commission_rate_override=commission_rate_override,
+        created_by=actor,
+    )
+    audit.record(actor=actor, action="listing.created", entity=listing, changes={"sale_mode": "auction"})
+    return listing
+
+
+def activate_auction_listing(listing: Listing, *, actor) -> Listing:
+    listing = Listing.objects.select_for_update(of=("self",)).get(pk=listing.pk)
+    if listing.status == ListingStatus.ACTIVE:
+        return listing
+    listing.status = ListingStatus.ACTIVE
+    listing.pricing_approved_by = actor
+    listing.pricing_approved_at = timezone.now()
+    listing.activated_at = timezone.now()
+    try:
+        with transaction.atomic():
+            listing.save()
+    except IntegrityError:
+        raise AlreadyActiveError() from None
+    return listing
+
+
+def close_auction_listing(listing: Listing, *, status: str = ListingStatus.ENDED) -> Listing:
+    listing = Listing.objects.select_for_update(of=("self",)).get(pk=listing.pk)
+    if listing.status in (ListingStatus.ACTIVE, ListingStatus.DRAFT):
+        listing.status = status
+        listing.closed_at = timezone.now()
+        listing.save(update_fields=["status", "closed_at", "updated_at"])
+    return listing

@@ -42,6 +42,15 @@ def ingest_image(upload: UploadedFile, *, purpose: ImagePurpose, user=None) -> I
     return asset
 
 
+def copy_image(asset: ImageAsset, *, purpose: ImagePurpose, user=None) -> ImageAsset:
+    """A new asset from another asset's original (e.g. auction-request photos reused for the
+    artwork), so each owner keeps its own lifecycle."""
+    with private_storage().open(asset.original_key, "rb") as source:
+        data = source.read()
+    upload = ContentFile(data, name=asset.original_key.rsplit("/", 1)[-1])
+    return ingest_image(upload, purpose=purpose, user=user)
+
+
 def delete_asset(asset: ImageAsset) -> None:
     """Delete the row now and the stored files after commit (never the other way round)."""
     from .tasks import delete_files

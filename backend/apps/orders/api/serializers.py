@@ -76,6 +76,7 @@ class OrderSummarySerializer(serializers.ModelSerializer):
         model = Order
         fields = [
             "number",
+            "source",
             "status",
             "subtotal",
             "deposit_due",
@@ -140,7 +141,7 @@ class CustomerOrderSerializer(OrderSummarySerializer):
         return timezone.now().isoformat()
 
     def get_can_cancel(self, order: Order) -> bool:
-        return order.status == OrderStatus.PENDING_DEPOSIT and order.amount_paid == 0
+        return order.source != "auction" and order.status == OrderStatus.PENDING_DEPOSIT and order.amount_paid == 0
 
     @extend_schema_field(serializers.URLField(allow_null=True))
     def get_whatsapp_url(self, order: Order):

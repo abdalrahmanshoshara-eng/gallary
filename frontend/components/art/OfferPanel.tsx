@@ -2,6 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { Suspense } from "react";
 
 import { BuyBox } from "@/features/cart/BuyBox";
+import { Link } from "@/i18n/navigation";
 import type { Offer } from "@/lib/catalog/types";
 import { formatDateTime } from "@/lib/formatters/datetime";
 import { formatUsd } from "@/lib/formatters/money";
@@ -14,6 +15,19 @@ export async function OfferPanel({ offer, archived }: { offer: Offer | null | un
   const t = await getTranslations("catalog");
   if (archived) return <p className="text-olive">{t("archivedNotice")}</p>;
   if (!offer) return <p className="text-muted">{t("notForSale")}</p>;
+  if (offer.sale_mode === "auction" && offer.auction_id) {
+    return (
+      <div className="flex flex-col gap-3">
+        <p className="font-medium text-primary">{t("offer.inAuction")}</p>
+        <Link
+          href={`/auctions/${offer.auction_id}`}
+          className="inline-flex min-h-11 items-center justify-center rounded-[var(--radius-control)] bg-primary px-6 text-sm font-medium text-on-primary hover:bg-primary/90 sm:self-start"
+        >
+          {t("offer.goToAuction")}
+        </Link>
+      </div>
+    );
+  }
 
   const reason = offer.unavailable_reason as
     | "sold_out"

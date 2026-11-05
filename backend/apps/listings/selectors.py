@@ -23,7 +23,12 @@ SHOWN_STATUSES = (ListingStatus.ACTIVE, ListingStatus.SOLD_OUT)
 
 def with_offers(qs: QuerySet[Artwork]) -> QuerySet[Artwork]:
     return qs.prefetch_related(
-        Prefetch("listings", queryset=Listing.objects.filter(status__in=SHOWN_STATUSES), to_attr="shown_listings")
+        Prefetch(
+            "listings",
+            # `auction`: reverse one-to-one used by the offer's auction link (no query per card).
+            queryset=Listing.objects.filter(status__in=SHOWN_STATUSES).select_related("auction"),
+            to_attr="shown_listings",
+        )
     )
 
 

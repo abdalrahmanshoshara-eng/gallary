@@ -2,7 +2,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { requireStaff } from "@/lib/auth/require";
-import { isCatalogEditor, isOrdersStaff } from "@/lib/auth/types";
+import { canUseOrderDesk, isAuctionStaff, isCatalogEditor } from "@/lib/auth/types";
 
 export default async function AdminHomePage({ params }: PageProps<"/[locale]/admin">) {
   const { locale } = await params;
@@ -10,8 +10,14 @@ export default async function AdminHomePage({ params }: PageProps<"/[locale]/adm
   const user = await requireStaff(locale, "/admin");
   const t = await getTranslations("admin");
   const sections = [
-    ...(isOrdersStaff(user)
+    ...(canUseOrderDesk(user)
       ? [{ href: "/admin/orders" as const, title: t("orders.title"), intro: t("orders.intro") }]
+      : []),
+    ...(isAuctionStaff(user)
+      ? [
+          { href: "/admin/auctions" as const, title: t("auctions.title"), intro: t("auctions.intro") },
+          { href: "/admin/auction-requests" as const, title: t("auctionRequests.title"), intro: t("auctionRequests.intro") },
+        ]
       : []),
     ...(isCatalogEditor(user)
       ? [

@@ -8,6 +8,8 @@ import { useCurrentUser } from "@/lib/auth/useCurrentUser";
 const TABS = [
   { href: "/account", key: "account" },
   { href: "/orders", key: "orders" },
+  { href: "/bids", key: "bids" },
+  { href: "/auction-requests", key: "auctionRequests" },
   { href: "/favorites", key: "favorites" },
 ] as const;
 

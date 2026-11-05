@@ -32,6 +32,7 @@ function CartLink() {
 }
 
 const MAIN_LINKS = [
+  { href: "/auctions", key: "auctions" },
   { href: "/artworks", key: "artworks" },
   { href: "/artists", key: "artists" },
   { href: "/archive", key: "archive" },
@@ -149,6 +150,16 @@ export function UserMenu() {
                   <li>
                     <Link href="/orders" className={menuItem}>
                       {t("orders")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/bids" className={menuItem}>
+                      {t("bids")}
+                    </Link>
+                  </li>
+                  <li>
+                    <Link href="/auction-requests" className={menuItem}>
+                      {t("auctionRequests")}
                     </Link>
                   </li>
                   <li>

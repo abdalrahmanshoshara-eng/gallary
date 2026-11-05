@@ -1,6 +1,6 @@
 # FEATURE_CHECKLIST.md — قائمة تتبع الميزات
 
-> آخر تحديث: 2026-11-05 — **Phase 5 (العربة والطلبات) مستقرة**. المرحلة التالية: Phase 6 (المزادات واللحظية) — بعد موافقتك.
+> آخر تحديث: 2026-11-05 — **Phase 6 (المزادات واللحظية) مستقرة**. المرحلة التالية: Phase 7 (عمليات الإدارة) — بعد موافقتك.
 >
 > **الحالات:** `NOT_STARTED` · `IN_PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `TESTED` · `COMPLETE` — و`N/A` عندما لا ينطبق البُعد على الميزة.
 > **COMPLETE** فقط عندما تكون كل الأبعاد المنطبقة `TESTED` والتوثيق مكتملاً.
@@ -92,23 +92,23 @@
 | F-ORD-09 | التسليم | طريقة، جهة، حالة، تاريخ، ملاحظات | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-801 |
 | F-ORD-10 | إزالة عنصر من طلب | قبل تأكيد العربون، إعادة حساب الإجمالي والعربون | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-303/409 |
 
-## Phase 6 — Auctions & Realtime (F-AUC / F-RT)
+## Phase 6 — Auctions & Realtime (F-AUC / F-RT) — ✅ مستقرة (2026-11-05)
 
 | ID | الميزة | الوصف | BE | FE | DB | Perm | Tests | Docs | Overall | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| F-AUC-01 | تقديم طلب مزاد | نموذج + صور اختيارية + متابعة الحالة | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-601..604 |
-| F-AUC-02 | مراجعة طلبات المزاد | حالات، ملاحظات، نسبة المنصة المتفق عليها (إلزامية قبل الموافقة)، قرار | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-605/606/606a |
-| F-AUC-03 | إدارة المزادات | إنشاء، جدولة، تعديل قبل البداية، إلغاء | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-501..504 |
-| F-AUC-04 | التحولات الزمنية | SCHEDULED→LIVE→ENDED بوقت الخادم | NOT_STARTED | N/A | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-505 |
-| F-AUC-05 | المزايدة | HTTP + Idempotency، قفل صف، ساعة Postgres، تمديد، version | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-505..510, Q8 |
-| F-AUC-06 | صفحات المزادات العامة | قادمة/نشطة/منتهية + صفحة حية لحظية | NOT_STARTED | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | تعتمد F-RT-03/05 |
-| F-AUC-07 | الفائز ومهلة الساعة | Order للفائز بعربون ≥ 50%، AWARDED بعد تأكيده | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-410, 511..515 |
-| F-AUC-08 | سياسة عدم الدفع | المزايد التالي / إلغاء الإرساء | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-514 |
-| F-AUC-09 | سجل مزايدات العميل | في حساب العميل | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-RT-03 | قناة المزاد العامة | snapshot عند الاتصال، أحداث بـ seq، server_time، أسماء مستعارة | NOT_STARTED | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-507b/c |
-| F-RT-04 | قناة المستخدم الخاصة | outbid، فوز، session.revoked | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-RT-05b | إعادة مزامنة المزاد | كشف فجوات `seq`، لقطة REST، دمج الأحداث | N/A | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | يبني على F-RT-05 |
-| F-RT-06 | التوسع والتحمّل | عدة نسخ realtime، اختبار تحمّل | NOT_STARTED | N/A | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
+| F-AUC-01 | تقديم طلب مزاد | نموذج + صور اختيارية + متابعة الحالة | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-601..604؛ حتى 10 صور بمعاينة؛ تعديل عند «بحاجة لمعلومات» فقط؛ سحب قبل القرار |
+| F-AUC-02 | مراجعة طلبات المزاد | حالات، ملاحظات، نسبة المنصة المتفق عليها (إلزامية قبل الموافقة)، قرار | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-605/606؛ الإجراءات المتاحة من الخادم؛ إنشاء عمل مسودة مالكه مقدّم الطلب مع نسخ الصور |
+| F-AUC-03 | إدارة المزادات | إنشاء، جدولة، تعديل قبل البداية، إلغاء | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-501..504/517؛ مزاد الطلب يُنشر عمله عند الجدولة |
+| F-AUC-04 | التحولات الزمنية | SCHEDULED→LIVE→ENDED بوقت الخادم | TESTED | N/A | TESTED | N/A | TESTED | TESTED | COMPLETE | BR-505؛ Beat كل 5 ثوانٍ + فحص كسول عند القراءة |
+| F-AUC-05 | المزايدة | HTTP + Idempotency، قفل صف، ساعة Postgres، تمديد، version | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-505..510؛ اختبار تزامن: مزايدتان بالمبلغ نفسه ← واحدة |
+| F-AUC-06 | صفحات المزادات العامة | قادمة/نشطة/منتهية + صفحة حية لحظية | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | تأكيد صريح قبل المزايدة، رسائل رفض بلغة طبيعية، aria-live |
+| F-AUC-07 | الفائز ومهلة الساعة | Order للفائز بعربون ≥ 50%، AWARDED بعد تأكيده | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-410, 511..513؛ لا إلغاء من العميل لطلب المزاد |
+| F-AUC-08 | سياسة عدم الدفع | المزايد التالي / إلغاء الإرساء | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-514؛ يُحسم فور انتهاء/إلغاء طلب الفائز |
+| F-AUC-09 | سجل مزايدات العميل | في حساب العميل | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | `/bids`؛ ما يحتاج إجراءً أولاً |
+| F-RT-03 | قناة المزاد العامة | snapshot عند الاتصال، أحداث بـ seq، server_time، أسماء مستعارة | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | BR-507b/c |
+| F-RT-04 | قناة المستخدم الخاصة | outbid، فوز، session.revoked | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | تنبيهات في أي صفحة |
+| F-RT-05b | إعادة مزامنة المزاد | كشف فجوات `seq`، لقطة REST، دمج الأحداث | N/A | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | منطق نقي مختبر (`features/auctions/live.ts`) |
+| F-RT-06 | التوسع والتحمّل | عدة نسخ realtime، اختبار تحمّل | NOT_STARTED | N/A | N/A | N/A | NOT_STARTED | NOT_STARTED | DEFERRED | مؤجّل بقصد إلى مرحلة الإطلاق |
 
 ## Phase 7 — Admin Operations
 

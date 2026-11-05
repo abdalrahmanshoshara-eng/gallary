@@ -19,6 +19,7 @@ source_modules =
     apps.favorites
     apps.cart
     apps.orders
+    apps.auctions
 forbidden_modules =
     apps.realtime
     channels
@@ -55,6 +56,7 @@ forbidden_modules =
     apps.favorites
     apps.cart
     apps.orders
+    apps.auctions
 
 [importlinter:contract:offers-below-orders]
 name = Offers know nothing about carts or orders (orders build on offers)
@@ -64,3 +66,14 @@ source_modules =
 forbidden_modules =
     apps.cart
     apps.orders
+    apps.auctions
+
+[importlinter:contract:auctions-on-top]
+name = Orders and carts know nothing about auctions (auctions react to order signals)
+type = forbidden
+source_modules =
+    apps.orders
+    apps.cart
+    apps.favorites
+forbidden_modules =
+    apps.auctions

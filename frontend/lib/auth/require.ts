@@ -41,9 +41,17 @@ export async function requireCustomer(locale: string, path: string): Promise<Cur
   return user;
 }
 
-/** Orders, payments and delivery: operations staff and Super Admin (PRD §8). */
-export async function requireOrdersStaff(locale: string, path: string): Promise<CurrentUser> {
+/** Orders, payments and delivery: operations staff and Super Admin; auction managers for
+ * their auctions' orders only (the API narrows the list). */
+export async function requireOrderDesk(locale: string, path: string): Promise<CurrentUser> {
   const user = await requireStaff(locale, path);
-  if (!user.roles.some((r) => r === "operations_staff" || r === "super_admin")) notFound();
+  if (!user.roles.some((r) => r === "operations_staff" || r === "super_admin" || r === "auction_manager")) notFound();
+  return user;
+}
+
+/** Auctions and auction requests: auction managers and Super Admin (PRD §8). */
+export async function requireAuctionStaff(locale: string, path: string): Promise<CurrentUser> {
+  const user = await requireStaff(locale, path);
+  if (!user.roles.some((r) => r === "auction_manager" || r === "super_admin")) notFound();
   return user;
 }
