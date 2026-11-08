@@ -367,7 +367,9 @@ CHECK: `gross_amount = platform_commission + payee_amount`.
 
 ### notifications
 
-**Notification**: `user_id`, `kind`, `title`, `body`, `payload` jsonb, `read_at`, `channel_status` jsonb (sms/email). مزود الإرسال قابل للتبديل عبر Interface.
+**Notification**: `public_id`, `user_id`, `kind` (مثل `order.created`، `auction.won`)، `category` (order/auction/request/payout)، `title`, `body` (نص محفوظ لحظة الحدث)، `link` (مسار داخلي)، `data` jsonb، `dedupe_key` (UNIQUE مع user إن لم يكن فارغاً — للتذكيرات)، `created_at`, `read_at`، و`email_status` (none/pending/sending/sent/failed)، `email_attempts`, `email_sent_at`, `email_error`. فهارس: `(user, -created_at)`، غير المقروء لكل مستخدم، وصندوق البريد المنتظر.
+**NotificationPreference**: `user_id` PK، `email_enabled` (افتراضياً true).
+مرسِل البريد قابل للتبديل (`NOTIFICATIONS_EMAIL_SENDER`)؛ الافتراضي SMTP عبر Django.
 
 ### audit
 

@@ -10,6 +10,8 @@ from django.utils import timezone
 
 from apps.audit import services as audit
 from apps.core.errors import ConflictError
+from apps.notifications import services as notifications
+from apps.notifications.catalog import usd
 from apps.orders.models import Order, OrderItem, OrderItemStatus, OrderStatus, PayeeType
 
 from .models import Settlement, SettlementStatus
@@ -176,5 +178,16 @@ def pay(
             action="settlement.paid",
             entity=s,
             changes={"amount": str(s.payee_amount), "reference": reference, "paid_at": paid_at.isoformat()},
+        )
+    owner_id = locked[0].owner_user_id
+    if owner_id:  # artists have no account; an owner who sold through an auction request does
+        notifications.notify(
+            owner_id,
+            "payout.paid",
+            params={
+                "amount": usd(sum(s.payee_amount for s in locked)),
+                "date": f"{paid_at.day}/{paid_at.month}/{paid_at.year}",
+                "reference": reference,
+            },
         )
     return locked

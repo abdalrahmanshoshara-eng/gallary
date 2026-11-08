@@ -23,6 +23,7 @@ from apps.core.exceptions import api_not_found
 from apps.dashboard import urls as dashboard_urls
 from apps.favorites import urls as favorites_urls
 from apps.listings import urls as listings_urls
+from apps.notifications import urls as notifications_urls
 from apps.orders import urls as orders_urls
 from apps.settlements import urls as settlements_urls
 
@@ -49,6 +50,7 @@ public_v1 = [
     *orders_urls.urls,
     *auctions_urls.urls,
     *cms_urls.public_urls,
+    *notifications_urls.urls,
 ]
 
 api_v1 = [

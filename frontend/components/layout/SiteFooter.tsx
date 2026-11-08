@@ -10,8 +10,14 @@ const ORDER = ["about", "terms", "privacy", "deposit-policy"];
 export async function SiteFooter() {
   const t = await getTranslations("footer");
   // Only published pages are linked; a CMS outage must never break the footer.
-  const pages = await publicApiGet<Schema<"PageLink">[]>("/pages", undefined, 300).catch(() => []);
-  const links = [...pages].sort((a, b) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug));
+  const pages = await publicApiGet<Schema<"PageLink">[]>(
+    "/pages",
+    undefined,
+    300,
+  ).catch(() => []);
+  const links = [...pages].sort(
+    (a, b) => ORDER.indexOf(a.slug) - ORDER.indexOf(b.slug),
+  );
   return (
     <footer className="mt-24 border-t border-border/60 bg-surface/40 py-10 text-sm text-muted">
       <Container className="flex flex-col gap-6">
@@ -19,7 +25,10 @@ export async function SiteFooter() {
           <ul className="flex flex-wrap gap-x-6 gap-y-2">
             {links.map((page) => (
               <li key={page.slug}>
-                <Link href={`/${page.slug}` as "/about"} className="hover:text-primary">
+                <Link
+                  href={`/${page.slug}` as "/about"}
+                  className="hover:text-primary"
+                >
                   {page.title}
                 </Link>
               </li>

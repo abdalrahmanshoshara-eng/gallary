@@ -19,6 +19,14 @@ if not (SESSION_COOKIE_SECURE and CSRF_COOKIE_SECURE):
 if OTP_SENDER == "console":
     raise ImproperlyConfigured("OTP_SENDER=console is for development only (BR-901c).")
 
+if NOTIFICATIONS_EMAIL_ENABLED:
+    if EMAIL_BACKEND.rsplit(".", 2)[-2] in {"console", "locmem", "filebased", "dummy"}:
+        raise ImproperlyConfigured("Notification e-mail needs a real EMAIL_BACKEND in production (e.g. SMTP).")
+    if EMAIL_BACKEND.endswith("smtp.EmailBackend") and not EMAIL_HOST:
+        raise ImproperlyConfigured("NOTIFICATIONS_EMAIL_ENABLED requires EMAIL_HOST (SMTP server).")
+    if not SITE_URL.startswith("https://"):
+        raise ImproperlyConfigured("SITE_URL must be the public https:// address for links in e-mails.")
+
 SECURE_SSL_REDIRECT = env.bool("SECURE_SSL_REDIRECT", default=True)
 # Health probes from the internal network arrive over plain HTTP.
 SECURE_REDIRECT_EXEMPT = [r"^api/v1/health/"]

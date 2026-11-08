@@ -160,6 +160,21 @@ Workflow and UX analysis: `docs/ux/PHASE7B_CONTENT.md`.
   6. Featured artists.
 - Terms and Privacy ship as unpublished draft templates. Review them legally before publishing.
 
+## Notifications (Phase 7c)
+
+Workflow and UX analysis: `docs/ux/PHASE7C_NOTIFICATIONS.md`.
+
+- **In-app** (`apps.notifications`): every §26 event creates a notification for the customer. The header bell shows the unread count and updates live over `/ws/me/`. The **الإشعارات** page lists notifications by day; opening one marks it read and goes to the order, auction or request.
+- **E-mail copies** go out over SMTP for the important events: order created, deposit reminder, deposit confirmed, payment complete, completion, expiry, cancellation, auction won, award lost, bid voided, auction-request decisions and messages, and payouts to owners.
+  - Delivery runs in Celery after commit, retries 3 times, and keeps a status per notification.
+  - Customers can switch e-mail off at the bottom of the notifications page.
+  - Outbid and ending-soon notices are in-app only.
+- **Reminders (Beat)**:
+  - Deposit deadline: 3 hours before for cart orders, 15 minutes before for auction winners.
+  - "Auction ending soon": 15 minutes before the end, for everyone who bid.
+  - Each reminder is sent once.
+- **Configuration**: see the e-mail block in `.env.example`. Run `python manage.py send_test_email you@example.com` after deploying. A new channel (SMS/WhatsApp) is a new sender class; the events don't change.
+
 ## Run without Docker
 
 You need Python 3.12+, Node 22.12+, PostgreSQL 16 and Redis 7 running locally.

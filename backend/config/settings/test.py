@@ -46,3 +46,7 @@ OTP_SENDER = "console"
 REST_FRAMEWORK["NUM_PROXIES"] = 0
 
 HEALTH_CHECKS = [c for c in HEALTH_CHECKS if not c.endswith("check_storage")]
+
+EMAIL_BACKEND = "django.core.mail.backends.locmem.EmailBackend"
+NOTIFICATIONS_EMAIL_ENABLED = True
+SITE_URL = "https://art.test"

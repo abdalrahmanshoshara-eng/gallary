@@ -125,8 +125,8 @@
 | F-CMS-03 | البنرات والمختارات | بنرات، أعمال وفنانون مميزون | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7b؛ بنر بصورة إلزامية ورابط آمن وفترة عرض؛ حتى 12 عملاً مختاراً؛ الفنانون من خيار «مميّز» |
 | F-CMS-04 | الصفحة الرئيسية | Hero، مختارات، مزادات، تصنيفات، حديث | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | 7b؛ الأقسام الفارغة تختفي؛ بلا تشغيل تلقائي؛ ISR 60 ثانية |
 | F-CMS-05 | إعدادات الموقع | العمولة/العربون الافتراضي، WhatsApp | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | `SiteSetting` منذ Phase 4/5 في «إعدادات المنصة» (انظر F-LST-04) |
-| F-NTF-01 | الإشعارات الداخلية | قائمة الإشعارات للعميل | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-NTF-02 | SMS/Email | Adapter قابل للتبديل، أحداث §26 | NOT_STARTED | N/A | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
+| F-NTF-01 | الإشعارات الداخلية | قائمة الإشعارات للعميل | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7c؛ جرس بعدد غير المقروء يتحدّث فوراً عبر `/ws/me/`، صفحة `/notifications` مجمّعة باليوم، تعليم كمقروء، تحميل تدريجي |
+| F-NTF-02 | SMS/Email | Adapter قابل للتبديل، أحداث §26 | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7c؛ Email عبر SMTP (Celery، إعادة محاولة، حالة لكل إشعار)، تفضيل إيقاف البريد، تذكيرات مهلة العربون وقرب انتهاء المزاد؛ SMS/WhatsApp لاحقاً بمرسِل جديد |
 | F-UX-04 | الموسيقى | تشغيل/إيقاف بلا autoplay | N/A | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | BLOCKED | Q13: ملف مرخص |
 
 ## Phase 8 — QA

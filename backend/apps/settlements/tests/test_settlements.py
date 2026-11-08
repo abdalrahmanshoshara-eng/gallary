@@ -180,3 +180,20 @@ def test_settlements_are_for_operations_and_super_admin(roles, make_user, login_
     client = login_client(make_user(roles=roles))
     assert client.get(ADMIN).status_code == 403
     assert client.get(f"{ADMIN}/summary").status_code == 403
+
+
+def test_owner_with_an_account_is_told_about_the_transfer(sell, make_user, login_client, super_admin):
+    from apps.notifications.models import Notification
+    from apps.settlements import services
+
+    owner = make_user(display_name="مالكة اللوحة")
+    order = sell("1000.00", artist=None, creator_name_override="فنان قديم", owner_user=owner, confirm=False)
+    item = order.items.get()
+    item.payee_type_snapshot = "owner"
+    item.save()
+    settlement = services.create_for_order(order)[0]
+    response = pay_api(login_client(super_admin), [settlement.public_id], reference="HW-91", paid_at="2026-11-07")
+    assert response.status_code == 200, response.json()
+    n = Notification.objects.get(user=owner)
+    assert n.kind == "payout.paid" and "HW-91" in n.body and "7/11/2026" in n.body
+    assert "850 US$" in n.body

@@ -111,9 +111,13 @@ async def test_outbid_notice_reaches_only_the_outbid_bidder(live_auction, make_u
 
     await sync_to_async(place)(live_auction, a, "100")
     await sync_to_async(place)(live_auction, b, "110")
-    notice = await ws_a.receive_json_from()
-    assert notice["type"] == "auction.outbid" and notice["data"]["auction"] == str(live_auction.public_id)
+    # The private channel carries the bell update and the live outbid notice.
+    received = {m["type"]: m for m in [await ws_a.receive_json_from(), await ws_a.receive_json_from()]}
+    notice = received["auction.outbid"]
+    assert notice["data"]["auction"] == str(live_auction.public_id)
     assert notice["data"]["minimum_next_bid"] == "120.00"
+    bell = received["notification.created"]
+    assert bell["data"]["kind"] == "auction.outbid" and bell["data"]["link"] == f"/auctions/{live_auction.public_id}"
     assert await ws_b.receive_nothing()
     await ws_a.disconnect()
     await ws_b.disconnect()

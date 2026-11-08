@@ -17,6 +17,7 @@ from apps.audit import services as audit
 from apps.core.errors import ConflictError
 from apps.media import services as media
 from apps.media.models import ImagePurpose
+from apps.notifications import services as notifications
 
 from .models import (
     FINAL_REQUEST_STATUSES,
@@ -55,12 +56,33 @@ class RequestStateError(ConflictError):
     message = "لا يمكن تنفيذ هذه العملية في حالة الطلب الحالية."
 
 
-def _move(req: AuctionRequest, to: str, actor) -> None:
+REQUEST_NOTICES = {
+    RequestStatus.UNDER_REVIEW: "request.under_review",
+    RequestStatus.NEEDS_MORE_INFO: "request.needs_more_info",
+    RequestStatus.NEGOTIATION: "request.negotiation",
+    RequestStatus.APPROVED: "request.approved",
+    RequestStatus.REJECTED: "request.rejected",
+}
+
+
+def _request_link(req: AuctionRequest) -> str:
+    return f"/auction-requests/{req.public_id}"
+
+
+def _move(req: AuctionRequest, to: str, actor, *, message: str = "") -> None:
     before = req.status
     req.status = to
     req.save(update_fields=["status", "updated_at"])
     RequestStatusHistory.objects.create(request=req, from_status=before, to_status=to, actor=actor)
     audit.record(actor=actor, action=f"auction_request.{to}", entity=req, changes={"from": before, "to": to})
+    kind = REQUEST_NOTICES.get(to)
+    if kind and (actor is None or actor.pk != req.user_id):  # not for the customer's own moves
+        notifications.notify(
+            req.user_id,
+            kind,
+            params={"title": req.work_title, "message": message.strip()},
+            link=_request_link(req),
+        )
 
 
 def _add_images(req: AuctionRequest, files, actor) -> None:
@@ -122,7 +144,7 @@ def staff_transition(req: AuctionRequest, *, actor, to: str, message: str = "") 
         AuctionRequestNote.objects.create(
             request=req, author=actor, visibility=NoteVisibility.CUSTOMER, body=message.strip()
         )
-    _move(req, to, actor)
+    _move(req, to, actor, message=message)
     return req
 
 
@@ -132,7 +154,15 @@ def add_note(req: AuctionRequest, *, actor, body: str, visibility: str) -> Aucti
         raise ConflictError(
             "نص الملاحظة مطلوب.", code="VALIDATION_ERROR", http_status=400, details={"body": ["مطلوب."]}
         )
-    return AuctionRequestNote.objects.create(request=req, author=actor, visibility=visibility, body=body.strip())
+    note = AuctionRequestNote.objects.create(request=req, author=actor, visibility=visibility, body=body.strip())
+    if visibility == NoteVisibility.CUSTOMER and actor.pk != req.user_id:
+        notifications.notify(
+            req.user_id,
+            "request.message",
+            params={"title": req.work_title, "message": note.body},
+            link=_request_link(req),
+        )
+    return note
 
 
 @transaction.atomic
@@ -166,7 +196,7 @@ def approve(req: AuctionRequest, *, actor, message: str = "") -> AuctionRequest:
         AuctionRequestNote.objects.create(
             request=req, author=actor, visibility=NoteVisibility.CUSTOMER, body=message.strip()
         )
-    _move(req, RequestStatus.APPROVED, actor)
+    _move(req, RequestStatus.APPROVED, actor, message=message)
     return req
 
 

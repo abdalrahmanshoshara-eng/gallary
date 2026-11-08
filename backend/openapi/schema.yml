@@ -3624,6 +3624,119 @@ paths:
                 items:
                   $ref: '#/components/schemas/MyBidAuction'
           description: ''
+  /api/v1/notifications:
+    get:
+      operationId: notifications_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: unread
+        schema:
+          type: string
+        description: '`1` = unread only'
+      tags:
+      - notifications
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedNotificationList'
+          description: ''
+  /api/v1/notifications/{public_id}/read:
+    post:
+      operationId: notifications_read
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - notifications
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Notification'
+          description: ''
+  /api/v1/notifications/preferences:
+    get:
+      operationId: notifications_preferences
+      tags:
+      - notifications
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preferences'
+          description: ''
+    patch:
+      operationId: notifications_preferences_update
+      tags:
+      - notifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedPreferencesRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Preferences'
+          description: ''
+  /api/v1/notifications/read-all:
+    post:
+      operationId: notifications_read_all
+      tags:
+      - notifications
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ReadAll'
+          description: ''
+  /api/v1/notifications/unread-count:
+    get:
+      operationId: notifications_unread_count
+      tags:
+      - notifications
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UnreadCount'
+          description: ''
   /api/v1/orders:
     get:
       operationId: orders_mine
@@ -6595,6 +6708,18 @@ components:
       required:
       - available_artworks
       - published_artworks
+    CategoryEnum:
+      enum:
+      - order
+      - auction
+      - request
+      - payout
+      type: string
+      description: |-
+        * `order` - الطلبات
+        * `auction` - المزادات
+        * `request` - طلبات المزاد
+        * `payout` - المستحقات
     CategoryWithParent:
       type: object
       properties:
@@ -7411,6 +7536,51 @@ components:
       description: |-
         * `offer_next_bidder` - عرض على المزايد التالي
         * `cancel_award` - إلغاء الإرساء
+    Notification:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        kind:
+          type: string
+          readOnly: true
+        category:
+          allOf:
+          - $ref: '#/components/schemas/CategoryEnum'
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        body:
+          type: string
+          readOnly: true
+        link:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+        read_at:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+        is_read:
+          type: boolean
+          readOnly: true
+      required:
+      - body
+      - category
+      - created_at
+      - id
+      - is_read
+      - kind
+      - link
+      - read_at
+      - title
     OrderItem:
       type: object
       properties:
@@ -7836,6 +8006,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/EligibleArtwork'
+    PaginatedNotificationList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Notification'
     PaginatedOrderSummaryList:
       type: object
       required:
@@ -8356,6 +8549,11 @@ components:
       properties:
         internal_notes:
           type: string
+    PatchedPreferencesRequest:
+      type: object
+      properties:
+        email_enabled:
+          type: boolean
     PatchedProfileUpdateRequest:
       type: object
       properties:
@@ -8634,6 +8832,21 @@ components:
       - reservation_hours
       - title
       - version
+    Preferences:
+      type: object
+      properties:
+        email_enabled:
+          type: boolean
+        email_available:
+          type: boolean
+          readOnly: true
+        has_email:
+          type: boolean
+          readOnly: true
+      required:
+      - email_available
+      - email_enabled
+      - has_email
     PricingRequest:
       type: object
       properties:
@@ -8994,6 +9207,16 @@ components:
         * `unique` - قطعة فريدة
         * `limited` - كمية محدودة
         * `unlimited` - غير محدودة
+    ReadAll:
+      type: object
+      properties:
+        updated:
+          type: integer
+        unread:
+          type: integer
+      required:
+      - unread
+      - updated
     Readiness:
       type: object
       properties:
@@ -9629,6 +9852,13 @@ components:
       required:
       - amount
       - count
+    UnreadCount:
+      type: object
+      properties:
+        unread:
+          type: integer
+      required:
+      - unread
   securitySchemes:
     cookieAuth:
       type: apiKey

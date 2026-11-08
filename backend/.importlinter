@@ -11,6 +11,7 @@ source_modules =
     apps.core
     apps.accounts
     apps.audit
+    apps.notifications
     apps.media
     apps.catalog
     apps.artists
@@ -98,5 +99,24 @@ source_modules =
     apps.orders
     apps.auctions
     apps.settlements
+    apps.notifications
 forbidden_modules =
+    apps.dashboard
+
+[importlinter:contract:notifications-is-generic]
+name = Notifications know nothing about the features that send them
+type = forbidden
+source_modules =
+    apps.notifications
+forbidden_modules =
+    apps.catalog
+    apps.artists
+    apps.artworks
+    apps.listings
+    apps.favorites
+    apps.cart
+    apps.orders
+    apps.auctions
+    apps.settlements
+    apps.cms
     apps.dashboard

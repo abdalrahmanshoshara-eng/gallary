@@ -45,6 +45,7 @@ INSTALLED_APPS = [
     "apps.core",
     "apps.accounts",
     "apps.audit",
+    "apps.notifications",
     "apps.media",
     "apps.catalog",
     "apps.artists",
@@ -408,9 +409,46 @@ CELERY_BEAT_SCHEDULE = {
         "schedule": 60.0,
         "options": {"queue": "default", "expires": 55},
     },
+    # §26 reminders: deposit deadlines and auctions about to end (each sent once).
+    "remind-due-deposits": {
+        "task": "apps.orders.tasks.remind_due_deposits",
+        "schedule": 60.0,
+        "options": {"queue": "default", "expires": 55},
+    },
+    "auctions-ending-soon": {
+        "task": "apps.auctions.tasks.notify_ending_soon",
+        "schedule": 60.0,
+        "options": {"queue": "default", "expires": 55},
+    },
+    "notifications-sweep": {
+        "task": "apps.notifications.tasks.sweep",
+        "schedule": 60.0 * 60 * 24,
+        "options": {"queue": "default"},
+    },
 }
 # Seconds after which a missing scheduler heartbeat is reported as degraded.
 SCHEDULER_HEARTBEAT_STALE_AFTER = 180
+
+# ---------------------------------------------------------------------------
+# Notifications (§26) — in-app always; e-mail copies over SMTP when switched on
+# ---------------------------------------------------------------------------
+NOTIFICATIONS_EMAIL_ENABLED = env.bool("NOTIFICATIONS_EMAIL_ENABLED", default=False)
+NOTIFICATIONS_EMAIL_SENDER = env.str(
+    "NOTIFICATIONS_EMAIL_SENDER", default="apps.notifications.channels.DjangoEmailSender"
+)
+NOTIFICATIONS_RETENTION_DAYS = env.int("NOTIFICATIONS_RETENTION_DAYS", default=180)
+# Public address of the site, used for links in e-mails.
+SITE_URL = env.str("SITE_URL", default="http://localhost:8080")
+EMAIL_BACKEND = env.str("EMAIL_BACKEND", default="django.core.mail.backends.smtp.EmailBackend")
+EMAIL_HOST = env.str("EMAIL_HOST", default="")
+EMAIL_PORT = env.int("EMAIL_PORT", default=587)
+EMAIL_HOST_USER = env.str("EMAIL_HOST_USER", default="")
+EMAIL_HOST_PASSWORD = env.str("EMAIL_HOST_PASSWORD", default="")
+EMAIL_USE_TLS = env.bool("EMAIL_USE_TLS", default=True)
+EMAIL_USE_SSL = env.bool("EMAIL_USE_SSL", default=False)
+EMAIL_TIMEOUT = env.int("EMAIL_TIMEOUT", default=15)
+DEFAULT_FROM_EMAIL = env.str("DEFAULT_FROM_EMAIL", default="منصة الفن الدمشقية <no-reply@localhost>")
+SERVER_EMAIL = DEFAULT_FROM_EMAIL
 
 # ---------------------------------------------------------------------------
 # Domain events (ADR-05v2) — the realtime app subscribes; domain code never imports it

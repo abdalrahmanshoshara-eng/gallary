@@ -28,6 +28,8 @@ from apps.core.errors import AppError, ConflictError, PermissionDeniedError
 from apps.core.events import publish_on_commit
 from apps.listings import services as listing_services
 from apps.listings.models import Listing, ListingStatus
+from apps.notifications import services as notifications
+from apps.notifications.catalog import usd, when
 from apps.orders import services as order_services
 from apps.orders.models import Order, OrderStatus
 
@@ -346,6 +348,12 @@ def place_bid(*, auction: Auction, user, amount: Decimal, idempotency_key: str, 
                 extended=extended,
             )
             if previous_top is not None and previous_top.user_id != user.pk:
+                notifications.notify(
+                    previous_top.user_id,
+                    "auction.outbid",
+                    params={"title": auction.title, "price": usd(amount), "next": usd(auction.minimum_next_bid)},
+                    link=_auction_link(auction),
+                )
                 publish_on_commit(
                     BidderNotice(
                         user_id=previous_top.user_id,
@@ -416,6 +424,19 @@ def void_bid(bid: Bid, *, actor, reason: str) -> Auction:
     )
     _emit(auction, "bid.voided", voided_bid=str(bid.public_id))
     base = {"auction": str(auction.public_id), "title": auction.title}
+    notifications.notify(
+        bid.user,
+        "auction.bid_voided",
+        params={"title": auction.title, "amount": usd(bid.amount), "reason": reason},
+        link=_auction_link(auction),
+    )
+    if restored is not None:
+        notifications.notify(
+            restored.user,
+            "auction.lead_restored",
+            params={"title": auction.title, "amount": usd(restored.amount)},
+            link=_auction_link(auction),
+        )
     publish_on_commit(
         BidderNotice(
             user_id=bid.user_id, type="auction.bid_voided", data={**base, "amount": str(bid.amount), "reason": reason}
@@ -448,6 +469,18 @@ def _declare_winner(auction: Auction, bid: Bid, now) -> None:
     auction.winner_declared_at = now
     auction.payment_deadline = deadline
     auction.winner_order_id = order.pk
+    notifications.notify(
+        bid.user,
+        "auction.won",
+        params={
+            "title": auction.title,
+            "amount": usd(bid.amount),
+            "deposit": usd(order.deposit_due),
+            "deadline": when(deadline),
+            "order": order.order_number,
+        },
+        link=f"/orders/{order.order_number}",
+    )
     publish_on_commit(
         BidderNotice(
             user_id=bid.user_id,
@@ -509,6 +542,9 @@ def _handle_unpaid(auction: Auction, now) -> None:
     loser = auction.current_winner_bid
     loser.status = BidStatus.NON_PAYMENT
     loser.save(update_fields=["status"])
+    notifications.notify(
+        loser.user_id, "auction.award_lost", params={"title": auction.title}, link=_auction_link(auction)
+    )
     publish_on_commit(
         BidderNotice(
             user_id=loser.user_id,
@@ -558,6 +594,39 @@ def advance(auction: Auction, now=None) -> bool:
                 _handle_unpaid(auction, now)  # safety net for an award left pending
                 changed = True
         return changed
+
+
+ENDING_SOON = timedelta(minutes=15)
+
+
+def _auction_link(auction: Auction) -> str:
+    return f"/auctions/{auction.public_id}"
+
+
+def notify_ending_soon(now=None) -> int:
+    """Beat task body: tell each bidder once that a live auction ends within 15 minutes."""
+    now = now or timezone.now()
+    sent = 0
+    soon = Auction.objects.filter(status=AuctionStatus.LIVE, ends_at__gt=now, ends_at__lte=now + ENDING_SOON)
+    for auction in soon:
+        leader = auction.highest_bid.user_id if auction.highest_bid_id else None
+        bidders = (
+            auction.bids.filter(status__in=[BidStatus.VALID, BidStatus.OUTBID])
+            .values_list("user_id", flat=True)
+            .distinct()
+        )
+        for user_id in bidders:
+            with transaction.atomic():
+                sent += bool(
+                    notifications.notify(
+                        user_id,
+                        "auction.ending_soon",
+                        params={"title": auction.title, "ends": when(auction.ends_at), "leading": user_id == leader},
+                        link=_auction_link(auction),
+                        dedupe_key=f"auction.ending_soon:{auction.public_id}",
+                    )
+                )
+    return sent
 
 
 def tick() -> int:

@@ -140,3 +140,25 @@ def test_image_limit(login_client, customer, image_file):
 
 def test_staff_cannot_submit_requests(login_client, manager):
     assert login_client(manager).post(MINE, FORM, format="multipart").status_code == 403
+
+
+def test_requester_is_notified_of_decisions_and_messages(submitted, login_client, customer, manager):
+    from apps.notifications.models import Notification
+
+    staff = login_client(manager)
+    rid = submitted["id"]
+    move(staff, rid, "under_review")
+    move(staff, rid, "needs_more_info", "أرسل صورة للتوقيع من فضلك")
+    staff.post(f"{ADMIN}/{rid}/notes", {"body": "ملاحظة داخلية", "visibility": "internal"}, format="json")
+    staff.post(f"{ADMIN}/{rid}/notes", {"body": "وصلتنا الصور، شكراً", "visibility": "customer"}, format="json")
+    rows = list(Notification.objects.filter(user=customer).order_by("id").values_list("kind", "body", "link"))
+    link = f"/auction-requests/{rid}"
+    assert rows == [
+        ("request.under_review", "يراجع فريقنا عملك وسنعلمك بالخطوة التالية.", link),
+        ("request.needs_more_info", "أرسل صورة للتوقيع من فضلك", link),
+        ("request.message", "وصلتنا الصور، شكراً", link),
+    ]
+    # The customer's own moves are not echoed back.
+    login_client(customer).patch(f"{MINE}/{rid}", {"year_text": "1997"}, format="multipart")
+    login_client(customer).post(f"{MINE}/{rid}/withdraw")
+    assert Notification.objects.filter(user=customer).count() == 3

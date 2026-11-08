@@ -29,3 +29,7 @@ WHITENOISE_USE_FINDERS = True
 
 # Development prints OTP codes to this process's stdout (never in production — BR-901c).
 OTP_SENDER = env.str("OTP_SENDER", default="console")
+
+# E-mail copies of notifications are printed to the worker's stdout unless SMTP is configured.
+EMAIL_BACKEND = env.str("EMAIL_BACKEND", default="django.core.mail.backends.console.EmailBackend")
+NOTIFICATIONS_EMAIL_ENABLED = env.bool("NOTIFICATIONS_EMAIL_ENABLED", default=True)

@@ -20,7 +20,7 @@ from datetime import timedelta
 from decimal import Decimal
 
 from django.db import transaction
-from django.db.models import Sum
+from django.db.models import Q, Sum
 from django.utils import timezone
 from rest_framework import status as http
 
@@ -30,6 +30,8 @@ from apps.core.errors import AppError, ConflictError, PermissionDeniedError
 from apps.core.models import SiteSetting
 from apps.listings import services as listing_services
 from apps.listings.models import Listing
+from apps.notifications import services as notifications
+from apps.notifications.catalog import usd, when
 
 from . import policy
 from .models import (
@@ -106,7 +108,7 @@ def _next_number(now) -> str:
     return f"ART-{now.year}-{seq.last_value:06d}"
 
 
-def _transition(order: Order, to: str, *, actor, reason: str = "") -> None:
+def _transition(order: Order, to: str, *, actor, reason: str = "", notify_customer: bool = True) -> None:
     before = order.status
     order.status = to
     if to in FINAL_STATUSES:
@@ -114,6 +116,79 @@ def _transition(order: Order, to: str, *, actor, reason: str = "") -> None:
     OrderStatusHistory.objects.create(order=order, from_status=before, to_status=to, actor=actor, reason=reason)
     audit.record(actor=actor, action=f"order.{to}", entity=order, changes={"from": before, "to": to}, reason=reason)
     order_status_changed.send(sender=Order, order=order, from_status=before, to_status=to, actor=actor)
+    if notify_customer:
+        _notify_status(order, to, actor=actor, reason=reason)
+
+
+# --- customer notifications (§26) ---------------------------------------------------------------------
+STATUS_NOTICES = {
+    OrderStatus.DEPOSIT_CONFIRMED: "order.deposit_confirmed",
+    OrderStatus.PAYMENT_PENDING: "order.payment_pending",
+    OrderStatus.CONFIRMED: "order.confirmed",
+    OrderStatus.COMPLETED: "order.completed",
+    OrderStatus.EXPIRED: "order.expired",
+    OrderStatus.CANCELLED_BY_PLATFORM: "order.cancelled_by_platform",
+    OrderStatus.CANCELLED_BY_CUSTOMER: "order.cancelled_for_customer",
+}
+DEPOSIT_REMINDER_BEFORE = {OrderSource.CART: timedelta(hours=3), OrderSource.AUCTION: timedelta(minutes=15)}
+
+
+def _order_link(order: Order) -> str:
+    return f"/orders/{order.order_number}"
+
+
+def _notify_status(order: Order, to: str, *, actor, reason: str) -> None:
+    if actor is not None and actor.pk == order.user_id:
+        return  # the customer did it themselves
+    if to == OrderStatus.EXPIRED and order.source == OrderSource.AUCTION:
+        return  # the auction tells the winner they lost the award
+    kind = STATUS_NOTICES.get(to)
+    if kind is None:
+        return
+    notifications.notify(
+        order.user,
+        kind,
+        params={
+            "number": order.order_number,
+            "reason": order.cancelled_reason or reason,
+            "refund_due": order.deposit_status == DepositStatus.REFUND_DUE,
+            "paid": usd(order.amount_paid),
+            "total": usd(order.subtotal),
+            "remaining": usd(max(order.subtotal - order.amount_paid, ZERO)),
+        },
+        link=_order_link(order),
+    )
+
+
+def remind_due_deposits(now=None) -> int:
+    """Beat task body: one reminder per order shortly before its deposit deadline."""
+    now = now or timezone.now()
+    window = Q()
+    for source, before in DEPOSIT_REMINDER_BEFORE.items():
+        window |= Q(source=source, reservation_expires_at__lte=now + before)
+    due = Order.objects.filter(
+        window,
+        status=OrderStatus.PENDING_DEPOSIT,
+        reservation_expires_at__gt=now,
+        created_at__lte=now - timedelta(minutes=10),  # not right after the order/award notice
+    ).select_related("user")
+    sent = 0
+    for order in due:
+        with transaction.atomic():
+            sent += bool(
+                notifications.notify(
+                    order.user,
+                    "order.deposit_reminder",
+                    params={
+                        "number": order.order_number,
+                        "deposit": usd(order.deposit_due),
+                        "deadline": when(order.reservation_expires_at),
+                    },
+                    link=_order_link(order),
+                    dedupe_key=f"order.deposit_reminder:{order.order_number}",
+                )
+            )
+    return sent
 
 
 def _lock(order: Order) -> Order:
@@ -229,6 +304,16 @@ def checkout(
             changes={"number": order.order_number, "subtotal": str(subtotal), "deposit_due": str(order.deposit_due)},
         )
         cart.items.all().delete()  # BR-327: converted lines leave the cart
+        notifications.notify(
+            user,
+            "order.created",
+            params={
+                "number": order.order_number,
+                "deposit": usd(order.deposit_due),
+                "deadline": when(order.reservation_expires_at),
+            },
+            link=_order_link(order),
+        )
     return order
 
 
@@ -310,13 +395,21 @@ def _confirmed_sum(order: Order, kinds=(PaymentKind.DEPOSIT, PaymentKind.PAYMENT
 
 def _recompute(order: Order, *, actor) -> None:
     """Derive money fields and advance the status when money says so."""
+    initial = order.status
     received = _confirmed_sum(order)
     refunded = _confirmed_sum(order, kinds=(PaymentKind.REFUND,))
     order.amount_paid = received - refunded
 
     if order.status == OrderStatus.PENDING_DEPOSIT and received >= order.deposit_due:
         order.deposit_status = DepositStatus.CONFIRMED
-        _transition(order, OrderStatus.DEPOSIT_CONFIRMED, actor=actor, reason="تأكيد العربون")
+        # Paid in full at once: one "payment complete" notice instead of two.
+        _transition(
+            order,
+            OrderStatus.DEPOSIT_CONFIRMED,
+            actor=actor,
+            reason="تأكيد العربون",
+            notify_customer=order.amount_paid < order.subtotal,
+        )
     if order.status in (OrderStatus.DEPOSIT_CONFIRMED, OrderStatus.PAYMENT_PENDING):
         if order.amount_paid >= order.subtotal:
             for item in _active_items(order):
@@ -324,7 +417,13 @@ def _recompute(order: Order, *, actor) -> None:
             order.confirmed_at = timezone.now()
             _transition(order, OrderStatus.CONFIRMED, actor=actor, reason="اكتمال الدفع")
         elif order.status == OrderStatus.DEPOSIT_CONFIRMED and received > order.deposit_due:
-            _transition(order, OrderStatus.PAYMENT_PENDING, actor=actor, reason="استلام دفعة جزئية")
+            _transition(
+                order,
+                OrderStatus.PAYMENT_PENDING,
+                actor=actor,
+                reason="استلام دفعة جزئية",
+                notify_customer=initial != OrderStatus.PENDING_DEPOSIT,  # the deposit notice says it
+            )
 
     if refunded and order.deposit_status == DepositStatus.REFUND_DUE and refunded >= min(received, order.deposit_due):
         order.deposit_status = DepositStatus.REFUNDED

@@ -15,10 +15,16 @@ export async function SiteHeader() {
         {t("nav.skipToContent")}
       </a>
       <Container className="flex h-20 items-center justify-between">
-        <Link href="/" className="font-heading text-xl font-semibold text-primary">
+        <Link
+          href="/"
+          className="font-heading text-xl font-semibold text-primary"
+        >
           {t("brand.name")}
         </Link>
-        <nav aria-label={t("nav.label")} className="flex items-center gap-6 text-sm md:gap-8">
+        <nav
+          aria-label={t("nav.label")}
+          className="flex items-center gap-6 text-sm md:gap-8"
+        >
           <ul className="hidden items-center gap-6 sm:flex">
             <li>
               <Link href="/auctions" className="text-text hover:text-secondary">

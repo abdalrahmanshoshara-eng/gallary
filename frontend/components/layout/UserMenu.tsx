@@ -7,6 +7,7 @@ import { useEffect, useRef, useState } from "react";
 import { Icon } from "@/components/ui/Icon";
 import { logout } from "@/features/auth/api";
 import { useCartCount } from "@/features/cart/api";
+import { NotificationBell } from "@/features/notifications/NotificationBell";
 import { Link, useRouter } from "@/i18n/navigation";
 import { currentUserKey, useCurrentUser } from "@/lib/auth/useCurrentUser";
 
@@ -17,7 +18,11 @@ function CartLink() {
   const t = useTranslations("nav");
   const count = useCartCount().data?.count ?? 0;
   return (
-    <Link href="/cart" className={iconLink} aria-label={t("cartCount", { count })}>
+    <Link
+      href="/cart"
+      className={iconLink}
+      aria-label={t("cartCount", { count })}
+    >
       <Icon name="bag" className="size-6" />
       {count > 0 ? (
         <span
@@ -74,7 +79,10 @@ export function UserMenu() {
       <Link href="/login" className="text-primary hover:text-secondary">
         {t("login")}
       </Link>
-      <Link href="/register" className="rounded-[var(--radius-control)] border border-secondary px-3 py-1.5 text-primary hover:bg-surface">
+      <Link
+        href="/register"
+        className="rounded-[var(--radius-control)] border border-secondary px-3 py-1.5 text-primary hover:bg-surface"
+      >
         {t("register")}
       </Link>
     </div>
@@ -85,7 +93,11 @@ export function UserMenu() {
           {t("admin")}
         </Link>
       ) : (
-        <Link href="/favorites" className={iconLink} aria-label={t("favorites")}>
+        <Link
+          href="/favorites"
+          className={iconLink}
+          aria-label={t("favorites")}
+        >
           <Icon name="heart" />
         </Link>
       )}
@@ -95,10 +107,12 @@ export function UserMenu() {
     </div>
   );
 
-  const menuItem = "block rounded-[var(--radius-control)] px-3 py-3 text-base text-text hover:bg-surface";
+  const menuItem =
+    "block rounded-[var(--radius-control)] px-3 py-3 text-base text-text hover:bg-surface";
   return (
     <div className="flex items-center gap-1">
       {desktop}
+      {isCustomer ? <NotificationBell className={iconLink} /> : null}
       {isCustomer ? <CartLink /> : null}
       <button
         type="button"
@@ -115,7 +129,9 @@ export function UserMenu() {
           id="mobile-menu"
           ref={panel}
           // Close after choosing a destination (any link inside the panel).
-          onClick={(e) => (e.target as HTMLElement).closest("a") && setOpen(false)}
+          onClick={(e) =>
+            (e.target as HTMLElement).closest("a") && setOpen(false)
+          }
           className="fixed inset-x-0 top-20 bottom-0 z-40 overflow-y-auto border-t border-border/60 bg-background px-4 py-4 sm:hidden"
         >
           <ul className="flex flex-col gap-1">
@@ -130,10 +146,16 @@ export function UserMenu() {
           <hr className="my-4 border-border/60" />
           {!user ? (
             <div className="flex flex-col gap-3">
-              <Link href="/login" className="rounded-[var(--radius-control)] bg-primary px-4 py-3 text-center text-on-primary">
+              <Link
+                href="/login"
+                className="rounded-[var(--radius-control)] bg-primary px-4 py-3 text-center text-on-primary"
+              >
                 {t("login")}
               </Link>
-              <Link href="/register" className="rounded-[var(--radius-control)] border border-secondary px-4 py-3 text-center text-primary">
+              <Link
+                href="/register"
+                className="rounded-[var(--radius-control)] border border-secondary px-4 py-3 text-center text-primary"
+              >
                 {t("register")}
               </Link>
             </div>
@@ -175,7 +197,11 @@ export function UserMenu() {
                 </Link>
               </li>
               <li>
-                <button type="button" className={`${menuItem} w-full text-start text-muted`} onClick={signOut}>
+                <button
+                  type="button"
+                  className={`${menuItem} w-full text-start text-muted`}
+                  onClick={signOut}
+                >
                   {t("logout")}
                 </button>
               </li>

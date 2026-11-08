@@ -10,6 +10,10 @@ const PATHS = {
   check: "M5 12.5l4.5 4.5L19 7",
   clock: "M12 7v5l3 2M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0z",
   trash: "M5 7h14M10 11v6M14 11v6M6 7l1 13h10l1-13M9 7V4h6v3",
+  bell: "M6 16.5V11a6 6 0 0 1 12 0v5.5l1.5 2h-15l1.5-2zM10 21a2 2 0 0 0 4 0",
+  gavel: "M13.5 4.5l6 6M11 7l6 6M10 8l6 6-2.5 2.5-6-6L10 8zM4 20l6.5-6.5",
+  file: "M7 3h7l5 5v13H7V3zm7 0v5h5M10 13h6M10 17h4",
+  wallet: "M4 7.5h15a1 1 0 0 1 1 1V19a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7.5zm0 0L15 4v3.5M16 14h.01",
 } as const;
 
 export type IconName = keyof typeof PATHS;

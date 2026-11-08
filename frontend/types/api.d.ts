@@ -1906,6 +1906,86 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/notifications": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notifications_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/{public_id}/read": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notifications_read"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/preferences": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notifications_preferences"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch: operations["notifications_preferences_update"];
+        trace?: never;
+    };
+    "/api/v1/notifications/read-all": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["notifications_read_all"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/notifications/unread-count": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["notifications_unread_count"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/orders": {
         parameters: {
             query?: never;
@@ -3030,6 +3110,14 @@ export interface components {
             published_artworks: number;
             available_artworks: number;
         };
+        /**
+         * @description * `order` - الطلبات
+         *     * `auction` - المزادات
+         *     * `request` - طلبات المزاد
+         *     * `payout` - المستحقات
+         * @enum {string}
+         */
+        CategoryEnum: "order" | "auction" | "request" | "payout";
         CategoryWithParent: {
             name: string;
             slug: string;
@@ -3359,6 +3447,20 @@ export interface components {
          * @enum {string}
          */
         NonPaymentPolicyEnum: "offer_next_bidder" | "cancel_award";
+        Notification: {
+            /** Format: uuid */
+            readonly id: string;
+            readonly kind: string;
+            readonly category: components["schemas"]["CategoryEnum"];
+            readonly title: string;
+            readonly body: string;
+            readonly link: string;
+            /** Format: date-time */
+            readonly created_at: string;
+            /** Format: date-time */
+            readonly read_at: string | null;
+            readonly is_read: boolean;
+        };
         OrderItem: {
             /** Format: uuid */
             readonly id: string;
@@ -3572,6 +3674,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["EligibleArtwork"][];
+        };
+        PaginatedNotificationList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Notification"][];
         };
         PaginatedOrderSummaryList: {
             /** @example 123 */
@@ -3812,6 +3929,9 @@ export interface components {
         PatchedNotesRequest: {
             internal_notes?: string;
         };
+        PatchedPreferencesRequest: {
+            email_enabled?: boolean;
+        };
         PatchedProfileUpdateRequest: {
             display_name?: string;
             first_name?: string;
@@ -3937,6 +4057,11 @@ export interface components {
             /** @description Limited Markdown (paragraphs, headings, lists, bold, links) */
             body: string;
             reservation_hours: number;
+        };
+        Preferences: {
+            email_enabled: boolean;
+            readonly email_available: boolean;
+            readonly has_email: boolean;
         };
         PricingRequest: {
             /** Format: decimal */
@@ -4083,6 +4208,10 @@ export interface components {
          * @enum {string}
          */
         QuantityModeEnum: "unique" | "limited" | "unlimited";
+        ReadAll: {
+            updated: number;
+            unread: number;
+        };
         Readiness: {
             status: components["schemas"]["ReadinessStatusEnum"];
             /** Format: date-time */
@@ -4334,6 +4463,9 @@ export interface components {
             count: number;
             /** Format: decimal */
             amount: string;
+        };
+        UnreadCount: {
+            unread: number;
         };
     };
     responses: never;
@@ -7863,6 +7995,133 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["MyBidAuction"][];
+                };
+            };
+        };
+    };
+    notifications_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                /** @description `1` = unread only */
+                unread?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedNotificationList"];
+                };
+            };
+        };
+    };
+    notifications_read: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Notification"];
+                };
+            };
+        };
+    };
+    notifications_preferences: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preferences"];
+                };
+            };
+        };
+    };
+    notifications_preferences_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedPreferencesRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Preferences"];
+                };
+            };
+        };
+    };
+    notifications_read_all: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ReadAll"];
+                };
+            };
+        };
+    };
+    notifications_unread_count: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["UnreadCount"];
                 };
             };
         };
