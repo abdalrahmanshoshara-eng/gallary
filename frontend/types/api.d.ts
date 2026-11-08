@@ -340,6 +340,22 @@ export interface paths {
         patch: operations["admin_auctions_update"];
         trace?: never;
     };
+    "/api/v1/admin/auctions/{public_id}/bids/{bid_id}/void": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_auctions_void_bid"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/auctions/{public_id}/cancel": {
         parameters: {
             query?: never;
@@ -1771,6 +1787,8 @@ export interface components {
             readonly winner_order: string | null;
             readonly schedule_problems: string[];
             readonly editable: boolean;
+            /** @description Bids can be voided only while the auction is open (BR-509). */
+            readonly bids_voidable: boolean;
         };
         AdminAuctionRequest: {
             /** Format: uuid */
@@ -1821,6 +1839,7 @@ export interface components {
             /** Format: date-time */
             created_at: string;
             status: string;
+            void_reason: string;
             readonly bidder: string;
             bidder_phone: string;
         };
@@ -4210,6 +4229,32 @@ export interface operations {
         requestBody?: {
             content: {
                 "application/json": components["schemas"]["PatchedAuctionWriteRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminAuction"];
+                };
+            };
+        };
+    };
+    admin_auctions_void_bid: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                bid_id: string;
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AuctionReasonRequest"];
             };
         };
         responses: {

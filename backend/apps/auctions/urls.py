@@ -23,6 +23,11 @@ admin_urls = [
     path("auctions/<uuid:public_id>", views.AdminAuctionDetailView.as_view(), name="auction-detail"),
     path("auctions/<uuid:public_id>/schedule", views.AdminAuctionScheduleView.as_view(), name="auction-schedule"),
     path("auctions/<uuid:public_id>/cancel", views.AdminAuctionCancelView.as_view(), name="auction-cancel"),
+    path(
+        "auctions/<uuid:public_id>/bids/<uuid:bid_id>/void",
+        views.AdminBidVoidView.as_view(),
+        name="auction-bid-void",
+    ),
     path("auction-requests", views.AdminAuctionRequestListView.as_view(), name="auction-requests"),
     path("auction-requests/<uuid:public_id>", views.AdminAuctionRequestDetailView.as_view(), name="auction-request"),
     path(

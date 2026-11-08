@@ -16,11 +16,23 @@ import { formatDateTime } from "@/lib/formatters/datetime";
 import { formatUsd } from "@/lib/formatters/money";
 import { errorText } from "@/lib/forms";
 
-import { adminAuctionKey, cancelAuction, getAdminAuction, scheduleAuction, type AdminAuction } from "./api";
+import { adminAuctionKey, cancelAuction, getAdminAuction, scheduleAuction, voidBid, type AdminAuction } from "./api";
 import { AuctionForm } from "./AuctionForm";
 import { AUCTION_TONE } from "./AuctionsTable";
 
 const LIVE_STATUSES = new Set(["scheduled", "live", "pending_winner_payment"]);
+
+type AdminBid = AdminAuction["bids"][number];
+
+/** What voiding `target` does to the price, so the manager decides knowing the outcome. */
+export function voidOutcome(bids: AdminBid[], target: AdminBid): { kind: "top"; next: AdminBid } | { kind: "opening" } | { kind: "lower" } {
+  const ranked = bids
+    .filter((b) => b.status !== "voided")
+    .sort((x, y) => Number(y.amount) - Number(x.amount) || Date.parse(x.created_at) - Date.parse(y.created_at));
+  if (ranked[0]?.id !== target.id) return { kind: "lower" };
+  const next = ranked[1];
+  return next ? { kind: "top", next } : { kind: "opening" };
+}
 
 function Row({ label, children }: { label: string; children: React.ReactNode }) {
   return (
@@ -56,6 +68,8 @@ export function AuctionManager({ id, justCreated }: { id: string; justCreated: b
   const [editing, setEditing] = useState(false);
   const [dialog, setDialog] = useState<"schedule" | "cancel" | null>(null);
   const [reason, setReason] = useState("");
+  const [voiding, setVoiding] = useState<AdminBid | null>(null);
+  const [voidReason, setVoidReason] = useState("");
   const [notice, setNotice] = useState<string | null>(null);
   const auction = useQuery({
     queryKey: adminAuctionKey(id),
@@ -74,6 +88,14 @@ export function AuctionManager({ id, justCreated }: { id: string; justCreated: b
   };
   const schedule = useMutation({ mutationFn: () => scheduleAuction(id), onSuccess: onDone(t("scheduled")) });
   const cancel = useMutation({ mutationFn: () => cancelAuction(id, reason), onSuccess: onDone(t("cancelled")) });
+  const voidMutation = useMutation({
+    mutationFn: (target: AdminBid) => voidBid(id, target.id, voidReason),
+    onSuccess: (result) => {
+      onDone(t("voided"))(result);
+      setVoiding(null);
+      setVoidReason("");
+    },
+  });
 
   if (auction.isPending) return <div className="h-64 animate-pulse rounded-[var(--radius-card)] bg-surface/60" aria-busy />;
   if (auction.isError) {
@@ -191,6 +213,9 @@ export function AuctionManager({ id, justCreated }: { id: string; justCreated: b
             {a.outcome ? <p className="text-sm text-muted">{t(`outcome.${a.outcome as "sold"}`)}</p> : null}
 
             <h3 className="mt-2 text-base font-medium text-primary">{t("bids")}</h3>
+            {a.bids.length > 0 && a.status !== "draft" && a.status !== "cancelled" ? (
+              <p className="text-xs text-muted">{a.bids_voidable ? t("voidNote") : t("voidHint")}</p>
+            ) : null}
             {a.bids.length === 0 ? (
               <p className="text-sm text-muted">{t("noBids")}</p>
             ) : (
@@ -198,29 +223,57 @@ export function AuctionManager({ id, justCreated }: { id: string; justCreated: b
                 <table className="w-full min-w-[36rem] text-sm">
                   <thead className="text-start text-xs text-muted">
                     <tr>
-                      <th className="py-2 text-start font-normal">{t("bidder")}</th>
-                      <th className="py-2 text-start font-normal">{t("phone")}</th>
-                      <th className="py-2 text-start font-normal">{tc("status")}</th>
-                      <th className="py-2 text-start font-normal">{t("time")}</th>
-                      <th className="py-2 text-end font-normal">USD</th>
+                      <th className="px-2 py-2 text-start font-normal">{t("bidder")}</th>
+                      <th className="px-2 py-2 text-start font-normal">{t("phone")}</th>
+                      <th className="px-2 py-2 text-start font-normal">{tc("status")}</th>
+                      <th className="px-2 py-2 text-start font-normal">{t("time")}</th>
+                      <th className="px-2 py-2 text-end font-normal">USD</th>
+                      {a.bids_voidable ? (
+                        <th className="px-2 py-2 text-end font-normal">
+                          <span className="sr-only">{tc("actions")}</span>
+                        </th>
+                      ) : null}
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-border/50">
-                    {a.bids.map((bid) => (
-                      <tr key={bid.id}>
-                        <td className="py-2">
-                          {bid.bidder} <span className="text-xs text-muted">#{bid.alias}</span>
-                        </td>
-                        <td className="py-2" dir="ltr">
-                          {bid.bidder_phone}
-                        </td>
-                        <td className="py-2">{t(`bidStatus.${bid.status as "valid"}`)}</td>
-                        <td className="py-2 text-xs text-muted">{formatDateTime(bid.created_at)}</td>
-                        <td className="py-2 text-end tabular-nums">
-                          <bdi dir="ltr">{formatUsd(bid.amount)}</bdi>
-                        </td>
-                      </tr>
-                    ))}
+                    {a.bids.map((bid) => {
+                      const voided = bid.status === "voided";
+                      return (
+                        <tr key={bid.id} className={voided ? "text-muted" : undefined}>
+                          <td className="px-2 py-2">
+                            {bid.bidder} <span className="text-xs text-muted">#{bid.alias}</span>
+                          </td>
+                          <td className="px-2 py-2">
+                            <bdi dir="ltr">{bid.bidder_phone}</bdi>
+                          </td>
+                          <td className="px-2 py-2">
+                            {t(`bidStatus.${bid.status as "valid"}`)}
+                            {voided && bid.void_reason ? <span className="block max-w-56 text-xs">{bid.void_reason}</span> : null}
+                          </td>
+                          <td className="px-2 py-2 text-xs text-muted">{formatDateTime(bid.created_at)}</td>
+                          <td className={`py-2 text-end tabular-nums ${voided ? "line-through" : ""}`}>
+                            <bdi dir="ltr">{formatUsd(bid.amount)}</bdi>
+                          </td>
+                          {a.bids_voidable ? (
+                            <td className="px-2 py-2 text-end">
+                              {!voided ? (
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    voidMutation.reset();
+                                    setVoiding(bid);
+                                  }}
+                                  aria-label={t("voidBidLabel", { bidder: bid.bidder, amount: formatUsd(bid.amount) })}
+                                  className="min-h-9 rounded-[var(--radius-control)] px-3 text-xs text-primary underline-offset-4 hover:bg-surface hover:underline"
+                                >
+                                  {t("voidBid")}
+                                </button>
+                              ) : null}
+                            </td>
+                          ) : null}
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>
@@ -296,6 +349,49 @@ export function AuctionManager({ id, justCreated }: { id: string; justCreated: b
             className="min-h-20 rounded-[var(--radius-control)] border border-border bg-white px-3 py-2"
             value={reason}
             onChange={(e) => setReason(e.target.value)}
+            required
+          />
+        </label>
+      </ConfirmDialog>
+      <ConfirmDialog
+        open={voiding !== null}
+        title={voiding ? t("voidTitle", { bidder: voiding.bidder, amount: formatUsd(voiding.amount) }) : ""}
+        confirmLabel={t("voidConfirm")}
+        cancelLabel={tc("back")}
+        busy={voidMutation.isPending}
+        confirmDisabled={!voidReason.trim()}
+        onCancel={() => {
+          setVoiding(null);
+          setVoidReason("");
+        }}
+        onConfirm={() => voiding && voidMutation.mutate(voiding)}
+      >
+        {voiding
+          ? (() => {
+              const outcome = voidOutcome(a.bids, voiding);
+              return (
+                <p className="font-medium text-text">
+                  {outcome.kind === "top"
+                    ? t("voidTop", { bidder: outcome.next.bidder, amount: formatUsd(outcome.next.amount) })
+                    : outcome.kind === "opening"
+                      ? t("voidTopOpening", { amount: formatUsd(a.starting_price) })
+                      : t("voidLower")}
+                </p>
+              );
+            })()
+          : null}
+        <p className="mt-2">{t("voidNote")}</p>
+        {voidMutation.error ? (
+          <div className="mt-3">
+            <Alert tone="error">{errorText(voidMutation.error)}</Alert>
+          </div>
+        ) : null}
+        <label className="mt-4 flex flex-col gap-1 text-sm text-text">
+          {t("voidReason")}
+          <textarea
+            className="min-h-20 rounded-[var(--radius-control)] border border-border bg-white px-3 py-2"
+            value={voidReason}
+            onChange={(e) => setVoidReason(e.target.value)}
             required
           />
         </label>

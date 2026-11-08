@@ -129,6 +129,7 @@ Workflow and UX analysis: `docs/ux/PHASE6_AUCTIONS.md`.
 - **Live updates** go over `/ws/auctions/<id>/` (snapshot + ordered events with `seq`; clients resync over REST after a gap or reconnect). Outbid and win notices go to `/ws/me/` and appear on any page.
 - **The winner** gets an auction order with a deposit of at least 50% due within one hour. A confirmed deposit awards the auction; an unpaid one goes to the next bidder or ends the auction, per the auction's policy. Celery Beat runs `auction_tick` every 5 seconds; reads also apply due transitions.
 - **Customers** offer their own works through **طلبات المزاد**. Staff review, ask for more information, record the agreed platform share (required before approval), create the artwork for the owner, then the auction.
+- While an auction is open, its manager can **void a bid** from the live monitor with a required reason (BR-509). The bid stays in the record; if it led, the lead returns to the best remaining bid. Bidders see the change live and the affected bidders are notified.
 - Auction managers see the auction orders (only) on the order desk.
 
 ## Run without Docker

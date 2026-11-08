@@ -367,6 +367,71 @@ def place_bid(*, auction: Auction, user, amount: Decimal, idempotency_key: str, 
         return BidResult(bid=previous, auction=previous.auction, replayed=True)
 
 
+@transaction.atomic
+def void_bid(bid: Bid, *, actor, reason: str) -> Auction:
+    """BR-509: a documented administrative void while the auction is open. The bid is kept
+    (never deleted); if it led, the lead returns to the best remaining bid. Extensions it
+    caused are not reverted (the end time is public). After the end, the remedy is
+    cancelling the auction (BR-517)."""
+    reason = reason.strip()
+    if not reason:
+        raise _invalid("reason", "سبب إلغاء المزايدة مطلوب.")
+    auction = _lock(bid.auction)
+    bid = Bid.objects.select_for_update().select_related("user").get(pk=bid.pk)
+    if bid.status == BidStatus.VOIDED:
+        raise AuctionStateError("هذه المزايدة ملغاة بالفعل.")
+    now = db_now()
+    if auction.status not in (AuctionStatus.SCHEDULED, AuctionStatus.LIVE) or not (
+        auction.starts_at <= now < auction.ends_at
+    ):
+        raise AuctionStateError("تُلغى المزايدات أثناء المزاد فقط. بعد انتهائه يُعالج الأمر بإلغاء المزاد.")
+
+    was_top = auction.highest_bid_id == bid.pk
+    bid.status = BidStatus.VOIDED
+    bid.void_reason = reason
+    bid.save(update_fields=["status", "void_reason"])
+    auction.bid_count = max(0, auction.bid_count - 1)
+    restored = None
+    if was_top:
+        top = (
+            auction.bids.filter(status__in=[BidStatus.VALID, BidStatus.OUTBID])
+            .select_related("user")
+            .order_by("-amount", "created_at")
+            .first()
+        )
+        if top is not None:
+            top.status = BidStatus.VALID
+            top.save(update_fields=["status"])
+        auction.highest_bid = top
+        auction.current_price = top.amount if top else None
+        restored = top if top is not None and top.user_id != bid.user_id else None
+    _bump(auction)
+    auction.save()
+    audit.record(
+        actor=actor,
+        action="auction.bid_voided",
+        entity=auction,
+        changes={"bid": str(bid.public_id), "amount": str(bid.amount), "was_top": was_top},
+        reason=reason,
+    )
+    _emit(auction, "bid.voided", voided_bid=str(bid.public_id))
+    base = {"auction": str(auction.public_id), "title": auction.title}
+    publish_on_commit(
+        BidderNotice(
+            user_id=bid.user_id, type="auction.bid_voided", data={**base, "amount": str(bid.amount), "reason": reason}
+        )
+    )
+    if restored is not None:
+        publish_on_commit(
+            BidderNotice(
+                user_id=restored.user_id,
+                type="auction.lead_restored",
+                data={**base, "current_price": str(restored.amount)},
+            )
+        )
+    return auction
+
+
 # --- time transitions and resolution (BR-505, 511…514) ----------------------------------------------
 def _declare_winner(auction: Auction, bid: Bid, now) -> None:
     deadline = now + timedelta(seconds=auction.winner_payment_window_sec)

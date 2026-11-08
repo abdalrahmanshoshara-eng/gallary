@@ -60,6 +60,8 @@ export function useAuctionLive(id: string) {
       if (result.event) setLastEvent({ event: result.event, at: Date.now() });
       // Results carry the viewer's outcome (winner, order number): fetch them.
       if (result.event?.type === "status" && !OPEN_STATUSES.has(result.event.status)) void refetch();
+      // After a void the viewer may lead again (or have lost a bid): refresh their position.
+      if (result.event?.type === "voided") void refetch();
     });
     const wake = () => {
       if (document.visibilityState === "visible") {

@@ -12,10 +12,10 @@ import { RealtimeSocket } from "@/lib/realtime/socket";
 
 import { myBidsKey } from "./api";
 
-type NoticeType = "auction.outbid" | "auction.won" | "auction.award_lost";
-type Notice = { id: number; type: NoticeType; auction: string; title: string; amount?: string; order?: string };
+type NoticeType = "auction.outbid" | "auction.won" | "auction.award_lost" | "auction.bid_voided" | "auction.lead_restored";
+type Notice = { id: number; type: NoticeType; auction: string; title: string; amount?: string; order?: string; reason?: string };
 
-const KNOWN: ReadonlySet<string> = new Set(["auction.outbid", "auction.won", "auction.award_lost"]);
+const KNOWN: ReadonlySet<string> = new Set(["auction.outbid", "auction.won", "auction.award_lost", "auction.bid_voided", "auction.lead_restored"]);
 const AUTO_DISMISS_MS = 12_000;
 
 /**
@@ -49,6 +49,7 @@ export function LiveNotices() {
         title: data.title ?? "",
         amount: data.current_price ?? data.amount,
         order: data.order,
+        reason: data.reason,
       };
       setNotices((current) => [...current.filter((n) => n.auction !== notice.auction), notice].slice(-3));
     });
@@ -76,7 +77,7 @@ export function LiveNotices() {
   return (
     <section aria-label={t("region")} aria-live="assertive" className="pointer-events-none fixed inset-x-0 bottom-4 z-50 flex flex-col items-center gap-3 px-4 sm:items-start sm:ps-6">
       {visible.map((notice) => {
-        const key = notice.type.slice("auction.".length) as "outbid" | "won" | "award_lost";
+        const key = notice.type.slice("auction.".length) as "outbid" | "won" | "award_lost" | "bid_voided" | "lead_restored";
         const href = notice.type === "auction.won" && notice.order ? `/orders/${notice.order}` : `/auctions/${notice.auction}`;
         return (
           <div
@@ -88,7 +89,7 @@ export function LiveNotices() {
           >
             <Icon name={notice.type === "auction.won" ? "check" : "clock"} className={`mt-0.5 size-5 shrink-0 ${notice.type === "auction.won" ? "text-olive" : "text-primary"}`} />
             <div className="min-w-0 flex-1 text-sm">
-              <p className="text-text">{t(key, { title: notice.title, amount: notice.amount ? formatUsd(notice.amount) : "" })}</p>
+              <p className="text-text">{t(key, { title: notice.title, amount: notice.amount ? formatUsd(notice.amount) : "", reason: notice.reason ?? "" })}</p>
               <Link href={href} onClick={() => dismiss(notice.id)} className="mt-2 inline-block font-medium text-primary underline-offset-4 hover:underline">
                 {t("open")}
               </Link>

@@ -187,6 +187,7 @@ class AdminBidSerializer(serializers.Serializer):
     alias = serializers.IntegerField(source="bidder_alias")
     created_at = serializers.DateTimeField()
     status = serializers.CharField()
+    void_reason = serializers.CharField()
     bidder = serializers.SerializerMethodField()
     bidder_phone = serializers.CharField(source="user.phone")
 
@@ -204,6 +205,7 @@ class AdminAuctionSerializer(AuctionDetailSerializer):
     winner_order = serializers.SerializerMethodField()
     schedule_problems = serializers.SerializerMethodField()
     editable = serializers.SerializerMethodField()
+    bids_voidable = serializers.SerializerMethodField()
 
     class Meta(AuctionDetailSerializer.Meta):
         fields = [
@@ -220,6 +222,7 @@ class AdminAuctionSerializer(AuctionDetailSerializer):
             "winner_order",
             "schedule_problems",
             "editable",
+            "bids_voidable",
         ]
         read_only_fields = fields
 
@@ -251,6 +254,11 @@ class AdminAuctionSerializer(AuctionDetailSerializer):
         from .. import services
 
         return services.schedule_problems(auction) if auction.status == "draft" else []
+
+    def get_bids_voidable(self, auction: Auction) -> bool:
+        """Bids can be voided only while the auction is open (BR-509)."""
+        now = timezone.now()
+        return auction.status in ("scheduled", "live") and auction.starts_at <= now < auction.ends_at
 
     def get_editable(self, auction: Auction) -> bool:
         return auction.status in ("draft", "scheduled") and timezone.now() < auction.starts_at

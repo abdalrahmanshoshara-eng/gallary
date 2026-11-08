@@ -100,7 +100,7 @@
 | F-AUC-02 | مراجعة طلبات المزاد | حالات، ملاحظات، نسبة المنصة المتفق عليها (إلزامية قبل الموافقة)، قرار | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-605/606؛ الإجراءات المتاحة من الخادم؛ إنشاء عمل مسودة مالكه مقدّم الطلب مع نسخ الصور |
 | F-AUC-03 | إدارة المزادات | إنشاء، جدولة، تعديل قبل البداية، إلغاء | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-501..504/517؛ مزاد الطلب يُنشر عمله عند الجدولة |
 | F-AUC-04 | التحولات الزمنية | SCHEDULED→LIVE→ENDED بوقت الخادم | TESTED | N/A | TESTED | N/A | TESTED | TESTED | COMPLETE | BR-505؛ Beat كل 5 ثوانٍ + فحص كسول عند القراءة |
-| F-AUC-05 | المزايدة | HTTP + Idempotency، قفل صف، ساعة Postgres، تمديد، version | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-505..510؛ اختبار تزامن: مزايدتان بالمبلغ نفسه ← واحدة |
+| F-AUC-05 | المزايدة | HTTP + Idempotency، قفل صف، ساعة Postgres، تمديد، version | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-505..510؛ اختبار تزامن: مزايدتان بالمبلغ نفسه ← واحدة؛ الإلغاء الإداري للمزايدة (BR-509) مع واجهته (6b) |
 | F-AUC-06 | صفحات المزادات العامة | قادمة/نشطة/منتهية + صفحة حية لحظية | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | تأكيد صريح قبل المزايدة، رسائل رفض بلغة طبيعية، aria-live |
 | F-AUC-07 | الفائز ومهلة الساعة | Order للفائز بعربون ≥ 50%، AWARDED بعد تأكيده | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-410, 511..513؛ لا إلغاء من العميل لطلب المزاد |
 | F-AUC-08 | سياسة عدم الدفع | المزايد التالي / إلغاء الإرساء | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-514؛ يُحسم فور انتهاء/إلغاء طلب الفائز |

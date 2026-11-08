@@ -19,7 +19,7 @@ from apps.core.errors import ConflictError
 
 from .. import requests as request_services
 from .. import selectors, services
-from ..models import Auction, AuctionRequest, AuctionStatus, RequestStatus
+from ..models import Auction, AuctionRequest, AuctionStatus, Bid, RequestStatus
 from .serializers import (
     AdminAuctionRequestSerializer,
     AdminAuctionSerializer,
@@ -358,6 +358,20 @@ class AdminEligibleArtworksView(ListAPIView):
     @extend_schema(operation_id="admin_auctions_eligible_artworks", parameters=[OpenApiParameter("search", str)])
     def get(self, request: Request, *args, **kwargs) -> Response:
         return super().get(request, *args, **kwargs)
+
+
+class AdminBidVoidView(APIView):
+    permission_classes = [IsAuctionStaff]
+
+    @extend_schema(
+        operation_id="admin_auctions_void_bid", request=AuctionReasonSerializer, responses=AdminAuctionSerializer
+    )
+    def post(self, request: Request, public_id, bid_id) -> Response:
+        data = AuctionReasonSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        bid = get_object_or_404(Bid, public_id=bid_id, auction__public_id=public_id)
+        auction = services.void_bid(bid, actor=request.user, reason=data.validated_data["reason"])
+        return Response(_admin_out(auction))
 
 
 # --- staff: auction requests --------------------------------------------------------------------------

@@ -26,6 +26,7 @@ export type ApplyResult =
 export type LiveEvent =
   | { type: "bid"; bid: PublicBid; mine: boolean; extended: boolean }
   | { type: "status"; status: string }
+  | { type: "voided"; bidId: string }
   | { type: "updated" };
 
 const STATE_FIELDS = [
@@ -95,6 +96,12 @@ export function applyMessage(state: AuctionState, message: StreamMessage): Apply
       state: { ...next, me: deriveMe(state.me, bid) },
       event: { type: "bid", bid, mine, extended: message.data.extended === true },
     };
+  }
+  if (message.type === "bid.voided" && typeof message.data.voided_bid === "string") {
+    // An administrative void (BR-509): the bid leaves the public history. The viewer's own
+    // position may change in ways the stream cannot tell, so the caller resyncs `me`.
+    const bidId = message.data.voided_bid;
+    return { kind: "applied", state: { ...base, bids: state.bids.filter((b) => b.id !== bidId) }, event: { type: "voided", bidId } };
   }
   const statusChanged = base.status !== state.status;
   return {

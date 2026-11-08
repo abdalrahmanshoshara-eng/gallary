@@ -28,6 +28,9 @@ export const scheduleAuction = (id: string) => apiFetch<AdminAuction>(`/admin/au
 export const cancelAuction = (id: string, reason: string) =>
   apiFetch<AdminAuction>(`/admin/auctions/${id}/cancel`, { method: "POST", body: { reason } });
 
+export const voidBid = (id: string, bidId: string, reason: string) =>
+  apiFetch<AdminAuction>(`/admin/auctions/${id}/bids/${bidId}/void`, { method: "POST", body: { reason } });
+
 export const listAdminRequests = (params: Record<string, string | number>) =>
   apiFetch<Page<AdminAuctionRequest>>(`/admin/auction-requests?${qs(params)}`);
 export const getAdminRequest = (id: string) => apiFetch<AdminAuctionRequest>(`/admin/auction-requests/${id}`);

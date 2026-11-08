@@ -183,6 +183,9 @@ export function AuctionLive({ detail }: { detail: AuctionDetail }) {
         assertive: outbidMe ? t("announce.outbid", { amount }) : "",
       };
     }
+    if (event.type === "voided") {
+      return { polite: t("announce.voided", { amount: formatUsd(state.current_price ?? detail.starting_price) }), assertive: "" };
+    }
     if (event.type === "status" && (event.status === "ended" || event.status === "pending_winner_payment")) {
       return { polite: t("announce.ended"), assertive: "" };
     }

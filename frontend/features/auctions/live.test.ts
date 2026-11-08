@@ -71,6 +71,15 @@ describe("applyMessage", () => {
     expect(result.state.me?.alias).toBe(1);
   });
 
+  it("removes a voided bid and asks the caller to refresh the viewer's position", () => {
+    const state = base({ bids: [{ id: "b2", amount: "150.00", alias: 2, created_at: "2026-11-05T09:40:00Z" }, ...base().bids] });
+    const result = applyMessage(state, { type: "bid.voided", seq: 6, data: { voided_bid: "b2", current_price: "100.00", minimum_next_bid: "110.00", bid_count: 1 } });
+    if (result.kind !== "applied") throw new Error("expected applied");
+    expect(result.state.bids.map((b) => b.id)).toEqual(["b1"]);
+    expect(result.state.current_price).toBe("100.00");
+    expect(result.event).toEqual({ type: "voided", bidId: "b2" });
+  });
+
   it("reports status changes", () => {
     const result = applyMessage(base(), { type: "auction.ended", seq: 6, data: { status: "pending_winner_payment", winner_alias: 1 } });
     if (result.kind !== "applied") throw new Error("expected applied");

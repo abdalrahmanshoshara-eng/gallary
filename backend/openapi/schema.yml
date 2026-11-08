@@ -835,6 +835,39 @@ paths:
               schema:
                 $ref: '#/components/schemas/AdminAuction'
           description: ''
+  /api/v1/admin/auctions/{public_id}/bids/{bid_id}/void:
+    post:
+      operationId: admin_auctions_void_bid
+      parameters:
+      - in: path
+        name: bid_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AuctionReasonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminAuction'
+          description: ''
   /api/v1/admin/auctions/{public_id}/cancel:
     post:
       operationId: admin_auctions_cancel
@@ -3532,11 +3565,16 @@ components:
         editable:
           type: boolean
           readOnly: true
+        bids_voidable:
+          type: boolean
+          description: Bids can be voided only while the auction is open (BR-509).
+          readOnly: true
       required:
       - artwork_id
       - artwork_slug
       - bid_count
       - bids
+      - bids_voidable
       - cancelled_reason
       - commission_rate
       - creator_name
@@ -3723,6 +3761,8 @@ components:
           format: date-time
         status:
           type: string
+        void_reason:
+          type: string
         bidder:
           type: string
           readOnly: true
@@ -3736,6 +3776,7 @@ components:
       - created_at
       - id
       - status
+      - void_reason
     AdminCategory:
       type: object
       properties:
