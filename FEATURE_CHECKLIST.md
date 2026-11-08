@@ -1,6 +1,6 @@
 # FEATURE_CHECKLIST.md — قائمة تتبع الميزات
 
-> آخر تحديث: 2026-11-05 — **Phase 6 (المزادات واللحظية) مستقرة**. المرحلة التالية: Phase 7 (عمليات الإدارة) — بعد موافقتك.
+> آخر تحديث: 2026-11-08 — **Phase 7a (العمولات والتسويات ولوحة المؤشرات وسجل التدقيق) مستقرة**. التالي: 7b (المحتوى والصفحة الرئيسية) — بعد موافقتك.
 >
 > **الحالات:** `NOT_STARTED` · `IN_PROGRESS` · `BLOCKED` · `IMPLEMENTED` · `TESTED` · `COMPLETE` — و`N/A` عندما لا ينطبق البُعد على الميزة.
 > **COMPLETE** فقط عندما تكون كل الأبعاد المنطبقة `TESTED` والتوثيق مكتملاً.
@@ -110,16 +110,16 @@
 | F-RT-05b | إعادة مزامنة المزاد | كشف فجوات `seq`، لقطة REST، دمج الأحداث | N/A | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | منطق نقي مختبر (`features/auctions/live.ts`) |
 | F-RT-06 | التوسع والتحمّل | عدة نسخ realtime، اختبار تحمّل | NOT_STARTED | N/A | N/A | N/A | NOT_STARTED | NOT_STARTED | DEFERRED | مؤجّل بقصد إلى مرحلة الإطلاق |
 
-## Phase 7 — Admin Operations
+## Phase 7 — Admin Operations — 🟡 جارية (7a ✅ 2026-11-08 · 7b المحتوى · 7c الإشعارات)
 
 | ID | الميزة | الوصف | BE | FE | DB | Perm | Tests | Docs | Overall | Notes |
 |---|---|---|---|---|---|---|---|---|---|---|
-| F-ADM-01 | هيكل لوحة الإدارة | تنقل حسب الصلاحية | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | يُبنى تدريجياً من Phase 2 |
-| F-ADM-02 | Dashboard | مؤشرات §9.1 | NOT_STARTED | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-ADM-03b | عرض AuditLog | واجهة للـ Super Admin | N/A | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | الخدمة جاهزة منذ Phase 2 |
-| F-SET-01 | اتفاقيات الفنانين | نسبة العمولة، اتفاقية نشطة واحدة | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-SET-02 | حساب العمولة | ترتيب الحسم + Snapshot | NOT_STARTED | N/A | NOT_STARTED | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-701..703؛ المنطق يُبنى في Phase 5 |
-| F-SET-03 | التسويات | إنشاء عند CONFIRMED + تسجيل الدفع؛ المستفيد فنان أو مالك | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | BR-704..706 |
+| F-ADM-01 | هيكل لوحة الإدارة | تنقل حسب الصلاحية | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | كل قسم يظهر لأدواره فقط؛ الصفحة الرئيسية = لوحة المؤشرات |
+| F-ADM-02 | Dashboard | مؤشرات §9.1 | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | 7a؛ أقسام حسب الدور، فترة 30/90/الكل، «يحتاج انتباهاً» |
+| F-ADM-03b | عرض AuditLog | واجهة للـ Super Admin | TESTED | TESTED | N/A | TESTED | TESTED | TESTED | COMPLETE | 7a؛ فلاتر النوع والإجراء والفاعل والفترة، تفاصيل التغييرات |
+| F-SET-01 | اتفاقيات الفنانين | نسبة العمولة، اتفاقية نشطة واحدة | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7a؛ المدير العام وحده؛ الجديدة تنهي السابقة؛ للطلبات الجديدة فقط |
+| F-SET-02 | حساب العمولة | ترتيب الحسم + Snapshot | TESTED | TESTED | TESTED | N/A | TESTED | TESTED | COMPLETE | BR-701..703؛ مصدر النسبة يظهر في محرر العرض |
+| F-SET-03 | التسويات | إنشاء عند CONFIRMED + تسجيل الدفع؛ المستفيد فنان أو مالك | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-704..706؛ دفع جماعي لمستفيد واحد بمرجع، Idempotency، ترحيل الطلبات السابقة |
 | F-CMS-01 | الصفحات الثابتة | من نحن، شروط، خصوصية، سياسة العربون (بإصدارات) | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | سياسة العربون مطلوبة في Phase 5 |
 | F-CMS-02 | FAQ | CRUD + عرض | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
 | F-CMS-03 | البنرات والمختارات | بنرات، أعمال وفنانون مميزون | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |

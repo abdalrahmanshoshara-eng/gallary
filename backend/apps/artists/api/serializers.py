@@ -66,3 +66,26 @@ class AdminArtistSerializer(serializers.ModelSerializer):
 class ImageUploadSerializer(serializers.Serializer):
     file = serializers.FileField()
     alt_text = serializers.CharField(max_length=250, required=False, allow_blank=True, default="")
+
+
+class AgreementSerializer(serializers.Serializer):
+    id = serializers.UUIDField(source="public_id")
+    commission_rate = serializers.DecimalField(max_digits=5, decimal_places=2)
+    status = serializers.CharField()
+    effective_from = serializers.DateField()
+    effective_to = serializers.DateField(allow_null=True)
+    notes = serializers.CharField()
+    created_by = serializers.CharField(source="created_by.display_name", allow_null=True, default=None)
+    created_at = serializers.DateTimeField()
+
+
+class ArtistAgreementsSerializer(serializers.Serializer):
+    active = AgreementSerializer(allow_null=True)
+    history = AgreementSerializer(many=True)
+    default_commission_rate = serializers.DecimalField(max_digits=5, decimal_places=2)
+    can_manage = serializers.BooleanField(help_text="Only the Super Admin sets commissions")
+
+
+class AgreementInputSerializer(serializers.Serializer):
+    commission_rate = serializers.DecimalField(max_digits=5, decimal_places=2, min_value=0, max_value=100)
+    notes = serializers.CharField(required=False, allow_blank=True, default="", max_length=2000)

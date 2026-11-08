@@ -20,6 +20,8 @@ source_modules =
     apps.cart
     apps.orders
     apps.auctions
+    apps.settlements
+    apps.dashboard
 forbidden_modules =
     apps.realtime
     channels
@@ -77,3 +79,22 @@ source_modules =
     apps.favorites
 forbidden_modules =
     apps.auctions
+    apps.settlements
+
+[importlinter:contract:dashboard-is-a-leaf]
+name = Nothing depends on the dashboard (it only reads other apps)
+type = forbidden
+source_modules =
+    apps.core
+    apps.accounts
+    apps.audit
+    apps.catalog
+    apps.artists
+    apps.artworks
+    apps.listings
+    apps.cart
+    apps.orders
+    apps.auctions
+    apps.settlements
+forbidden_modules =
+    apps.dashboard

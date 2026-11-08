@@ -11,4 +11,10 @@ admin_urls = [
     path("artists", views.AdminArtistListView.as_view(), name="artists"),
     path("artists/<uuid:public_id>", views.AdminArtistDetailView.as_view(), name="artist-detail"),
     path("artists/<uuid:public_id>/photo", views.AdminArtistPhotoView.as_view(), name="artist-photo"),
+    path("artists/<uuid:public_id>/agreements", views.AdminArtistAgreementsView.as_view(), name="artist-agreements"),
+    path(
+        "artists/<uuid:public_id>/agreements/end",
+        views.AdminArtistAgreementEndView.as_view(),
+        name="artist-agreement-end",
+    ),
 ]

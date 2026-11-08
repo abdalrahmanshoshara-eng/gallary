@@ -135,7 +135,7 @@ Index: `(user_id) WHERE revoked_at IS NULL`.
 | is_featured | bool | |
 | search_document | text | نص مطبَّع للبحث |
 
-**ArtistAgreement**: `artist_id` FK, `commission_rate` numeric(5,2), `status` (`DRAFT`,`ACTIVE`,`ENDED`), `effective_from`, `effective_to` null, `notes`.
+**ArtistAgreement**: `artist_id` FK, `commission_rate` numeric(5,2) CHECK 0..100, `status` (`ACTIVE`,`ENDED` — **7a:** لا مسودات؛ الاتفاقية تُعتمد مباشرة)، `effective_from`, `effective_to` null، `notes`، `created_by`, `ended_by`. UNIQUE جزئي: اتفاقية `ACTIVE` واحدة لكل فنان.
 قيد: اتفاقية `ACTIVE` واحدة لكل فنان (partial unique).
 
 ### artworks
@@ -348,9 +348,11 @@ UNIQUE `(user_id, idempotency_key)` (BR-507a). Index: `(auction_id, amount DESC,
 | artist_id | FK null |
 | owner_user_id | FK null / owner_name |
 | currency | `USD` |
-| gross_amount, platform_commission, payee_amount | من Snapshot |
+| payee_name, payee_key | الاسم لحظة البيع، ومفتاح تجميع المستفيد (`artist:<id>`/`owner:<id>`) — 7a |
+| gross_amount, commission_rate, platform_commission, payee_amount | من Snapshot |
 | status | `PENDING`,`PAID`,`ON_HOLD`,`CANCELLED` |
-| paid_at, reference, notes | |
+| status_reason | سبب التعليق/الإلغاء |
+| paid_at (date), reference, notes, paid_by_id | CHECK: `PAID` يتطلب `paid_at` و`reference` |
 
 CHECK: `gross_amount = platform_commission + payee_amount`.
 

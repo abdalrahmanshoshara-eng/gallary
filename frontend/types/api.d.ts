@@ -36,6 +36,38 @@ export interface paths {
         patch: operations["admin_artists_update"];
         trace?: never;
     };
+    "/api/v1/admin/artists/{public_id}/agreements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_artist_agreements"];
+        put?: never;
+        post: operations["admin_artist_agreements_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/artists/{public_id}/agreements/end": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_artist_agreements_end"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/artists/{public_id}/photo": {
         parameters: {
             query?: never;
@@ -405,6 +437,39 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/admin/audit": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description BR-007: read-only for the Super Admin. Newest first. */
+        get: operations["admin_audit_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/audit/facets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_audit_facets"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/catalog/categories": {
         parameters: {
             query?: never;
@@ -531,6 +596,22 @@ export interface paths {
         options?: never;
         head?: never;
         patch: operations["admin_techniques_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/dashboard": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_dashboard"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/admin/listings/{public_id}": {
@@ -790,6 +871,118 @@ export interface paths {
         head?: never;
         /** @description Staff can read the platform defaults; only the Super Admin changes them (BR-212). */
         patch: operations["admin_settings_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/settlements": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_settlements_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settlements/{public_id}/cancel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_settlements_cancel"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settlements/{public_id}/hold": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_settlements_hold"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settlements/{public_id}/release": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_settlements_release"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settlements/pay": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_settlements_pay"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settlements/payees": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_settlements_payees"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/settlements/summary": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_settlements_summary"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
         trace?: never;
     };
     "/api/v1/admin/staff": {
@@ -1556,6 +1749,14 @@ export interface paths {
 export type webhooks = Record<string, never>;
 export interface components {
     schemas: {
+        /**
+         * @description * `pay` - pay
+         *     * `hold` - hold
+         *     * `release` - release
+         *     * `cancel` - cancel
+         * @enum {string}
+         */
+        ActionsEnum: "pay" | "hold" | "release" | "cancel";
         ActivationRequest: {
             /** @default  */
             reason: string;
@@ -1916,6 +2117,7 @@ export interface components {
             readonly pricing_approved_at: string | null;
             /** Format: decimal */
             readonly effective_commission_rate: string;
+            readonly effective_commission_source: components["schemas"]["EffectiveCommissionSourceEnum"];
             readonly effective_deposit: components["schemas"]["DepositTerms"];
             readonly quantity_mode: components["schemas"]["QuantityModeEnum"];
             readonly quantity_total: number | null;
@@ -2139,6 +2341,27 @@ export interface components {
              */
             readonly last_login: string | null;
         };
+        Agreement: {
+            /** Format: uuid */
+            id: string;
+            /** Format: decimal */
+            commission_rate: string;
+            status: string;
+            /** Format: date */
+            effective_from: string;
+            /** Format: date */
+            effective_to: string | null;
+            notes: string;
+            created_by?: string | null;
+            /** Format: date-time */
+            created_at: string;
+        };
+        AgreementInputRequest: {
+            /** Format: decimal */
+            commission_rate: string;
+            /** @default  */
+            notes: string;
+        };
         ArchiveInputRequest: {
             /** @default visible */
             visibility: components["schemas"]["ArchiveVisibilityEnum"];
@@ -2151,6 +2374,14 @@ export interface components {
          * @enum {string}
          */
         ArchiveVisibilityEnum: "visible" | "hidden";
+        ArtistAgreements: {
+            active: components["schemas"]["Agreement"] | null;
+            history: components["schemas"]["Agreement"][];
+            /** Format: decimal */
+            default_commission_rate: string;
+            /** @description Only the Super Admin sets commissions */
+            can_manage: boolean;
+        };
         ArtistRef: {
             name: string;
             slug: string;
@@ -2161,6 +2392,22 @@ export interface components {
          * @enum {string}
          */
         ArtistStatusEnum: "active" | "hidden";
+        AttentionItem: {
+            kind: components["schemas"]["AttentionItemKindEnum"];
+            ref: string;
+            label: string;
+            /** Format: date-time */
+            at: string | null;
+            count?: number;
+        };
+        /**
+         * @description * `order_expiring` - order_expiring
+         *     * `settlements_on_hold` - settlements_on_hold
+         *     * `auction_awaiting_winner` - auction_awaiting_winner
+         *     * `auction_requests_new` - auction_requests_new
+         * @enum {string}
+         */
+        AttentionItemKindEnum: "order_expiring" | "settlements_on_hold" | "auction_awaiting_winner" | "auction_requests_new";
         AuctionCard: {
             /** Format: uuid */
             readonly id: string;
@@ -2244,6 +2491,11 @@ export interface components {
             /** @description null when there is no reserve; the reserve itself stays private */
             readonly reserve_met: boolean | null;
             readonly version: number;
+        };
+        AuctionKpis: {
+            live: number;
+            upcoming: number;
+            ended: number;
         };
         /**
          * @description * `sold` - بيع
@@ -2345,6 +2597,23 @@ export interface components {
          * @enum {string}
          */
         AuctionStatusEnum: "draft" | "scheduled" | "live" | "ended" | "pending_winner_payment" | "awarded" | "cancelled";
+        AuditEntry: {
+            readonly id: number;
+            readonly actor: string | null;
+            actor_phone?: string | null;
+            readonly action: string;
+            readonly entity_type: string;
+            readonly entity_id: string;
+            readonly changes: unknown;
+            readonly reason: string;
+            readonly ip: string | null;
+            readonly request_id: string;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        AuditFacets: {
+            entity_types: string[];
+        };
         AvailableActions: {
             /** @description Money is still owed on an open order */
             record_payment: boolean;
@@ -2416,6 +2685,10 @@ export interface components {
             /** @description Why this line cannot be ordered now; null when it can. */
             problem: string | null;
         };
+        CatalogKpis: {
+            published_artworks: number;
+            available_artworks: number;
+        };
         CategoryWithParent: {
             name: string;
             slug: string;
@@ -2479,6 +2752,16 @@ export interface components {
             readonly history: components["schemas"]["StatusStep"][];
             readonly delivery: components["schemas"]["DeliveryPublic"] | null;
         };
+        Dashboard: {
+            period: components["schemas"]["PeriodEnum"];
+            /** Format: date-time */
+            generated_at: string;
+            catalog: components["schemas"]["CatalogKpis"] | null;
+            orders: components["schemas"]["OrderKpis"] | null;
+            settlements: components["schemas"]["SettlementKpis"] | null;
+            auctions: components["schemas"]["AuctionKpis"] | null;
+            attention: components["schemas"]["AttentionItem"][];
+        };
         DeliveryInputRequest: {
             method?: components["schemas"]["DeliveryMethodEnum"] | components["schemas"]["BlankEnum"];
             carrier_name?: string;
@@ -2539,6 +2822,13 @@ export interface components {
             /** Format: decimal */
             weight_kg: string | null;
         };
+        /**
+         * @description * `listing` - listing
+         *     * `agreement` - agreement
+         *     * `default` - default
+         * @enum {string}
+         */
+        EffectiveCommissionSourceEnum: "listing" | "agreement" | "default";
         EligibleArtwork: {
             /** Format: uuid */
             id: string;
@@ -2730,6 +3020,15 @@ export interface components {
          * @enum {string}
          */
         OrderItemStatusEnum: "active" | "removed";
+        OrderKpis: {
+            orders: number;
+            pending_deposit: number;
+            sales_count: number;
+            /** Format: decimal */
+            sales_amount: string;
+            /** Format: decimal */
+            commission_amount: string;
+        };
         OrderReasonRequest: {
             reason: string;
         };
@@ -2852,6 +3151,21 @@ export interface components {
             previous?: string | null;
             results: components["schemas"]["AuctionCard"][];
         };
+        PaginatedAuditEntryList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["AuditEntry"][];
+        };
         PaginatedEligibleArtworkList: {
             /** @example 123 */
             count: number;
@@ -2911,6 +3225,21 @@ export interface components {
              */
             previous?: string | null;
             results: components["schemas"]["PublicArtworkCard"][];
+        };
+        PaginatedSettlementList: {
+            /** @example 123 */
+            count: number;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=4
+             */
+            next?: string | null;
+            /**
+             * Format: uri
+             * @example http://api.example.org/accounts/?page=2
+             */
+            previous?: string | null;
+            results: components["schemas"]["Settlement"][];
         };
         PaginatedStorefrontCardList: {
             /** @example 123 */
@@ -3107,6 +3436,24 @@ export interface components {
             display_name?: string;
             roles?: components["schemas"]["RolesEnum"][];
         };
+        PayInputRequest: {
+            settlements: string[];
+            reference: string;
+            /** Format: date */
+            paid_at?: string;
+            /** @default  */
+            notes: string;
+        };
+        PayeeDue: {
+            payee_key: string;
+            payee_name: string;
+            payee_type: string;
+            count: number;
+            /** Format: decimal */
+            amount: string;
+            /** Format: date-time */
+            oldest: string;
+        };
         PaymentInputRequest: {
             kind: components["schemas"]["PaymentKindEnum"];
             /** Format: decimal */
@@ -3167,6 +3514,13 @@ export interface components {
          * @enum {string}
          */
         PaymentStatusEnum: "unpaid" | "partially_paid" | "paid" | "refunded";
+        /**
+         * @description * `30d` - 30d
+         *     * `90d` - 90d
+         *     * `all` - all
+         * @enum {string}
+         */
+        PeriodEnum: "30d" | "90d" | "all";
         Policy: {
             version: string;
             title: string;
@@ -3380,6 +3734,60 @@ export interface components {
             readonly expires_at: string;
             readonly current: boolean;
         };
+        Settlement: {
+            /** Format: uuid */
+            readonly id: string;
+            order_number: string;
+            artwork_title: string;
+            /** Format: uuid */
+            artwork_id: string;
+            quantity: number;
+            readonly payee_type: string;
+            readonly payee_name: string;
+            readonly payee_key: string;
+            readonly currency: string;
+            /** Format: decimal */
+            readonly gross_amount: string;
+            /** Format: decimal */
+            readonly commission_rate: string;
+            /** Format: decimal */
+            readonly platform_commission: string;
+            /** Format: decimal */
+            readonly payee_amount: string;
+            readonly status: components["schemas"]["SettlementStatusEnum"];
+            readonly status_reason: string;
+            /** Format: date */
+            readonly paid_at: string | null;
+            readonly reference: string;
+            readonly notes: string;
+            paid_by?: string | null;
+            readonly actions: components["schemas"]["ActionsEnum"][];
+            /** @description Paid, then the order was cancelled: recover the amount from the payee outside the platform. */
+            readonly order_cancelled_after_payment: boolean;
+            /** Format: date-time */
+            readonly created_at: string;
+        };
+        SettlementKpis: {
+            pending_count: number;
+            /** Format: decimal */
+            pending_amount: string;
+        };
+        SettlementReasonRequest: {
+            reason: string;
+        };
+        /**
+         * @description * `pending` - مستحقة
+         *     * `on_hold` - معلّقة
+         *     * `paid` - مدفوعة
+         *     * `cancelled` - ملغاة
+         * @enum {string}
+         */
+        SettlementStatusEnum: "pending" | "on_hold" | "paid" | "cancelled";
+        SettlementSummary: {
+            pending: components["schemas"]["Total"];
+            on_hold: components["schemas"]["Total"];
+            paid_this_month: components["schemas"]["Total"];
+        };
         SiteSetting: {
             /**
              * نسبة العمولة الافتراضية %
@@ -3476,6 +3884,11 @@ export interface components {
         TermRef: {
             name: string;
             slug: string;
+        };
+        Total: {
+            count: number;
+            /** Format: decimal */
+            amount: string;
         };
     };
     responses: never;
@@ -3597,6 +4010,73 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AdminArtist"];
+                };
+            };
+        };
+    };
+    admin_artist_agreements: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtistAgreements"];
+                };
+            };
+        };
+    };
+    admin_artist_agreements_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AgreementInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtistAgreements"];
+                };
+            };
+        };
+    };
+    admin_artist_agreements_end: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ArtistAgreements"];
                 };
             };
         };
@@ -4339,6 +4819,59 @@ export interface operations {
             };
         };
     };
+    admin_audit_list: {
+        parameters: {
+            query?: {
+                /** @description prefix, e.g. settlement. */
+                action?: string;
+                actor?: string;
+                entity_type?: string;
+                /** @description YYYY-MM-DD */
+                from?: string;
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                search?: string;
+                system?: "1";
+                /** @description YYYY-MM-DD */
+                to?: string;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedAuditEntryList"];
+                };
+            };
+        };
+    };
+    admin_audit_facets: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AuditFacets"];
+                };
+            };
+        };
+    };
     admin_categories_list: {
         parameters: {
             query?: never;
@@ -4683,6 +5216,27 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AdminTechnique"];
+                };
+            };
+        };
+    };
+    admin_dashboard: {
+        parameters: {
+            query?: {
+                period?: "30d" | "90d" | "all";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Dashboard"];
                 };
             };
         };
@@ -5152,6 +5706,169 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SiteSetting"];
+                };
+            };
+        };
+    };
+    admin_settlements_list: {
+        parameters: {
+            query?: {
+                /** @description رقم الصفحة ضمن النتائج المقسمة. */
+                page?: number;
+                /** @description عدد النتائج التي يجب إرجاعها في كل صفحة. */
+                page_size?: number;
+                /** @description payee_key from the by-payee summary */
+                payee?: string;
+                search?: string;
+                status?: "all" | "cancelled" | "on_hold" | "paid" | "pending";
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PaginatedSettlementList"];
+                };
+            };
+        };
+    };
+    admin_settlements_cancel: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettlementReasonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Settlement"];
+                };
+            };
+        };
+    };
+    admin_settlements_hold: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["SettlementReasonRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Settlement"];
+                };
+            };
+        };
+    };
+    admin_settlements_release: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Settlement"];
+                };
+            };
+        };
+    };
+    admin_settlements_pay: {
+        parameters: {
+            query?: never;
+            header: {
+                /** @description UUID per attempt */
+                "Idempotency-Key": string;
+            };
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PayInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Settlement"][];
+                };
+            };
+        };
+    };
+    admin_settlements_payees: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PayeeDue"][];
+                };
+            };
+        };
+    };
+    admin_settlements_summary: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["SettlementSummary"];
                 };
             };
         };

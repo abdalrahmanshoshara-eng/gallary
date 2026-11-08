@@ -1,7 +1,7 @@
 """
 Artists (PRD F-CAT-02). Managed by staff only — artists have no account in the MVP.
 Contact details and internal notes are never exposed by public endpoints.
-Commission agreements (ArtistAgreement) arrive with settlements in Phase 7.
+Commission agreements (ArtistAgreement, BR-701) set the artist's platform share.
 """
 
 from __future__ import annotations
@@ -54,3 +54,49 @@ class Artist(models.Model):
 
     def __str__(self) -> str:
         return self.name
+
+
+class AgreementStatus(models.TextChoices):
+    ACTIVE = "active", "نشطة"
+    ENDED = "ended", "منتهية"
+
+
+class ArtistAgreement(models.Model):
+    """The platform's commission for an artist's works (BR-701, second in the order of
+    precedence). One active agreement per artist; a new one ends the previous. Changes apply
+    to new orders only: orders keep their snapshot (BR-703)."""
+
+    public_id = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
+    artist = models.ForeignKey(Artist, on_delete=models.CASCADE, related_name="agreements")
+    commission_rate = models.DecimalField("نسبة العمولة %", max_digits=5, decimal_places=2)
+    status = models.CharField(max_length=8, choices=AgreementStatus.choices, default=AgreementStatus.ACTIVE)
+    effective_from = models.DateField(default=timezone.localdate)
+    effective_to = models.DateField(null=True, blank=True)
+    notes = models.TextField(blank=True)
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    ended_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL, null=True, blank=True, on_delete=models.SET_NULL, related_name="+"
+    )
+    created_at = models.DateTimeField(default=timezone.now)
+
+    class Meta:
+        verbose_name = "اتفاقية عمولة"
+        verbose_name_plural = "اتفاقيات العمولة"
+        ordering = ["-created_at"]
+        constraints = [
+            models.UniqueConstraint(
+                fields=["artist"], condition=models.Q(status="active"), name="artist_one_active_agreement"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(commission_rate__gte=0, commission_rate__lte=100), name="agreement_rate_range"
+            ),
+            models.CheckConstraint(
+                condition=models.Q(effective_to__isnull=True) | models.Q(effective_to__gte=models.F("effective_from")),
+                name="agreement_dates_ordered",
+            ),
+        ]
+
+    def __str__(self) -> str:
+        return f"{self.artist_id}: {self.commission_rate}% ({self.status})"

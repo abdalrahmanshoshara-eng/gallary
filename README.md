@@ -132,6 +132,15 @@ Workflow and UX analysis: `docs/ux/PHASE6_AUCTIONS.md`.
 - While an auction is open, its manager can **void a bid** from the live monitor with a required reason (BR-509). The bid stays in the record; if it led, the lead returns to the best remaining bid. Bidders see the change live and the affected bidders are notified.
 - Auction managers see the auction orders (only) on the order desk.
 
+## Commissions, settlements, dashboard and audit (Phase 7a)
+
+Workflow and UX analysis: `docs/ux/PHASE7A_FINANCE.md`.
+
+- **Commission (BR-701)**: the listing's own rate, else the artist's active agreement, else the platform default. The Super Admin manages agreements on the artist page (a new one ends the current one). Orders keep the rate from when they were placed.
+- **Settlements (BR-704…706)**: one per sold item, created automatically when an order is confirmed (`apps.settlements`, via the `order_status_changed` signal). Operations staff and the Super Admin see what each payee is owed, record one transfer per payee with its reference, and can hold or cancel with a reason. A migration created settlements for orders confirmed earlier.
+- **Dashboard**: the admin home shows KPIs for the sections each role works in, plus a "needs attention" list.
+- **Audit log**: the Super Admin browses every administrative and financial action in **لوحة الإدارة ← سجل التدقيق**.
+
 ## Run without Docker
 
 You need Python 3.12+, Node 22.12+, PostgreSQL 16 and Redis 7 running locally.

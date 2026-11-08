@@ -15,6 +15,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from django.db import IntegrityError, transaction
 from django.utils import timezone
 
+from apps.artists import services as artist_services
 from apps.artists.models import ArtistStatus
 from apps.artworks.models import Artwork, PublicationStatus
 from apps.audit import services as audit
@@ -69,10 +70,19 @@ class DepositTerms:
         return min(amount, line_total)  # BR-403: deposit never exceeds the subtotal
 
 
-def commission_rate(listing: Listing, settings: SiteSetting | None = None) -> Decimal:
+def commission_source(listing: Listing, settings: SiteSetting | None = None) -> tuple[Decimal, str]:
+    """BR-701: the listing's own rate, else the artist's active agreement, else the
+    platform default. Returns (rate, source) with source in listing / agreement / default."""
     if listing.commission_rate_override is not None:
-        return listing.commission_rate_override
-    return (settings or SiteSetting.load()).default_commission_rate
+        return listing.commission_rate_override, "listing"
+    agreement = artist_services.active_agreement(listing.artwork.artist_id)
+    if agreement is not None:
+        return agreement.commission_rate, "agreement"
+    return (settings or SiteSetting.load()).default_commission_rate, "default"
+
+
+def commission_rate(listing: Listing, settings: SiteSetting | None = None) -> Decimal:
+    return commission_source(listing, settings)[0]
 
 
 def deposit_terms(listing: Listing, settings: SiteSetting | None = None) -> DepositTerms:

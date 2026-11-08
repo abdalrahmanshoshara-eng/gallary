@@ -6,6 +6,7 @@ import { ArtistDelete } from "@/features/admin-catalog/ArtistDelete";
 import { ArtistForm } from "@/features/admin-catalog/ArtistForm";
 import { ArtistPhoto } from "@/features/admin-catalog/ArtistPhoto";
 import { isUuid, loadAdmin } from "@/features/admin-catalog/load";
+import { AgreementsPanel } from "@/features/admin-finance/AgreementsPanel";
 import { Link } from "@/i18n/navigation";
 import { requireCatalogEditor } from "@/lib/auth/require";
 
@@ -30,9 +31,10 @@ export default async function EditArtistPage({ params }: PageProps<"/[locale]/ad
           </Link>
         ) : null}
       </div>
-      <div className="grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem]">
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
         <ArtistForm artist={artist} />
         <aside className="flex flex-col gap-10">
+          <AgreementsPanel artistId={artist.id} artistName={artist.name} />
           <ArtistPhoto artist={artist} />
           <ArtistDelete id={artist.id} name={artist.name} />
         </aside>

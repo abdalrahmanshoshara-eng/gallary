@@ -54,6 +54,8 @@ INSTALLED_APPS = [
     "apps.cart",
     "apps.orders",
     "apps.auctions",
+    "apps.settlements",
+    "apps.dashboard",
     "apps.realtime",
 ]
 
@@ -354,6 +356,8 @@ SPECTACULAR_SETTINGS = {
         "NonPaymentPolicyEnum": "apps.auctions.models.NonPaymentPolicy",
         "AuctionRequestStatusEnum": "apps.auctions.models.RequestStatus",
         "NoteVisibilityEnum": "apps.auctions.models.NoteVisibility",
+        "SettlementStatusEnum": "apps.settlements.models.SettlementStatus",
+        "AgreementStatusEnum": "apps.artists.models.AgreementStatus",
     },
 }
 

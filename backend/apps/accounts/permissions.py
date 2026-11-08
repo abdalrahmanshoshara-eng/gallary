@@ -93,3 +93,13 @@ class IsOrderDesk(BasePermission):
 
     def has_permission(self, request, view) -> bool:
         return orders_scope(request.user) is not None
+
+
+class IsStaff(BasePermission):
+    """Any active staff account (the dashboard narrows its sections by role)."""
+
+    message = "هذه الصفحة متاحة لفريق المنصة فقط."
+
+    def has_permission(self, request, view) -> bool:
+        user = request.user
+        return bool(getattr(user, "is_authenticated", False) and user.is_active and user.is_staff)

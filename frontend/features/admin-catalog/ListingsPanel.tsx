@@ -141,7 +141,9 @@ function PricingForm({ listing, onSaved }: { listing: AdminListing; onSaved: (l:
           {t("approvePricing")}
         </Button>
       </div>
-      <p className="text-xs text-muted">{t("commissionHint", { rate: Number(listing.effective_commission_rate) })}</p>
+      <p className="text-xs text-muted">
+        {t(`commissionSource.${listing.effective_commission_source}`, { rate: Number(listing.effective_commission_rate) })}
+      </p>
     </fieldset>
   );
 }

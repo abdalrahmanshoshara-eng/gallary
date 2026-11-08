@@ -4,7 +4,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Container } from "@/components/ui/Container";
 import { Link } from "@/i18n/navigation";
 import { getCurrentUser } from "@/lib/auth/server";
-import { canUseOrderDesk, isAuctionStaff, isCatalogEditor } from "@/lib/auth/types";
+import { canUseOrderDesk, isAuctionStaff, isCatalogEditor, isOrdersStaff } from "@/lib/auth/types";
 
 export const metadata: Metadata = { robots: { index: false, follow: false } };
 
@@ -20,6 +20,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
   const links = [
     { href: "/admin" as const, label: t("home") },
     ...(canUseOrderDesk(user) ? [{ href: "/admin/orders" as const, label: t("orders.title") }] : []),
+    ...(isOrdersStaff(user) ? [{ href: "/admin/settlements" as const, label: t("settlements.title") }] : []),
     ...(isAuctionStaff(user)
       ? [
           { href: "/admin/auctions" as const, label: t("auctions.title") },
@@ -38,6 +39,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
       ? [
           { href: "/admin/staff" as const, label: t("staff.title") },
           { href: "/admin/users" as const, label: t("users.title") },
+          { href: "/admin/audit" as const, label: t("audit.title") },
         ]
       : []),
   ];

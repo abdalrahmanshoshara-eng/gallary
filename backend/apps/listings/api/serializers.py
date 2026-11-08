@@ -86,6 +86,7 @@ class AdminListingSerializer(serializers.ModelSerializer):
     artwork = serializers.UUIDField(source="artwork.public_id", read_only=True)
     pricing_approved_by = serializers.CharField(source="pricing_approved_by.display_name", read_only=True, default=None)
     effective_commission_rate = serializers.SerializerMethodField()
+    effective_commission_source = serializers.SerializerMethodField()
     effective_deposit = serializers.SerializerMethodField()
     activation_problems = serializers.SerializerMethodField()
     purchasable = serializers.SerializerMethodField()
@@ -104,6 +105,7 @@ class AdminListingSerializer(serializers.ModelSerializer):
             "pricing_approved_by",
             "pricing_approved_at",
             "effective_commission_rate",
+            "effective_commission_source",
             "effective_deposit",
             "quantity_mode",
             "quantity_total",
@@ -126,6 +128,10 @@ class AdminListingSerializer(serializers.ModelSerializer):
     @extend_schema_field(serializers.DecimalField(max_digits=5, decimal_places=2))
     def get_effective_commission_rate(self, listing: Listing):
         return f"{services.commission_rate(listing, self.context.get('settings')):.2f}"
+
+    @extend_schema_field(serializers.ChoiceField(choices=["listing", "agreement", "default"]))
+    def get_effective_commission_source(self, listing: Listing) -> str:
+        return services.commission_source(listing, self.context.get("settings"))[1]
 
     @extend_schema_field(DepositTermsSerializer)
     def get_effective_deposit(self, listing: Listing):

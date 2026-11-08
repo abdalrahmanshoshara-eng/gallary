@@ -10,11 +10,17 @@ from rest_framework.request import Request
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from apps.accounts.permissions import IsCatalogEditor
+from apps.accounts.permissions import IsCatalogEditor, IsSuperAdmin
 
 from .. import selectors, services
 from ..models import Artist
-from .serializers import AdminArtistSerializer, ImageUploadSerializer, PublicArtistSerializer
+from .serializers import (
+    AdminArtistSerializer,
+    AgreementInputSerializer,
+    ArtistAgreementsSerializer,
+    ImageUploadSerializer,
+    PublicArtistSerializer,
+)
 
 
 class PublicArtistListView(ListAPIView):
@@ -123,3 +129,51 @@ class AdminArtistPhotoView(APIView):
         artist = get_object_or_404(Artist, public_id=public_id)
         services.remove_photo(artist, actor=request.user)
         return Response(AdminArtistSerializer(selectors.admin_artists().get(pk=artist.pk)).data)
+
+
+# --- commission agreements (BR-701): read by catalogue staff, managed by the Super Admin -----------
+def _agreements_payload(artist: Artist, user) -> dict:
+    from apps.accounts.roles import is_super_admin
+    from apps.core.models import SiteSetting
+
+    agreements = list(artist.agreements.select_related("created_by"))
+    return {
+        "active": next((a for a in agreements if a.status == "active"), None),
+        "history": [a for a in agreements if a.status != "active"],
+        "default_commission_rate": SiteSetting.load().default_commission_rate,
+        "can_manage": is_super_admin(user),
+    }
+
+
+class AdminArtistAgreementsView(APIView):
+    def get_permissions(self):
+        return [IsSuperAdmin()] if self.request.method == "POST" else [IsCatalogEditor()]
+
+    @extend_schema(operation_id="admin_artist_agreements", responses=ArtistAgreementsSerializer)
+    def get(self, request: Request, public_id) -> Response:
+        artist = get_object_or_404(Artist, public_id=public_id)
+        return Response(ArtistAgreementsSerializer(_agreements_payload(artist, request.user)).data)
+
+    @extend_schema(
+        operation_id="admin_artist_agreements_create",
+        request=AgreementInputSerializer,
+        responses={201: ArtistAgreementsSerializer},
+    )
+    def post(self, request: Request, public_id) -> Response:
+        artist = get_object_or_404(Artist, public_id=public_id)
+        data = AgreementInputSerializer(data=request.data)
+        data.is_valid(raise_exception=True)
+        services.create_agreement(artist, actor=request.user, **data.validated_data)
+        return Response(
+            ArtistAgreementsSerializer(_agreements_payload(artist, request.user)).data, status=status.HTTP_201_CREATED
+        )
+
+
+class AdminArtistAgreementEndView(APIView):
+    permission_classes = [IsSuperAdmin]
+
+    @extend_schema(operation_id="admin_artist_agreements_end", request=None, responses=ArtistAgreementsSerializer)
+    def post(self, request: Request, public_id) -> Response:
+        artist = get_object_or_404(Artist, public_id=public_id)
+        services.end_agreement(artist, actor=request.user)
+        return Response(ArtistAgreementsSerializer(_agreements_payload(artist, request.user)).data)

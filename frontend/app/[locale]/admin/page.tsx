@@ -2,7 +2,8 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 import { Link } from "@/i18n/navigation";
 import { requireStaff } from "@/lib/auth/require";
-import { canUseOrderDesk, isAuctionStaff, isCatalogEditor } from "@/lib/auth/types";
+import { Dashboard } from "@/features/admin-finance/Dashboard";
+import { canUseOrderDesk, isAuctionStaff, isCatalogEditor, isOrdersStaff } from "@/lib/auth/types";
 
 export default async function AdminHomePage({ params }: PageProps<"/[locale]/admin">) {
   const { locale } = await params;
@@ -12,6 +13,9 @@ export default async function AdminHomePage({ params }: PageProps<"/[locale]/adm
   const sections = [
     ...(canUseOrderDesk(user)
       ? [{ href: "/admin/orders" as const, title: t("orders.title"), intro: t("orders.intro") }]
+      : []),
+    ...(isOrdersStaff(user)
+      ? [{ href: "/admin/settlements" as const, title: t("settlements.title"), intro: t("settlements.intro") }]
       : []),
     ...(isAuctionStaff(user)
       ? [
@@ -31,6 +35,7 @@ export default async function AdminHomePage({ params }: PageProps<"/[locale]/adm
       ? [
           { href: "/admin/staff" as const, title: t("staff.title"), intro: t("staff.intro") },
           { href: "/admin/users" as const, title: t("users.title"), intro: "" },
+          { href: "/admin/audit" as const, title: t("audit.title"), intro: t("audit.intro") },
         ]
       : []),
   ];
@@ -42,7 +47,12 @@ export default async function AdminHomePage({ params }: PageProps<"/[locale]/adm
         {user.display_name} · {user.roles.map((r) => t(`roles.${r as "super_admin"}`)).join("، ")}
       </p>
       {sections.length ? (
-        <section className="mt-10">
+        <div className="mt-8">
+          <Dashboard />
+        </div>
+      ) : null}
+      {sections.length ? (
+        <section className="mt-12">
           <h2 className="mb-4 text-lg font-medium text-primary">{t("availableSections")}</h2>
           <ul className="grid gap-4 md:grid-cols-2">
             {sections.map((section) => (

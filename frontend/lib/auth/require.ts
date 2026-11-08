@@ -55,3 +55,10 @@ export async function requireAuctionStaff(locale: string, path: string): Promise
   if (!user.roles.some((r) => r === "auction_manager" || r === "super_admin")) notFound();
   return user;
 }
+
+/** Settlements: operations staff and Super Admin (decision 2026-11-08). */
+export async function requireOrdersStaff(locale: string, path: string): Promise<CurrentUser> {
+  const user = await requireStaff(locale, path);
+  if (!user.roles.some((r) => r === "operations_staff" || r === "super_admin")) notFound();
+  return user;
+}

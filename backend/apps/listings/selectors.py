@@ -43,7 +43,7 @@ def pick_offer(artwork: Artwork) -> Listing | None:
     return sold[0] if sold else None
 
 
-def _buyable_now() -> Q:
+def buyable_now() -> Q:
     now = timezone.now()
     return (
         Q(status=ListingStatus.ACTIVE, sale_mode=SaleMode.FIXED_PRICE)
@@ -100,9 +100,9 @@ def storefront_artworks(
     if sale_mode in SaleMode.values:
         qs = qs.filter(Exists(active.filter(sale_mode=sale_mode)))
     if availability == "available":
-        qs = qs.filter(Exists(Listing.objects.filter(_buyable_now(), artwork=OuterRef("pk"))))
+        qs = qs.filter(Exists(Listing.objects.filter(buyable_now(), artwork=OuterRef("pk"))))
     elif availability == "unavailable":
-        qs = qs.exclude(Exists(Listing.objects.filter(_buyable_now(), artwork=OuterRef("pk"))))
+        qs = qs.exclude(Exists(Listing.objects.filter(buyable_now(), artwork=OuterRef("pk"))))
 
     order = ORDERINGS.get(ordering, ORDERINGS["newest"])
     if ordering in ("price_asc", "price_desc"):

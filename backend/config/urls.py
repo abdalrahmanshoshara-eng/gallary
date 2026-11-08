@@ -15,12 +15,15 @@ from apps.accounts.urls import auth_urls
 from apps.artists import urls as artists_urls
 from apps.artworks import urls as artworks_urls
 from apps.auctions import urls as auctions_urls
+from apps.audit import urls as audit_urls
 from apps.cart import urls as cart_urls
 from apps.catalog import urls as catalog_urls
 from apps.core.exceptions import api_not_found
+from apps.dashboard import urls as dashboard_urls
 from apps.favorites import urls as favorites_urls
 from apps.listings import urls as listings_urls
 from apps.orders import urls as orders_urls
+from apps.settlements import urls as settlements_urls
 
 admin_v1 = [
     *accounts_admin_urls,
@@ -30,6 +33,9 @@ admin_v1 = [
     *listings_urls.admin_urls,
     *orders_urls.admin_urls,
     *auctions_urls.admin_urls,
+    *settlements_urls.admin_urls,
+    *dashboard_urls.admin_urls,
+    *audit_urls.admin_urls,
 ]
 public_v1 = [
     *catalog_urls.public_urls,

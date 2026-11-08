@@ -123,6 +123,74 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/admin/artists/{public_id}/agreements:
+    get:
+      operationId: admin_artist_agreements
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistAgreements'
+          description: ''
+    post:
+      operationId: admin_artist_agreements_create
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AgreementInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistAgreements'
+          description: ''
+  /api/v1/admin/artists/{public_id}/agreements/end:
+    post:
+      operationId: admin_artist_agreements_end
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ArtistAgreements'
+          description: ''
   /api/v1/admin/artists/{public_id}/photo:
     post:
       operationId: admin_artists_photo_upload
@@ -949,6 +1017,81 @@ paths:
               schema:
                 $ref: '#/components/schemas/PaginatedEligibleArtworkList'
           description: ''
+  /api/v1/admin/audit:
+    get:
+      operationId: admin_audit_list
+      description: 'BR-007: read-only for the Super Admin. Newest first.'
+      parameters:
+      - in: query
+        name: action
+        schema:
+          type: string
+        description: prefix, e.g. settlement.
+      - in: query
+        name: actor
+        schema:
+          type: string
+      - in: query
+        name: entity_type
+        schema:
+          type: string
+      - in: query
+        name: from
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: system
+        schema:
+          type: string
+          enum:
+          - '1'
+      - in: query
+        name: to
+        schema:
+          type: string
+        description: YYYY-MM-DD
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedAuditEntryList'
+          description: ''
+  /api/v1/admin/audit/facets:
+    get:
+      operationId: admin_audit_facets
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AuditFacets'
+          description: ''
   /api/v1/admin/catalog/categories:
     get:
       operationId: admin_categories_list
@@ -1249,6 +1392,30 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/admin/dashboard:
+    get:
+      operationId: admin_dashboard
+      parameters:
+      - in: query
+        name: period
+        schema:
+          type: string
+          enum:
+          - 30d
+          - 90d
+          - all
+          default: 30d
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Dashboard'
+          description: ''
   /api/v1/admin/listings/{public_id}:
     get:
       operationId: admin_listing_detail
@@ -1752,6 +1919,186 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/SiteSetting'
+          description: ''
+  /api/v1/admin/settlements:
+    get:
+      operationId: admin_settlements_list
+      parameters:
+      - name: page
+        required: false
+        in: query
+        description: رقم الصفحة ضمن النتائج المقسمة.
+        schema:
+          type: integer
+      - name: page_size
+        required: false
+        in: query
+        description: عدد النتائج التي يجب إرجاعها في كل صفحة.
+        schema:
+          type: integer
+      - in: query
+        name: payee
+        schema:
+          type: string
+        description: payee_key from the by-payee summary
+      - in: query
+        name: search
+        schema:
+          type: string
+      - in: query
+        name: status
+        schema:
+          type: string
+          enum:
+          - all
+          - cancelled
+          - on_hold
+          - paid
+          - pending
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedSettlementList'
+          description: ''
+  /api/v1/admin/settlements/{public_id}/cancel:
+    post:
+      operationId: admin_settlements_cancel
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettlementReasonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'
+          description: ''
+  /api/v1/admin/settlements/{public_id}/hold:
+    post:
+      operationId: admin_settlements_hold
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SettlementReasonRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'
+          description: ''
+  /api/v1/admin/settlements/{public_id}/release:
+    post:
+      operationId: admin_settlements_release
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Settlement'
+          description: ''
+  /api/v1/admin/settlements/pay:
+    post:
+      operationId: admin_settlements_pay
+      parameters:
+      - in: header
+        name: Idempotency-Key
+        schema:
+          type: string
+        description: UUID per attempt
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PayInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Settlement'
+          description: ''
+  /api/v1/admin/settlements/payees:
+    get:
+      operationId: admin_settlements_payees
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PayeeDue'
+          description: ''
+  /api/v1/admin/settlements/summary:
+    get:
+      operationId: admin_settlements_summary
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SettlementSummary'
           description: ''
   /api/v1/admin/staff:
     get:
@@ -2951,6 +3298,18 @@ paths:
           description: ''
 components:
   schemas:
+    ActionsEnum:
+      enum:
+      - pay
+      - hold
+      - release
+      - cancel
+      type: string
+      description: |-
+        * `pay` - pay
+        * `hold` - hold
+        * `release` - release
+        * `cancel` - cancel
     ActivationRequest:
       type: object
       properties:
@@ -3974,6 +4333,10 @@ components:
           format: decimal
           pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
           readOnly: true
+        effective_commission_source:
+          allOf:
+          - $ref: '#/components/schemas/EffectiveCommissionSourceEnum'
+          readOnly: true
         effective_deposit:
           allOf:
           - $ref: '#/components/schemas/DepositTerms'
@@ -4047,6 +4410,7 @@ components:
       - deposit_type
       - deposit_value
       - effective_commission_rate
+      - effective_commission_source
       - effective_deposit
       - ends_at
       - id
@@ -4644,6 +5008,54 @@ components:
       - last_login
       - phone
       - roles
+    Agreement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        status:
+          type: string
+        effective_from:
+          type: string
+          format: date
+        effective_to:
+          type: string
+          format: date
+          nullable: true
+        notes:
+          type: string
+        created_by:
+          type: string
+          nullable: true
+        created_at:
+          type: string
+          format: date-time
+      required:
+      - commission_rate
+      - created_at
+      - effective_from
+      - effective_to
+      - id
+      - notes
+      - status
+    AgreementInputRequest:
+      type: object
+      properties:
+        commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        notes:
+          type: string
+          default: ''
+          maxLength: 2000
+      required:
+      - commission_rate
     ArchiveInputRequest:
       type: object
       properties:
@@ -4663,6 +5075,29 @@ components:
       description: |-
         * `visible` - ظاهر في الأرشيف
         * `hidden` - مخفي من الأرشيف
+    ArtistAgreements:
+      type: object
+      properties:
+        active:
+          allOf:
+          - $ref: '#/components/schemas/Agreement'
+          nullable: true
+        history:
+          type: array
+          items:
+            $ref: '#/components/schemas/Agreement'
+        default_commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+        can_manage:
+          type: boolean
+          description: Only the Super Admin sets commissions
+      required:
+      - active
+      - can_manage
+      - default_commission_rate
+      - history
     ArtistRef:
       type: object
       properties:
@@ -4681,6 +5116,38 @@ components:
       description: |-
         * `active` - ظاهر
         * `hidden` - مخفي
+    AttentionItem:
+      type: object
+      properties:
+        kind:
+          $ref: '#/components/schemas/AttentionItemKindEnum'
+        ref:
+          type: string
+        label:
+          type: string
+        at:
+          type: string
+          format: date-time
+          nullable: true
+        count:
+          type: integer
+      required:
+      - at
+      - kind
+      - label
+      - ref
+    AttentionItemKindEnum:
+      enum:
+      - order_expiring
+      - settlements_on_hold
+      - auction_awaiting_winner
+      - auction_requests_new
+      type: string
+      description: |-
+        * `order_expiring` - order_expiring
+        * `settlements_on_hold` - settlements_on_hold
+        * `auction_awaiting_winner` - auction_awaiting_winner
+        * `auction_requests_new` - auction_requests_new
     AuctionCard:
       type: object
       properties:
@@ -4939,6 +5406,19 @@ components:
       - version
       - winner_deposit_percent
       - winner_payment_window_sec
+    AuctionKpis:
+      type: object
+      properties:
+        live:
+          type: integer
+        upcoming:
+          type: integer
+        ended:
+          type: integer
+      required:
+      - ended
+      - live
+      - upcoming
     AuctionOutcomeEnum:
       enum:
       - sold
@@ -5205,6 +5685,64 @@ components:
         * `pending_winner_payment` - بانتظار دفع الفائز
         * `awarded` - مُرسى
         * `cancelled` - ملغى
+    AuditEntry:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        actor:
+          type: string
+          nullable: true
+          readOnly: true
+        actor_phone:
+          type: string
+          nullable: true
+        action:
+          type: string
+          readOnly: true
+        entity_type:
+          type: string
+          readOnly: true
+        entity_id:
+          type: string
+          readOnly: true
+        changes:
+          readOnly: true
+        reason:
+          type: string
+          readOnly: true
+        ip:
+          type: string
+          readOnly: true
+          nullable: true
+        request_id:
+          type: string
+          readOnly: true
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - action
+      - actor
+      - changes
+      - created_at
+      - entity_id
+      - entity_type
+      - id
+      - ip
+      - reason
+      - request_id
+    AuditFacets:
+      type: object
+      properties:
+        entity_types:
+          type: array
+          items:
+            type: string
+      required:
+      - entity_types
     AvailableActions:
       type: object
       properties:
@@ -5382,6 +5920,16 @@ components:
       - quantity_mode
       - title
       - unit_price
+    CatalogKpis:
+      type: object
+      properties:
+        published_artworks:
+          type: integer
+        available_artworks:
+          type: integer
+      required:
+      - available_artworks
+      - published_artworks
     CategoryWithParent:
       type: object
       properties:
@@ -5586,6 +6134,42 @@ components:
       - status
       - subtotal
       - whatsapp_url
+    Dashboard:
+      type: object
+      properties:
+        period:
+          $ref: '#/components/schemas/PeriodEnum'
+        generated_at:
+          type: string
+          format: date-time
+        catalog:
+          allOf:
+          - $ref: '#/components/schemas/CatalogKpis'
+          nullable: true
+        orders:
+          allOf:
+          - $ref: '#/components/schemas/OrderKpis'
+          nullable: true
+        settlements:
+          allOf:
+          - $ref: '#/components/schemas/SettlementKpis'
+          nullable: true
+        auctions:
+          allOf:
+          - $ref: '#/components/schemas/AuctionKpis'
+          nullable: true
+        attention:
+          type: array
+          items:
+            $ref: '#/components/schemas/AttentionItem'
+      required:
+      - attention
+      - auctions
+      - catalog
+      - generated_at
+      - orders
+      - period
+      - settlements
     DeliveryInputRequest:
       type: object
       properties:
@@ -5706,6 +6290,16 @@ components:
       - height_cm
       - weight_kg
       - width_cm
+    EffectiveCommissionSourceEnum:
+      enum:
+      - listing
+      - agreement
+      - default
+      type: string
+      description: |-
+        * `listing` - listing
+        * `agreement` - agreement
+        * `default` - default
     EligibleArtwork:
       type: object
       properties:
@@ -6164,6 +6758,29 @@ components:
       description: |-
         * `active` - فعّال
         * `removed` - أُزيل
+    OrderKpis:
+      type: object
+      properties:
+        orders:
+          type: integer
+        pending_deposit:
+          type: integer
+        sales_count:
+          type: integer
+        sales_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        commission_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - commission_amount
+      - orders
+      - pending_deposit
+      - sales_amount
+      - sales_count
     OrderReasonRequest:
       type: object
       properties:
@@ -6383,6 +7000,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/AuctionCard'
+    PaginatedAuditEntryList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/AuditEntry'
     PaginatedEligibleArtworkList:
       type: object
       required:
@@ -6475,6 +7115,29 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/PublicArtworkCard'
+    PaginatedSettlementList:
+      type: object
+      required:
+      - count
+      - results
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=4
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?page=2
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/Settlement'
     PaginatedStorefrontCardList:
       type: object
       required:
@@ -6934,6 +7597,54 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/RolesEnum'
+    PayInputRequest:
+      type: object
+      properties:
+        settlements:
+          type: array
+          items:
+            type: string
+            format: uuid
+          maxItems: 200
+          minItems: 1
+        reference:
+          type: string
+          maxLength: 120
+        paid_at:
+          type: string
+          format: date
+        notes:
+          type: string
+          default: ''
+          maxLength: 2000
+      required:
+      - reference
+      - settlements
+    PayeeDue:
+      type: object
+      properties:
+        payee_key:
+          type: string
+        payee_name:
+          type: string
+        payee_type:
+          type: string
+        count:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+        oldest:
+          type: string
+          format: date-time
+      required:
+      - amount
+      - count
+      - oldest
+      - payee_key
+      - payee_name
+      - payee_type
     PaymentInputRequest:
       type: object
       properties:
@@ -7065,6 +7776,16 @@ components:
         * `partially_paid` - مدفوع جزئياً
         * `paid` - مدفوع بالكامل
         * `refunded` - مُسترد
+    PeriodEnum:
+      enum:
+      - 30d
+      - 90d
+      - all
+      type: string
+      description: |-
+        * `30d` - 30d
+        * `90d` - 90d
+        * `all` - all
     Policy:
       type: object
       properties:
@@ -7588,6 +8309,156 @@ components:
       - ip
       - last_seen_at
       - user_agent_summary
+    Settlement:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        order_number:
+          type: string
+        artwork_title:
+          type: string
+        artwork_id:
+          type: string
+          format: uuid
+        quantity:
+          type: integer
+        payee_type:
+          type: string
+          readOnly: true
+        payee_name:
+          type: string
+          readOnly: true
+        payee_key:
+          type: string
+          readOnly: true
+        currency:
+          type: string
+          readOnly: true
+        gross_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        commission_rate:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
+          readOnly: true
+        platform_commission:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        payee_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,10}(?:\.\d{0,2})?$
+          readOnly: true
+        status:
+          allOf:
+          - $ref: '#/components/schemas/SettlementStatusEnum'
+          readOnly: true
+        status_reason:
+          type: string
+          readOnly: true
+        paid_at:
+          type: string
+          format: date
+          readOnly: true
+          nullable: true
+        reference:
+          type: string
+          readOnly: true
+        notes:
+          type: string
+          readOnly: true
+        paid_by:
+          type: string
+          nullable: true
+        actions:
+          type: array
+          items:
+            $ref: '#/components/schemas/ActionsEnum'
+          readOnly: true
+        order_cancelled_after_payment:
+          type: boolean
+          readOnly: true
+          description: 'Paid, then the order was cancelled: recover the amount from
+            the payee outside the platform.'
+        created_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - actions
+      - artwork_id
+      - artwork_title
+      - commission_rate
+      - created_at
+      - currency
+      - gross_amount
+      - id
+      - notes
+      - order_cancelled_after_payment
+      - order_number
+      - paid_at
+      - payee_amount
+      - payee_key
+      - payee_name
+      - payee_type
+      - platform_commission
+      - quantity
+      - reference
+      - status
+      - status_reason
+    SettlementKpis:
+      type: object
+      properties:
+        pending_count:
+          type: integer
+        pending_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - pending_amount
+      - pending_count
+    SettlementReasonRequest:
+      type: object
+      properties:
+        reason:
+          type: string
+          maxLength: 1000
+      required:
+      - reason
+    SettlementStatusEnum:
+      enum:
+      - pending
+      - on_hold
+      - paid
+      - cancelled
+      type: string
+      description: |-
+        * `pending` - مستحقة
+        * `on_hold` - معلّقة
+        * `paid` - مدفوعة
+        * `cancelled` - ملغاة
+    SettlementSummary:
+      type: object
+      properties:
+        pending:
+          $ref: '#/components/schemas/Total'
+        on_hold:
+          $ref: '#/components/schemas/Total'
+        paid_this_month:
+          $ref: '#/components/schemas/Total'
+      required:
+      - on_hold
+      - paid_this_month
+      - pending
     SiteSetting:
       type: object
       properties:
@@ -7840,6 +8711,18 @@ components:
       required:
       - name
       - slug
+    Total:
+      type: object
+      properties:
+        count:
+          type: integer
+        amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,12}(?:\.\d{0,2})?$
+      required:
+      - amount
+      - count
   securitySchemes:
     cookieAuth:
       type: apiKey
