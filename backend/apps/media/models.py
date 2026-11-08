@@ -19,6 +19,7 @@ class ImagePurpose(models.TextChoices):
     ARTWORK = "artwork", "صورة عمل فني"
     ARTIST = "artist", "صورة فنان"
     AUCTION_REQUEST = "auction_request", "صورة طلب مزاد"
+    BANNER = "banner", "صورة بنر"
 
 
 class ImageStatus(models.TextChoices):

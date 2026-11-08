@@ -358,11 +358,12 @@ CHECK: `gross_amount = platform_commission + payee_amount`.
 
 ### cms
 
-**Page**: `slug` UNIQUE (`about`, `faq`, `terms`, `privacy`, `deposit-policy`)، `title`, `body` (Markdown مُعقَّم)، `is_published`, `version`.
+**Page**: `slug` UNIQUE (`about`, `terms`, `privacy`, `deposit-policy`)، مسودة `draft_title`, `draft_body` (Markdown محدود)، `draft_updated_at/by`، `published_id` → PageVersion null (null = غير منشورة).
+**PageVersion** (غير قابلة للتعديل): `page_id`, `number`, `code` (`2026-11-08` أو `2026-11-08-2`)، `title`, `body`, `published_at`, `published_by_id`. UNIQUE `(page, number)` و`(page, code)`. رمز إصدار سياسة العربون هو ما يُحفظ في `Order.policy_version`.
 **FaqItem**: `question`, `answer`, `sort_order`, `is_active`.
-**Banner**: `title`, `subtitle`, `image_key`, `link_url`/`artwork_id`, `placement`, `sort_order`, `is_active`, `starts_at`, `ends_at`.
-**FeaturedItem**: `section` (`HOME_FEATURED_ARTWORKS`, `HOME_FEATURED_ARTISTS`)، `artwork_id`/`artist_id`، `sort_order`.
-**SiteSetting** (singleton): `default_commission_rate`, `default_deposit_type`, `default_deposit_value`, `reservation_hours` (24 — للعرض فقط؛ مقفل وفق BR-306), `whatsapp_number`, `max_pending_orders_per_user`, `background_music_key`.
+**Banner**: `title`, `subtitle`, `image_id` → ImageAsset (غرض `banner`) UNIQUE، `link_url` (يبدأ بـ `/` أو `https://`)، `link_label`, `sort_order`, `is_active`, `starts_at`, `ends_at`. CHECK: النهاية بعد البداية، والرابط يتطلب نصاً.
+**FeaturedArtwork**: `artwork_id` UNIQUE، `sort_order` (حتى 12). الفنانون المميزون من `Artist.is_featured`.
+**SiteSetting** (singleton، في `apps.core`): `default_commission_rate`, `default_deposit_type`, `default_deposit_value`, `whatsapp_number`, `max_pending_orders_per_user`.
 
 ### notifications
 

@@ -16,6 +16,7 @@ import { Link, useRouter } from "@/i18n/navigation";
 import { ApiError } from "@/lib/api/errors";
 import type { CurrentUser } from "@/lib/auth/types";
 import { formatUsd } from "@/lib/formatters/money";
+import { Markdown } from "@/lib/markdown";
 import { applyServerErrors } from "@/lib/forms";
 
 import { checkout, getPolicy, orderKey, ordersKey, policyKey } from "./api";
@@ -146,7 +147,7 @@ export function CheckoutForm({ user }: { user: CurrentUser }) {
 
         <fieldset className="grid gap-6">
           <legend className="mb-1 text-lg font-medium text-primary">{t("delivery")}</legend>
-          <p className="-mt-4 text-xs text-muted">{t("deliveryHint")}</p>
+          <p className="text-xs text-muted">{t("deliveryHint")}</p>
           <div className="grid gap-6 sm:grid-cols-2">
             <div className="flex flex-col gap-2">
               <label htmlFor={`${uid}-gov`} className="text-sm font-medium">
@@ -194,11 +195,13 @@ export function CheckoutForm({ user }: { user: CurrentUser }) {
           <h2 id="co-policy" className="text-lg font-medium text-primary">
             {policy.data.title}
           </h2>
-          <ul className="mt-3 list-inside list-disc space-y-2 text-sm leading-7">
-            {policy.data.points.map((point) => (
-              <li key={point}>{point}</li>
-            ))}
-          </ul>
+          <Markdown source={policy.data.body} className="mt-3 gap-3 text-sm leading-7" />
+          <p className="mt-3 text-xs text-muted">
+            {t("policyVersion", { version: policy.data.version })}{" "}
+            <Link href="/deposit-policy" className="underline underline-offset-4 hover:text-primary" target="_blank">
+              {t("policyFull")}
+            </Link>
+          </p>
           <label className="mt-5 flex items-start gap-3 text-sm font-medium">
             <input
               type="checkbox"

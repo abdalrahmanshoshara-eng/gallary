@@ -32,6 +32,7 @@ export default async function AdminLayout({ children, params }: LayoutProps<"/[l
           { href: "/admin/artworks" as const, label: t("artworks.title") },
           { href: "/admin/artists" as const, label: t("artists.title") },
           { href: "/admin/catalog" as const, label: t("terms.title") },
+          { href: "/admin/content" as const, label: t("content.title") },
           { href: "/admin/settings" as const, label: t("settings.title") },
         ]
       : []),

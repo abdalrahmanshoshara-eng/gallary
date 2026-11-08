@@ -36,7 +36,9 @@ def test_kpis_count_sales_and_commission(
     listing_factory(artwork_factory(published=True), price="50.00")
     cart_services.add_item(customer, listing=sold, quantity=1)
     order = order_services.checkout(
-        user=customer, policy_version=policy.VERSION, contact={"contact_name": "x", "contact_phone": customer.phone}
+        user=customer,
+        policy_version=policy.current_version(),
+        contact={"contact_name": "x", "contact_phone": customer.phone},
     )
     order_services.record_payment(order, actor=ops, kind="payment", amount=order.subtotal, method="cash")
     body = login_client(super_admin).get(f"{URL}?period=all").json()

@@ -18,7 +18,6 @@ from apps.orders.models import Order, OrderStatus
 pytestmark = pytest.mark.django_db
 ADMIN = "/api/v1/admin/orders"
 CHECKOUT = {
-    "policy_version": policy.VERSION,
     "accept_policy": True,
     "governorate": "damascus",
     "city": "المالكي",
@@ -43,7 +42,7 @@ def ops(make_user):
 def checkout(client, key=None, **overrides):
     return client.post(
         "/api/v1/orders/checkout",
-        {**CHECKOUT, **overrides},
+        {**CHECKOUT, "policy_version": policy.current_version(), **overrides},
         format="json",
         HTTP_IDEMPOTENCY_KEY=key or uuid.uuid4().hex,
     )
@@ -58,7 +57,9 @@ def order_with(customer, offer, price="1000.00", **kw):
     listing = offer(price=price, **kw)
     fill_cart(customer, (listing, 1))
     order = services.checkout(
-        user=customer, policy_version=policy.VERSION, contact={"contact_name": "x", "contact_phone": customer.phone}
+        user=customer,
+        policy_version=policy.current_version(),
+        contact={"contact_name": "x", "contact_phone": customer.phone},
     )
     return order, listing
 
@@ -95,7 +96,7 @@ def test_checkout_creates_one_order_reserves_stock_and_empties_cart(login_client
         Decimal("425.00"),
     )
     assert order.reservation_expires_at - order.created_at == timedelta(hours=24)
-    assert order.policy_version == policy.VERSION and order.history.count() == 1
+    assert order.policy_version == policy.current_version() and order.history.count() == 1
 
 
 def test_checkout_is_idempotent(login_client, customer, offer):
@@ -106,7 +107,9 @@ def test_checkout_is_idempotent(login_client, customer, offer):
     assert first.status_code == again.status_code == 201
     assert first.json()["number"] == again.json()["number"] and Order.objects.count() == 1
     assert checkout(client).json()["error"]["code"] == "CART_EMPTY"  # a new attempt finds the cart converted
-    missing = client.post("/api/v1/orders/checkout", CHECKOUT, format="json")
+    missing = client.post(
+        "/api/v1/orders/checkout", {**CHECKOUT, "policy_version": policy.current_version()}, format="json"
+    )
     assert missing.status_code == 400 and missing.json()["error"]["code"] == "IDEMPOTENCY_KEY_REQUIRED"
 
 
@@ -174,7 +177,9 @@ def test_two_customers_racing_for_one_piece(make_user, offer):
         barrier.wait()
         try:
             services.checkout(
-                user=buyer, policy_version=policy.VERSION, contact={"contact_name": "x", "contact_phone": buyer.phone}
+                user=buyer,
+                policy_version=policy.current_version(),
+                contact={"contact_name": "x", "contact_phone": buyer.phone},
             )
             results.append("ok")
         except services.CheckoutError:
@@ -323,7 +328,7 @@ def test_removing_an_item_recomputes_totals(customer, offer, ops):
     a, b = offer(price="100.00"), offer(price="300.00")
     fill_cart(customer, (a, 1), (b, 1))
     order = services.checkout(
-        user=customer, policy_version=policy.VERSION, contact={"contact_name": "x", "contact_phone": "1"}
+        user=customer, policy_version=policy.current_version(), contact={"contact_name": "x", "contact_phone": "1"}
     )
     item = order.items.get(listing=b)
     services.remove_item(order, item, actor=ops, reason="غير متوفر فعلياً")

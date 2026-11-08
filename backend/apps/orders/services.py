@@ -137,8 +137,9 @@ def checkout(
     contact: dict,
     customer_notes: str = "",
 ) -> Order:
-    if policy_version != policy.VERSION:
-        raise PolicyNotAcceptedError(details={"current_version": policy.VERSION})
+    current_policy = policy.current_version()
+    if policy_version != current_policy:
+        raise PolicyNotAcceptedError(details={"current_version": current_policy})
     if not user.is_active:
         raise PermissionDeniedError()
 
@@ -189,7 +190,7 @@ def checkout(
             deposit_due=Decimal("0.01"),
             created_at=now,
             reservation_expires_at=now + timedelta(hours=policy.RESERVATION_HOURS),
-            policy_version=policy.VERSION,
+            policy_version=current_policy,
             policy_accepted_at=now,
             customer_notes=customer_notes.strip(),
             **contact,
@@ -588,7 +589,7 @@ def create_auction_order(*, user, listing_id: int, amount: Decimal, deposit_perc
         created_at=now,
         reservation_expires_at=deadline,
         payment_deadline=deadline,
-        policy_version=policy.VERSION,
+        policy_version=policy.current_version(),
         policy_accepted_at=now,
         contact_name=user.display_name or user.phone,
         contact_phone=user.phone,

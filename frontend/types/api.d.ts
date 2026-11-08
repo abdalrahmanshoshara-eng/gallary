@@ -598,6 +598,214 @@ export interface paths {
         patch: operations["admin_techniques_update"];
         trace?: never;
     };
+    "/api/v1/admin/content/banners": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_banners_list"];
+        put?: never;
+        post: operations["admin_banners_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/banners/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_banners_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_banners_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/content/banners/{public_id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_banners_move"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/faq": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_faq_list"];
+        put?: never;
+        post: operations["admin_faq_create"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/faq/{public_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_faq_delete"];
+        options?: never;
+        head?: never;
+        patch: operations["admin_faq_update"];
+        trace?: never;
+    };
+    "/api/v1/admin/content/faq/{public_id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_faq_move"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/featured": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_featured_list"];
+        put?: never;
+        post: operations["admin_featured_add"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/featured/{artwork_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: operations["admin_featured_remove"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/featured/{artwork_id}/move": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_featured_move"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_pages_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/pages/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_pages_detail"];
+        put: operations["admin_pages_save_draft"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/pages/{slug}/publish": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: operations["admin_pages_publish"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/admin/content/pages/{slug}/versions/{number}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["admin_pages_version"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/admin/dashboard": {
         parameters: {
             query?: never;
@@ -1566,6 +1774,22 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/api/v1/faq": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["faq_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/api/v1/favorites": {
         parameters: {
             query?: never;
@@ -1641,6 +1865,23 @@ export interface paths {
         };
         /** @description All critical dependencies are reachable. Returns 503 otherwise. */
         get: operations["health_ready"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/home": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** @description Managed parts of the home page (F-CMS-04); other sections use their own endpoints. */
+        get: operations["home"];
         put?: never;
         post?: never;
         delete?: never;
@@ -1737,6 +1978,38 @@ export interface paths {
             cookie?: never;
         };
         get: operations["orders_policy"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pages": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pages_list"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/api/v1/pages/{slug}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: operations["pages_detail"];
         put?: never;
         post?: never;
         delete?: never;
@@ -2031,6 +2304,22 @@ export interface components {
             readonly notes: components["schemas"]["RequestNote"][];
             readonly actions: string[];
         };
+        AdminBanner: {
+            /** Format: uuid */
+            readonly id: string;
+            title: string;
+            subtitle?: string;
+            readonly image: components["schemas"]["AdminImage"] | null;
+            link_url?: string;
+            link_label?: string;
+            is_active?: boolean;
+            /** Format: date-time */
+            starts_at?: string | null;
+            /** Format: date-time */
+            ends_at?: string | null;
+            readonly sort_order: number;
+            readonly state: components["schemas"]["StateEnum"];
+        };
         AdminBid: {
             /** Format: uuid */
             id: string;
@@ -2078,6 +2367,31 @@ export interface components {
             /** Format: date-time */
             delivered_at: string | null;
             notes: string;
+        };
+        AdminFaq: {
+            /** Format: uuid */
+            readonly id: string;
+            question?: string;
+            answer?: string;
+            is_active?: boolean;
+            readonly sort_order: number;
+            /** Format: date-time */
+            readonly updated_at: string;
+        };
+        AdminFaqRequest: {
+            question?: string;
+            answer?: string;
+            is_active?: boolean;
+        };
+        AdminFeatured: {
+            /** Format: uuid */
+            artwork_id: string;
+            title: string;
+            creator_name: string;
+            readonly image: components["schemas"]["PublicArtworkImage"] | null;
+            /** @description False when the work was hidden or archived (not shown) */
+            readonly is_public: boolean;
+            sort_order: number;
         };
         /** @description Responsive image for the frontend: variants are listed by ascending width (srcset). */
         AdminImage: {
@@ -2263,6 +2577,20 @@ export interface components {
             phone: string;
             readonly deposit_status: components["schemas"]["DepositStatusEnum"];
             readonly payment_status: components["schemas"]["PaymentStatusEnum"];
+        };
+        AdminPage: {
+            slug: components["schemas"]["PageSlugEnum"];
+            readonly label: string;
+            draft_title: string;
+            draft_body: string;
+            /** Format: date-time */
+            draft_updated_at: string | null;
+            draft_updated_by?: string | null;
+            published: components["schemas"]["PageVersion"] | null;
+            readonly unpublished_changes: boolean;
+            /** @description The deposit policy is the Super Admin's only */
+            readonly can_edit: boolean;
+            readonly versions: components["schemas"]["PageVersionSummary"][];
         };
         AdminSetPasswordRequest: {
             password: string;
@@ -2626,6 +2954,19 @@ export interface components {
             delivery: boolean;
             complete: boolean;
         };
+        BannerInputRequest: {
+            title?: string;
+            subtitle?: string;
+            link_url?: string;
+            link_label?: string;
+            is_active?: boolean;
+            /** Format: date-time */
+            starts_at?: string | null;
+            /** Format: date-time */
+            ends_at?: string | null;
+            /** Format: binary */
+            image?: string;
+        };
         BidInputRequest: {
             /** Format: decimal */
             amount: string;
@@ -2823,6 +3164,12 @@ export interface components {
             weight_kg: string | null;
         };
         /**
+         * @description * `up` - up
+         *     * `down` - down
+         * @enum {string}
+         */
+        DirectionEnum: "up" | "down";
+        /**
          * @description * `listing` - listing
          *     * `agreement` - agreement
          *     * `default` - default
@@ -2838,6 +3185,10 @@ export interface components {
         };
         FavoriteIds: {
             ids: string[];
+        };
+        FeaturedInputRequest: {
+            /** Format: uuid */
+            artwork: string;
         };
         /**
          * @description * `damascus` - دمشق
@@ -2883,6 +3234,10 @@ export interface components {
             reason: string;
             /** Format: date-time */
             created_at: string;
+        };
+        Home: {
+            banners: components["schemas"]["PublicBanner"][];
+            featured: components["schemas"]["StorefrontCard"][];
         };
         ImageOrderRequest: {
             ids: string[];
@@ -2959,6 +3314,9 @@ export interface components {
              * Format: date-time
              */
             readonly date_joined: string;
+        };
+        MoveRequest: {
+            direction: components["schemas"]["DirectionEnum"];
         };
         MyAuctionState: {
             alias: number | null;
@@ -3060,6 +3418,40 @@ export interface components {
             readonly needs_action: boolean;
             /** Format: date-time */
             readonly created_at: string;
+        };
+        PageDraftRequest: {
+            title: string;
+            /** @description Limited Markdown: paragraphs, ## / ### headings, - and 1. lists, **bold**, [text](url). */
+            body: string;
+        };
+        PageLink: {
+            slug: string;
+            title: string;
+        };
+        /**
+         * @description * `about` - من نحن
+         *     * `terms` - شروط الاستخدام
+         *     * `privacy` - سياسة الخصوصية
+         *     * `deposit-policy` - سياسة العربون والإلغاء
+         * @enum {string}
+         */
+        PageSlugEnum: "about" | "terms" | "privacy" | "deposit-policy";
+        PageVersion: {
+            readonly number: number;
+            readonly code: string;
+            readonly title: string;
+            readonly body: string;
+            /** Format: date-time */
+            readonly published_at: string;
+            published_by?: string | null;
+        };
+        PageVersionSummary: {
+            readonly number: number;
+            readonly code: string;
+            readonly title: string;
+            /** Format: date-time */
+            readonly published_at: string;
+            published_by?: string | null;
         };
         PaginatedAdminArtistList: {
             /** @example 123 */
@@ -3325,6 +3717,11 @@ export interface components {
             /** الوصف */
             description?: string;
         };
+        PatchedAdminFaqRequest: {
+            question?: string;
+            answer?: string;
+            is_active?: boolean;
+        };
         PatchedAdminMaterialRequest: {
             /** الاسم */
             name?: string;
@@ -3384,6 +3781,19 @@ export interface components {
             /** Format: decimal */
             winner_deposit_percent?: string;
             non_payment_policy?: components["schemas"]["NonPaymentPolicyEnum"];
+        };
+        PatchedBannerInputRequest: {
+            title?: string;
+            subtitle?: string;
+            link_url?: string;
+            link_label?: string;
+            is_active?: boolean;
+            /** Format: date-time */
+            starts_at?: string | null;
+            /** Format: date-time */
+            ends_at?: string | null;
+            /** Format: binary */
+            image?: string;
         };
         PatchedImageUpdateRequest: {
             alt_text?: string;
@@ -3524,7 +3934,8 @@ export interface components {
         Policy: {
             version: string;
             title: string;
-            points: string[];
+            /** @description Limited Markdown (paragraphs, headings, lists, bold, links) */
+            body: string;
             reservation_hours: number;
         };
         PricingRequest: {
@@ -3577,6 +3988,15 @@ export interface components {
             alt_text: string;
             image: components["schemas"]["PublicImage"];
         };
+        PublicBanner: {
+            /** Format: uuid */
+            id: string;
+            title: string;
+            subtitle: string;
+            image: components["schemas"]["PublicImage"];
+            link_url: string;
+            link_label: string;
+        };
         /** @description A bid as every viewer sees it: amount and a stable per-auction alias, never identity (BR-509). */
         PublicBid: {
             /** Format: uuid */
@@ -3595,6 +4015,13 @@ export interface components {
             /** الوصف */
             readonly description: string;
             readonly children: components["schemas"]["TermRef"][];
+        };
+        PublicFaq: {
+            /** Format: uuid */
+            id: string;
+            question: string;
+            /** @description Limited Markdown: paragraphs, ## / ### headings, - and 1. lists, **bold**, [text](url). */
+            answer: string;
         };
         /** @description Responsive image for the frontend: variants are listed by ascending width (srcset). */
         PublicImage: {
@@ -3627,6 +4054,16 @@ export interface components {
              * @description Set when the offer is an auction: link to its page.
              */
             readonly auction_id: string | null;
+        };
+        PublicPage: {
+            slug: string;
+            title: string;
+            /** @description Limited Markdown: paragraphs, ## / ### headings, - and 1. lists, **bold**, [text](url). */
+            body: string;
+            version: number;
+            code: string;
+            /** Format: date-time */
+            published_at: string;
         };
         PublicTerm: {
             name: string;
@@ -3832,6 +4269,14 @@ export interface components {
             /** @default  */
             password: string;
         };
+        /**
+         * @description * `live` - live
+         *     * `scheduled` - scheduled
+         *     * `expired` - expired
+         *     * `hidden` - hidden
+         * @enum {string}
+         */
+        StateEnum: "live" | "scheduled" | "expired" | "hidden";
         StatusStep: {
             status: string;
             /** Format: date-time */
@@ -5216,6 +5661,425 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AdminTechnique"];
+                };
+            };
+        };
+    };
+    admin_banners_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBanner"][];
+                };
+            };
+        };
+    };
+    admin_banners_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["BannerInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBanner"][];
+                };
+            };
+        };
+    };
+    admin_banners_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_banners_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "multipart/form-data": components["schemas"]["PatchedBannerInputRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBanner"][];
+                };
+            };
+        };
+    };
+    admin_banners_move: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MoveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminBanner"][];
+                };
+            };
+        };
+    };
+    admin_faq_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminFaq"][];
+                };
+            };
+        };
+    };
+    admin_faq_create: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["AdminFaqRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminFaq"][];
+                };
+            };
+        };
+    };
+    admin_faq_delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_faq_update: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: {
+            content: {
+                "application/json": components["schemas"]["PatchedAdminFaqRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminFaq"][];
+                };
+            };
+        };
+    };
+    admin_faq_move: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                public_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MoveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminFaq"][];
+                };
+            };
+        };
+    };
+    admin_featured_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminFeatured"][];
+                };
+            };
+        };
+    };
+    admin_featured_add: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["FeaturedInputRequest"];
+            };
+        };
+        responses: {
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminFeatured"][];
+                };
+            };
+        };
+    };
+    admin_featured_remove: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                artwork_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description No response body */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
+            };
+        };
+    };
+    admin_featured_move: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                artwork_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["MoveRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminFeatured"][];
+                };
+            };
+        };
+    };
+    admin_pages_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPage"][];
+                };
+            };
+        };
+    };
+    admin_pages_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPage"];
+                };
+            };
+        };
+    };
+    admin_pages_save_draft: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PageDraftRequest"];
+            };
+        };
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPage"];
+                };
+            };
+        };
+    };
+    admin_pages_publish: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AdminPage"];
+                };
+            };
+        };
+    };
+    admin_pages_version: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                number: number;
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageVersion"];
                 };
             };
         };
@@ -6810,6 +7674,25 @@ export interface operations {
             };
         };
     };
+    faq_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicFaq"][];
+                };
+            };
+        };
+    };
     favorites_list: {
         parameters: {
             query?: {
@@ -6946,6 +7829,25 @@ export interface operations {
             };
         };
     };
+    home: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["Home"];
+                };
+            };
+        };
+    };
     auctions_my_bids: {
         parameters: {
             query?: never;
@@ -7076,6 +7978,46 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["Policy"];
+                };
+            };
+        };
+    };
+    pages_list: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PageLink"][];
+                };
+            };
+        };
+    };
+    pages_detail: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                slug: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PublicPage"];
                 };
             };
         };

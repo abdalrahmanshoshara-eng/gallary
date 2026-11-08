@@ -1392,6 +1392,413 @@ paths:
       responses:
         '204':
           description: No response body
+  /api/v1/admin/content/banners:
+    get:
+      operationId: admin_banners_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminBanner'
+          description: ''
+    post:
+      operationId: admin_banners_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/BannerInputRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminBanner'
+          description: ''
+  /api/v1/admin/content/banners/{public_id}:
+    patch:
+      operationId: admin_banners_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedBannerInputRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminBanner'
+          description: ''
+    delete:
+      operationId: admin_banners_delete
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/content/banners/{public_id}/move:
+    post:
+      operationId: admin_banners_move
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminBanner'
+          description: ''
+  /api/v1/admin/content/faq:
+    get:
+      operationId: admin_faq_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminFaq'
+          description: ''
+    post:
+      operationId: admin_faq_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminFaqRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminFaq'
+          description: ''
+  /api/v1/admin/content/faq/{public_id}:
+    patch:
+      operationId: admin_faq_update
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminFaqRequest'
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminFaq'
+          description: ''
+    delete:
+      operationId: admin_faq_delete
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/content/faq/{public_id}/move:
+    post:
+      operationId: admin_faq_move
+      parameters:
+      - in: path
+        name: public_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminFaq'
+          description: ''
+  /api/v1/admin/content/featured:
+    get:
+      operationId: admin_featured_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminFeatured'
+          description: ''
+    post:
+      operationId: admin_featured_add
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/FeaturedInputRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminFeatured'
+          description: ''
+  /api/v1/admin/content/featured/{artwork_id}:
+    delete:
+      operationId: admin_featured_remove
+      parameters:
+      - in: path
+        name: artwork_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '204':
+          description: No response body
+  /api/v1/admin/content/featured/{artwork_id}/move:
+    post:
+      operationId: admin_featured_move
+      parameters:
+      - in: path
+        name: artwork_id
+        schema:
+          type: string
+          format: uuid
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MoveRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminFeatured'
+          description: ''
+  /api/v1/admin/content/pages:
+    get:
+      operationId: admin_pages_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminPage'
+          description: ''
+  /api/v1/admin/content/pages/{slug}:
+    get:
+      operationId: admin_pages_detail
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPage'
+          description: ''
+    put:
+      operationId: admin_pages_save_draft
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PageDraftRequest'
+        required: true
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPage'
+          description: ''
+  /api/v1/admin/content/pages/{slug}/publish:
+    post:
+      operationId: admin_pages_publish
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminPage'
+          description: ''
+  /api/v1/admin/content/pages/{slug}/versions/{number}:
+    get:
+      operationId: admin_pages_version
+      parameters:
+      - in: path
+        name: number
+        schema:
+          type: integer
+        required: true
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PageVersion'
+          description: ''
   /api/v1/admin/dashboard:
     get:
       operationId: admin_dashboard
@@ -3053,6 +3460,23 @@ paths:
                 items:
                   $ref: '#/components/schemas/PublicTerm'
           description: ''
+  /api/v1/faq:
+    get:
+      operationId: faq_list
+      tags:
+      - faq
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PublicFaq'
+          description: ''
   /api/v1/favorites:
     get:
       operationId: favorites_list
@@ -3166,6 +3590,23 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Readiness'
+          description: ''
+  /api/v1/home:
+    get:
+      operationId: home
+      description: Managed parts of the home page (F-CMS-04); other sections use their
+        own endpoints.
+      tags:
+      - home
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Home'
           description: ''
   /api/v1/me/bids:
     get:
@@ -3295,6 +3736,44 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Policy'
+          description: ''
+  /api/v1/pages:
+    get:
+      operationId: pages_list
+      tags:
+      - pages
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/PageLink'
+          description: ''
+  /api/v1/pages/{slug}:
+    get:
+      operationId: pages_detail
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - pages
+      security:
+      - cookieAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PublicPage'
           description: ''
 components:
   schemas:
@@ -4103,6 +4582,53 @@ components:
       - work_description
       - work_title
       - year_text
+    AdminBanner:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        title:
+          type: string
+          maxLength: 150
+        subtitle:
+          type: string
+          maxLength: 300
+        image:
+          allOf:
+          - $ref: '#/components/schemas/AdminImage'
+          readOnly: true
+          nullable: true
+        link_url:
+          type: string
+          maxLength: 500
+        link_label:
+          type: string
+          maxLength: 60
+        is_active:
+          type: boolean
+        starts_at:
+          type: string
+          format: date-time
+          nullable: true
+        ends_at:
+          type: string
+          format: date-time
+          nullable: true
+        sort_order:
+          type: integer
+          readOnly: true
+        state:
+          allOf:
+          - $ref: '#/components/schemas/StateEnum'
+          readOnly: true
+      required:
+      - id
+      - image
+      - sort_order
+      - state
+      - title
     AdminBid:
       type: object
       properties:
@@ -4227,6 +4753,71 @@ components:
       - method
       - notes
       - status
+    AdminFaq:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        question:
+          type: string
+          maxLength: 300
+        answer:
+          type: string
+        is_active:
+          type: boolean
+        sort_order:
+          type: integer
+          readOnly: true
+        updated_at:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - id
+      - sort_order
+      - updated_at
+    AdminFaqRequest:
+      type: object
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 300
+        answer:
+          type: string
+          minLength: 1
+        is_active:
+          type: boolean
+    AdminFeatured:
+      type: object
+      properties:
+        artwork_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        creator_name:
+          type: string
+        image:
+          allOf:
+          - $ref: '#/components/schemas/PublicArtworkImage'
+          nullable: true
+          readOnly: true
+        is_public:
+          type: boolean
+          readOnly: true
+          description: False when the work was hidden or archived (not shown)
+        sort_order:
+          type: integer
+      required:
+      - artwork_id
+      - creator_name
+      - image
+      - is_public
+      - sort_order
+      - title
     AdminImage:
       type: object
       description: 'Responsive image for the frontend: variants are listed by ascending
@@ -4817,6 +5408,51 @@ components:
       - source
       - status
       - subtotal
+    AdminPage:
+      type: object
+      properties:
+        slug:
+          $ref: '#/components/schemas/PageSlugEnum'
+        label:
+          type: string
+          readOnly: true
+        draft_title:
+          type: string
+        draft_body:
+          type: string
+        draft_updated_at:
+          type: string
+          format: date-time
+          nullable: true
+        draft_updated_by:
+          type: string
+          nullable: true
+        published:
+          allOf:
+          - $ref: '#/components/schemas/PageVersion'
+          nullable: true
+        unpublished_changes:
+          type: boolean
+          readOnly: true
+        can_edit:
+          type: boolean
+          readOnly: true
+          description: The deposit policy is the Super Admin's only
+        versions:
+          type: array
+          items:
+            $ref: '#/components/schemas/PageVersionSummary'
+          readOnly: true
+      required:
+      - can_edit
+      - draft_body
+      - draft_title
+      - draft_updated_at
+      - label
+      - published
+      - slug
+      - unpublished_changes
+      - versions
     AdminSetPasswordRequest:
       type: object
       properties:
@@ -5773,6 +6409,35 @@ components:
       - record_payment
       - record_refund
       - remove_items
+    BannerInputRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 150
+        subtitle:
+          type: string
+          maxLength: 300
+        link_url:
+          type: string
+          maxLength: 500
+        link_label:
+          type: string
+          maxLength: 60
+        is_active:
+          type: boolean
+        starts_at:
+          type: string
+          format: date-time
+          nullable: true
+        ends_at:
+          type: string
+          format: date-time
+          nullable: true
+        image:
+          type: string
+          format: binary
     BidInputRequest:
       type: object
       properties:
@@ -6290,6 +6955,14 @@ components:
       - height_cm
       - weight_kg
       - width_cm
+    DirectionEnum:
+      enum:
+      - up
+      - down
+      type: string
+      description: |-
+        * `up` - up
+        * `down` - down
     EffectiveCommissionSourceEnum:
       enum:
       - listing
@@ -6330,6 +7003,14 @@ components:
             format: uuid
       required:
       - ids
+    FeaturedInputRequest:
+      type: object
+      properties:
+        artwork:
+          type: string
+          format: uuid
+      required:
+      - artwork
     GovernorateEnum:
       enum:
       - damascus
@@ -6419,6 +7100,20 @@ components:
       - from_status
       - reason
       - to_status
+    Home:
+      type: object
+      properties:
+        banners:
+          type: array
+          items:
+            $ref: '#/components/schemas/PublicBanner'
+        featured:
+          type: array
+          items:
+            $ref: '#/components/schemas/StorefrontCard'
+      required:
+      - banners
+      - featured
     ImageOrderRequest:
       type: object
       properties:
@@ -6594,6 +7289,13 @@ components:
       - phone
       - phone_verified
       - roles
+    MoveRequest:
+      type: object
+      properties:
+        direction:
+          $ref: '#/components/schemas/DirectionEnum'
+      required:
+      - direction
     MyAuctionState:
       type: object
       properties:
@@ -6862,6 +7564,94 @@ components:
       - source
       - status
       - subtotal
+    PageDraftRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          maxLength: 200
+        body:
+          type: string
+          description: 'Limited Markdown: paragraphs, ## / ### headings, - and 1.
+            lists, **bold**, [text](url).'
+          maxLength: 60000
+      required:
+      - body
+      - title
+    PageLink:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+      required:
+      - slug
+      - title
+    PageSlugEnum:
+      enum:
+      - about
+      - terms
+      - privacy
+      - deposit-policy
+      type: string
+      description: |-
+        * `about` - من نحن
+        * `terms` - شروط الاستخدام
+        * `privacy` - سياسة الخصوصية
+        * `deposit-policy` - سياسة العربون والإلغاء
+    PageVersion:
+      type: object
+      properties:
+        number:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        body:
+          type: string
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+        published_by:
+          type: string
+          nullable: true
+      required:
+      - body
+      - code
+      - number
+      - published_at
+      - title
+    PageVersionSummary:
+      type: object
+      properties:
+        number:
+          type: integer
+          readOnly: true
+        code:
+          type: string
+          readOnly: true
+        title:
+          type: string
+          readOnly: true
+        published_at:
+          type: string
+          format: date-time
+          readOnly: true
+        published_by:
+          type: string
+          nullable: true
+      required:
+      - code
+      - number
+      - published_at
+      - title
     PaginatedAdminArtistList:
       type: object
       required:
@@ -7333,6 +8123,18 @@ components:
         description:
           type: string
           title: الوصف
+    PatchedAdminFaqRequest:
+      type: object
+      properties:
+        question:
+          type: string
+          minLength: 1
+          maxLength: 300
+        answer:
+          type: string
+          minLength: 1
+        is_active:
+          type: boolean
     PatchedAdminMaterialRequest:
       type: object
       properties:
@@ -7489,6 +8291,35 @@ components:
           pattern: ^-?\d{0,3}(?:\.\d{0,2})?$
         non_payment_policy:
           $ref: '#/components/schemas/NonPaymentPolicyEnum'
+    PatchedBannerInputRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          minLength: 1
+          maxLength: 150
+        subtitle:
+          type: string
+          maxLength: 300
+        link_url:
+          type: string
+          maxLength: 500
+        link_label:
+          type: string
+          maxLength: 60
+        is_active:
+          type: boolean
+        starts_at:
+          type: string
+          format: date-time
+          nullable: true
+        ends_at:
+          type: string
+          format: date-time
+          nullable: true
+        image:
+          type: string
+          format: binary
     PatchedImageUpdateRequest:
       type: object
       properties:
@@ -7793,14 +8624,13 @@ components:
           type: string
         title:
           type: string
-        points:
-          type: array
-          items:
-            type: string
+        body:
+          type: string
+          description: Limited Markdown (paragraphs, headings, lists, bold, links)
         reservation_hours:
           type: integer
       required:
-      - points
+      - body
       - reservation_hours
       - title
       - version
@@ -7940,6 +8770,29 @@ components:
       - alt_text
       - id
       - image
+    PublicBanner:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        subtitle:
+          type: string
+        image:
+          $ref: '#/components/schemas/PublicImage'
+        link_url:
+          type: string
+        link_label:
+          type: string
+      required:
+      - id
+      - image
+      - link_label
+      - link_url
+      - subtitle
+      - title
     PublicBid:
       type: object
       description: 'A bid as every viewer sees it: amount and a stable per-auction
@@ -7988,6 +8841,22 @@ components:
       - description
       - name
       - slug
+    PublicFaq:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        question:
+          type: string
+        answer:
+          type: string
+          description: 'Limited Markdown: paragraphs, ## / ### headings, - and 1.
+            lists, **bold**, [text](url).'
+      required:
+      - answer
+      - id
+      - question
     PublicImage:
       type: object
       description: 'Responsive image for the frontend: variants are listed by ascending
@@ -8070,6 +8939,31 @@ components:
       - starts_at
       - status
       - unavailable_reason
+    PublicPage:
+      type: object
+      properties:
+        slug:
+          type: string
+        title:
+          type: string
+        body:
+          type: string
+          description: 'Limited Markdown: paragraphs, ## / ### headings, - and 1.
+            lists, **bold**, [text](url).'
+        version:
+          type: integer
+        code:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+      required:
+      - body
+      - code
+      - published_at
+      - slug
+      - title
+      - version
     PublicTerm:
       type: object
       properties:
@@ -8540,6 +9434,18 @@ components:
       required:
       - phone
       - roles
+    StateEnum:
+      enum:
+      - live
+      - scheduled
+      - expired
+      - hidden
+      type: string
+      description: |-
+        * `live` - live
+        * `scheduled` - scheduled
+        * `expired` - expired
+        * `hidden` - hidden
     StatusStep:
       type: object
       properties:

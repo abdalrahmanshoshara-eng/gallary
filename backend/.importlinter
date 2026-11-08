@@ -22,6 +22,7 @@ source_modules =
     apps.auctions
     apps.settlements
     apps.dashboard
+    apps.cms
 forbidden_modules =
     apps.realtime
     channels
@@ -59,6 +60,7 @@ forbidden_modules =
     apps.cart
     apps.orders
     apps.auctions
+    apps.cms
 
 [importlinter:contract:offers-below-orders]
 name = Offers know nothing about carts or orders (orders build on offers)

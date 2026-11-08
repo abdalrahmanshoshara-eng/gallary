@@ -141,6 +141,25 @@ Workflow and UX analysis: `docs/ux/PHASE7A_FINANCE.md`.
 - **Dashboard**: the admin home shows KPIs for the sections each role works in, plus a "needs attention" list.
 - **Audit log**: the Super Admin browses every administrative and financial action in **لوحة الإدارة ← سجل التدقيق**.
 
+## Content and home page (Phase 7b)
+
+Workflow and UX analysis: `docs/ux/PHASE7B_CONTENT.md`.
+
+- **Pages** (`apps.cms`): About, Terms, Privacy and the Deposit & Cancellation Policy.
+  - Edit a draft with a live preview, then publish an immutable version.
+  - Content staff and the Super Admin manage pages. Only the Super Admin edits and publishes the deposit policy.
+  - Unpublished pages return 404, and the footer links only to published pages.
+- **Deposit policy (BR-313)**: checkout shows the published version and stores its code on the order. A new version does not change existing orders.
+- **FAQ, banners, featured works**: all managed under **لوحة الإدارة ← المحتوى**. Banners need an image and a safe link (`/…` or `https://…`), and can have a display window. Up to 12 featured works.
+- **Home page**, in this order. Empty sections are hidden, and the page revalidates every 60 s.
+  1. Banners (manual navigation, no autoplay).
+  2. Live or upcoming auctions.
+  3. Featured works.
+  4. Categories.
+  5. Latest works.
+  6. Featured artists.
+- Terms and Privacy ship as unpublished draft templates. Review them legally before publishing.
+
 ## Run without Docker
 
 You need Python 3.12+, Node 22.12+, PostgreSQL 16 and Redis 7 running locally.

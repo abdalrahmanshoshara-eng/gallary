@@ -32,7 +32,9 @@ def sell(artwork_factory, listing_factory, customer, ops):
             listing = listing_factory(artwork_factory(published=True, **kwargs, **artwork_kw), price=price)
             cart_services.add_item(customer, listing=listing, quantity=1)
         order = order_services.checkout(
-            user=customer, policy_version=policy.VERSION, contact={"contact_name": "x", "contact_phone": customer.phone}
+            user=customer,
+            policy_version=policy.current_version(),
+            contact={"contact_name": "x", "contact_phone": customer.phone},
         )
         if confirm:
             order_services.record_payment(

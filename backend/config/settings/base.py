@@ -55,6 +55,7 @@ INSTALLED_APPS = [
     "apps.orders",
     "apps.auctions",
     "apps.settlements",
+    "apps.cms",
     "apps.dashboard",
     "apps.realtime",
 ]
@@ -358,6 +359,7 @@ SPECTACULAR_SETTINGS = {
         "NoteVisibilityEnum": "apps.auctions.models.NoteVisibility",
         "SettlementStatusEnum": "apps.settlements.models.SettlementStatus",
         "AgreementStatusEnum": "apps.artists.models.AgreementStatus",
+        "PageSlugEnum": "apps.cms.models.PageSlug",
     },
 }
 

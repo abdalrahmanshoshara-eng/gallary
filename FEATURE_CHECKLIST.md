@@ -120,11 +120,11 @@
 | F-SET-01 | اتفاقيات الفنانين | نسبة العمولة، اتفاقية نشطة واحدة | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7a؛ المدير العام وحده؛ الجديدة تنهي السابقة؛ للطلبات الجديدة فقط |
 | F-SET-02 | حساب العمولة | ترتيب الحسم + Snapshot | TESTED | TESTED | TESTED | N/A | TESTED | TESTED | COMPLETE | BR-701..703؛ مصدر النسبة يظهر في محرر العرض |
 | F-SET-03 | التسويات | إنشاء عند CONFIRMED + تسجيل الدفع؛ المستفيد فنان أو مالك | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | BR-704..706؛ دفع جماعي لمستفيد واحد بمرجع، Idempotency، ترحيل الطلبات السابقة |
-| F-CMS-01 | الصفحات الثابتة | من نحن، شروط، خصوصية، سياسة العربون (بإصدارات) | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | سياسة العربون مطلوبة في Phase 5 |
-| F-CMS-02 | FAQ | CRUD + عرض | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-CMS-03 | البنرات والمختارات | بنرات، أعمال وفنانون مميزون | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-CMS-04 | الصفحة الرئيسية | Hero، مختارات، مزادات، تصنيفات، حديث | NOT_STARTED | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
-| F-CMS-05 | إعدادات الموقع | العمولة/العربون الافتراضي، WhatsApp | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
+| F-CMS-01 | الصفحات الثابتة | من نحن، شروط، خصوصية، سياسة العربون (بإصدارات) | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7b؛ مسودة + معاينة حيّة + نشر إصدار غير قابل للتعديل + سجل؛ السياسة للمدير العام وحده وتغذّي صفحة التأكيد (BR-313) |
+| F-CMS-02 | FAQ | CRUD + عرض | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7b؛ تحرير في المكان، ترتيب، إظهار/إخفاء؛ `/faq` أكورديون `details` |
+| F-CMS-03 | البنرات والمختارات | بنرات، أعمال وفنانون مميزون | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | 7b؛ بنر بصورة إلزامية ورابط آمن وفترة عرض؛ حتى 12 عملاً مختاراً؛ الفنانون من خيار «مميّز» |
+| F-CMS-04 | الصفحة الرئيسية | Hero، مختارات، مزادات، تصنيفات، حديث | TESTED | TESTED | N/A | N/A | TESTED | TESTED | COMPLETE | 7b؛ الأقسام الفارغة تختفي؛ بلا تشغيل تلقائي؛ ISR 60 ثانية |
+| F-CMS-05 | إعدادات الموقع | العمولة/العربون الافتراضي، WhatsApp | TESTED | TESTED | TESTED | TESTED | TESTED | TESTED | COMPLETE | `SiteSetting` منذ Phase 4/5 في «إعدادات المنصة» (انظر F-LST-04) |
 | F-NTF-01 | الإشعارات الداخلية | قائمة الإشعارات للعميل | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
 | F-NTF-02 | SMS/Email | Adapter قابل للتبديل، أحداث §26 | NOT_STARTED | N/A | N/A | N/A | NOT_STARTED | NOT_STARTED | NOT_STARTED | |
 | F-UX-04 | الموسيقى | تشغيل/إيقاف بلا autoplay | N/A | NOT_STARTED | N/A | N/A | NOT_STARTED | NOT_STARTED | BLOCKED | Q13: ملف مرخص |

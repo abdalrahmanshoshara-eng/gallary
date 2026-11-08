@@ -162,15 +162,16 @@ class CustomerOrderSerializer(OrderSummarySerializer):
 class PolicySerializer(serializers.Serializer):
     version = serializers.CharField()
     title = serializers.CharField()
-    points = serializers.ListField(child=serializers.CharField())
+    body = serializers.CharField(help_text="Limited Markdown (paragraphs, headings, lists, bold, links)")
     reservation_hours = serializers.IntegerField()
 
 
 def policy_payload() -> dict:
+    current = policy.current()
     return {
-        "version": policy.VERSION,
-        "title": policy.TITLE,
-        "points": policy.POINTS,
+        "version": current.code,
+        "title": current.title,
+        "body": current.body,
         "reservation_hours": policy.RESERVATION_HOURS,
     }
 

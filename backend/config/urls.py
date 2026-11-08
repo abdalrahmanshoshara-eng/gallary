@@ -18,6 +18,7 @@ from apps.auctions import urls as auctions_urls
 from apps.audit import urls as audit_urls
 from apps.cart import urls as cart_urls
 from apps.catalog import urls as catalog_urls
+from apps.cms import urls as cms_urls
 from apps.core.exceptions import api_not_found
 from apps.dashboard import urls as dashboard_urls
 from apps.favorites import urls as favorites_urls
@@ -36,6 +37,7 @@ admin_v1 = [
     *settlements_urls.admin_urls,
     *dashboard_urls.admin_urls,
     *audit_urls.admin_urls,
+    *cms_urls.admin_urls,
 ]
 public_v1 = [
     *catalog_urls.public_urls,
@@ -46,6 +48,7 @@ public_v1 = [
     *cart_urls.urls,
     *orders_urls.urls,
     *auctions_urls.urls,
+    *cms_urls.public_urls,
 ]
 
 api_v1 = [

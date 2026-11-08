@@ -28,6 +28,7 @@ export default async function AdminHomePage({ params }: PageProps<"/[locale]/adm
           { href: "/admin/artworks" as const, title: t("artworks.title"), intro: t("artworks.homeIntro") },
           { href: "/admin/artists" as const, title: t("artists.title"), intro: t("artists.homeIntro") },
           { href: "/admin/catalog" as const, title: t("terms.title"), intro: t("terms.intro") },
+          { href: "/admin/content" as const, title: t("content.title"), intro: t("content.intro") },
           { href: "/admin/settings" as const, title: t("settings.title"), intro: t("settings.intro") },
         ]
       : []),

@@ -215,7 +215,7 @@ describe("CartView", () => {
 });
 
 describe("CheckoutForm", () => {
-  const POLICY = { version: "2026-11-05", title: "سياسة العربون والإلغاء", points: ["تأكيد الطلب يحجز القطع لك لمدة 24 ساعة."], reservation_hours: 24 };
+  const POLICY = { version: "2026-11-05", title: "سياسة العربون والإلغاء", body: "- تأكيد الطلب يحجز القطع لك لمدة 24 ساعة.", reservation_hours: 24 };
 
   it("requires the policy, sends one idempotency key and opens the order", async () => {
     routes = {
